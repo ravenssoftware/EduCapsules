@@ -9,6 +9,7 @@
 |---|---|---|---|
 | A-01 | SRS v1.1 (audited) is the build baseline, not the originally-attached v1.0 | 2026-09-11 | High — v1.1 only fixes internal contradictions/gaps in v1.0; reverting means re-introducing the duplicate BR-014 ID and the two contradictions it resolved |
 | A-02 | Frontend framework is React + Vite (SPA, no SSR) | 2026-09-11 | Medium — affects Phase 1 frontend architecture and every screen built after; changing later means a rewrite of the web app, not a config change |
+| A-03 | D-08 resolved: grade scales configurable per Organization (never global), scale/criteria pinned per Grade at creation/release. Baseline bumped to SRS v1.2. | 2026-09-11 | Low to change the *value* (it's a config-driven, versioned entity by design — GRD-016); high to change the *shape* (per-Organization vs. some other scope) once Phase 13 has built against it |
 
 ## B. Proposed — to be brought to you for explicit approval at Phase 1 kickoff, not decided here
 
@@ -32,7 +33,7 @@ These follow directly from constraints the SRS *does* fix (CON-01/CON-02: Cloudf
 | # | Assumption | Why deferred |
 |---|---|---|
 | C-01 | Retention periods will end up as per-category config values, not hard-coded | Blocked on D-06 (counsel) |
-| C-02 | Grade scale will end up as a per-organization config value | Blocked on D-08 (Project Owner) — see the Open-Decision Register for why this is the one I'd resolve soonest anyway |
+| ~~C-02~~ | ~~Grade scale will end up as a per-organization config value~~ | **Resolved — moved to section A (A-03).** No longer deferred. |
 | C-03 | Performance thresholds will be measured, not asserted | Blocked on D-05 (requires a load test to exist first — Phase 24) |
 
 ## D. Structural assumptions (not really "open" — implied directly by SRS golden rules, listed for completeness)

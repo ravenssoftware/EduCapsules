@@ -1,10 +1,10 @@
 # Open-Decision Register
 
 **Phase:** 0
-**Source:** SRS v1.1 §51 (Table 51.1), plus D-17/D-18 added by the v1.1 audit.
+**Source:** SRS v1.2 §51 (Table 51.1), plus D-17/D-18 added by the v1.1 audit.
 **Rule:** nothing here is decided by implementation. Each row states who decides, whether it blocks anything before launch, and — where it doesn't block launch — the generic, reversible interim behavior the code will implement so that resolving the decision later is a config change, not a rework.
 
-Per Table 51.1, **only D-03, D-05, D-06, D-07, D-08 and D-17 are required before launch** (AC-20). None of the 18 items block starting the build.
+Per Table 51.1 (as of v1.2), **D-03, D-05, D-06, D-07 and D-17 are required before launch** (AC-20). **D-08 is now RESOLVED** (below) — it was launch-blocking until the Project Owner resolved it directly; removed from the list accordingly, and D-17 added (it was omitted from the launch-blocking list when first registered in v1.1 — corrected in the same pass). 17 items remain open; none block starting the build.
 
 | # | Decision | Owner | Launch-blocking? | Interim plan (reversible, no rework) |
 |---|---|---|---|---|
@@ -15,7 +15,7 @@ Per Table 51.1, **only D-03, D-05, D-06, D-07, D-08 and D-17 are required before
 | D-05 | Performance thresholds | Engineer + QA | **Yes** | Instrument every metric named in §43.1 now (histograms, RUM); no threshold value invented anywhere in code or docs |
 | D-06 | Retention periods, applicable data-protection regime, minors' data rules | **Project Owner + counsel** | **Yes** | Build the LIF-001..012 erasure/retention pipeline generically, with retention period as a per-data-category config value defaulting to "retain, do not auto-purge" until set |
 | D-07 | V1 capacity model (cohort size, peak concurrent assessment, storage growth) | **Project Owner** | No — capacity planning | Size dev/staging conservatively; nothing in the architecture assumes a specific number |
-| D-08 | Grade scale: numeric, letter, or configurable per organization | **Project Owner** | **Yes** | Schema (`Grade.scaled_score`, `grading_scale_snapshot`) already supports any of the three; **no default will be implemented without your sign-off** before Phase 13 — this is the one item I'd ask you to resolve earliest, since it's cheap to decide now and expensive to guess wrong |
+| D-08 | ~~Grade scale: numeric, letter, or configurable per organization~~ | **Project Owner** | **RESOLVED** | **Decided:** grade scales are configurable per Organization; never a single global scale; the scale and criteria in force at grade creation/release are permanently preserved. Recorded in SRS v1.2 §17.1 (GRD-013..020) and §51 (D-08 row). Data model: new `GradingScale`/`GradingScaleVersion` entities (§37.3.3, copy-on-write, mirroring QuestionVersion/FileVersion), `Grade.grading_scale_version_id` pins the version at creation. Permission: `GRADING_SCALE_MANAGE` (Admin, §26.3). API: `/grading-scales` (§38.2). This is now unblocked for Phase 13. |
 | D-09 | Whether Achievements/Leaderboards ship in V1 or immediately after | Project Owner | No — sprint planning | Already SHOULD in the SRS, leaderboards ship disabled-by-default (LDB-009); build both, gate by a flag, no schedule commitment implied |
 | D-10 | Assistant permission defaults: which permissions are delegatable out of the box | Project Owner | No — permission catalogue freeze | §26.2 already fixes which permissions are *structurally* delegatable (Yes/No column); "on by default in the delegation UI" is a Phase 16 UX default, not a backend blocker |
 | D-11 | Whether the Math Knowledge Hub is V1 content or a distinct product surface | Project Owner | No — content model | FUTURE/COULD per §49; out of V1 build scope entirely until decided otherwise |
@@ -31,8 +31,9 @@ Per Table 51.1, **only D-03, D-05, D-06, D-07, D-08 and D-17 are required before
 
 Ranked by how early they'd otherwise force a guess:
 
-1. **D-08 (grade scale)** — cheapest to decide now, most expensive to guess wrong once submissions exist.
-2. **D-16 (reconstructed §9/§21)** — worth a quick read-through of those two sections against your original intent before Phase 5–6, since "confirm" vs "correct" changes what gets built.
-3. **D-06 (retention/legal)** — not urgent for code, but has the longest lead time (needs counsel), so starting it now avoids it becoming the Phase 28 blocker.
+1. **D-16 (reconstructed §9/§21)** — worth a quick read-through of those two sections against your original intent before Phase 5–6, since "confirm" vs "correct" changes what gets built.
+2. **D-06 (retention/legal)** — not urgent for code, but has the longest lead time (needs counsel), so starting it now avoids it becoming the Phase 28 blocker.
+
+~~D-08 (grade scale)~~ — resolved, see above.
 
 Everything else can wait for its natural phase without any rework cost.

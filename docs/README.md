@@ -3,7 +3,7 @@
 Start here on any device: clone the repo, read this file, follow the links.
 
 ## Source of truth
-- [`srs/`](srs/README.md) — the Master SRS (v1.1, audited). All requirement IDs referenced anywhere in this repo point here.
+- [`srs/`](srs/README.md) — the Master SRS (v1.2: v1.1 audit + D-08 grading-scale resolution). All requirement IDs referenced anywhere in this repo point here.
 
 ## Phase 0 — Specification & Decision Freeze
 - [`decisions/00-architecture-readiness-report.md`](decisions/00-architecture-readiness-report.md) — what the SRS fixes vs. what's genuinely open

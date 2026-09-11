@@ -1,1 +1,9 @@
 id,title,srs_section,priority,module_path,test_ids,status,notes
+GRD-013,One configurable GradingScale per Organization,§17.1,MUST,apps/api/src/modules/grading/,,pending,Added v1.2 (D-08 resolution)
+GRD-014,GradingScale type + type-appropriate definition,§17.1,MUST,apps/api/src/modules/grading/,,pending,Added v1.2 (D-08 resolution)
+GRD-015,New Organization provisioned with default GradingScale,§17.1,MUST,apps/api/src/modules/grading/,,pending,Added v1.2 (D-08 resolution)
+GRD-016,Editing a GradingScale creates a new immutable GradingScaleVersion,§17.1,MUST,apps/api/src/modules/grading/,,pending,Added v1.2 (D-08 resolution)
+GRD-017,Grade pins its GradingScaleVersion + snapshot at creation,§17.1,MUST,apps/api/src/modules/grading/,,pending,Added v1.2 (D-08 resolution)
+GRD-018,Historical Grade always renders from its pinned version,§17.1,MUST,apps/api/src/modules/grading/,,pending,Added v1.2 (D-08 resolution)
+GRD-019,Only Admin manages GradingScale; others read-only,§17.1,MUST,apps/api/src/modules/grading/,,pending,Added v1.2 (D-08 resolution); permission GRADING_SCALE_MANAGE §26.3
+GRD-020,GradingScaleVersion changes are audited,§17.1,MUST,apps/api/src/modules/grading/,,pending,Added v1.2 (D-08 resolution)

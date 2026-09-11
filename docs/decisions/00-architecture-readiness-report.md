@@ -2,7 +2,7 @@
 
 **Phase:** 0 — Specification & Decision Freeze
 **Status:** Draft for Project Owner review
-**Source of truth:** `docs/srs/EduCapsules_Master_SRS_v1.1.docx` (see `docs/srs/README.md` for provenance)
+**Source of truth:** `docs/srs/EduCapsules_Master_SRS_v1.2.docx` (see `docs/srs/README.md` for provenance)
 
 This report states what the SRS already fixes (so it is *not* re-decided here) and what it deliberately leaves open. Per the Project Owner's instruction, **no architectural or product decision in this report is being locked in Phase 0** — items requiring a decision are marked and routed to Phase 1 (System Architecture) for formal sign-off, or to the Project Owner directly where the SRS itself says so.
 
@@ -33,7 +33,7 @@ These are CONFIRMED in the SRS and treated as immovable constraints for every la
 
 These are called out explicitly in the SRS itself as requiring Owner (and in some cases counsel) input. I am not proposing values for them — see the Open-Decision Register (`01-open-decision-register.md`) for the full list and my interim-safe-default plan for each. The ones with real near-term impact:
 
-- **D-08 — Grade scale** (numeric / letter / configurable per organization). Touches the `Grade` entity's `scaled_score` and `grading_scale_snapshot` fields. Does not block Phases 0–12; must be resolved before Phase 13 (Grading & Progress) writes real grading logic.
+- ~~D-08 — Grade scale~~ **RESOLVED** by explicit Project Owner decision: configurable per Organization, never global, scale/criteria preserved at grade creation/release. See SRS v1.2 §17.1 (GRD-013..020) and the Open-Decision Register.
 - **D-06 — Retention periods & applicable data-protection regime.** Legal decision requiring counsel. Does not block building the erasure/retention *pipeline* (LIF-001..012), which is designed generically with retention as a config value — but the actual numbers cannot be invented.
 - **D-05 — Performance thresholds.** Cannot be set before a load test exists (Phase 24). Metrics and instrumentation points are fixed now (§43.1); the numbers are not.
 - **D-16 — Two source documents never supplied** (`assistant_acc`, `classroom_details`). The SRS's §9 (Classroom/Group) and §21 (Assistant) requirements were reconstructed from surrounding material and are explicitly marked for Owner confirmation. **I am building from them as written**, per the SRS's own instruction, but flagging this because it's the one place where "the requirement itself might not be what you actually meant" is a live possibility, not just an unresolved parameter.
@@ -42,8 +42,8 @@ These are called out explicitly in the SRS itself as requiring Owner (and in som
 
 The SRS fixes *what* must be true of the backend (§39) and *where* it must run (CON-01/CON-02) but deliberately does not name a language, framework, or ORM. That selection is real architecture work and belongs in Phase 1's "Define backend architecture / database architecture" task, not Phase 0. I have candidate recommendations ready (see the Assumptions Register) and will bring them to you as a formal proposal when Phase 1 starts, rather than assuming them now.
 
-Two decisions in this category **have already been made by you**, not by me, in the prior turn, and are treated as confirmed:
-- SRS baseline: **v1.1 (audited)**.
+Decisions in this category **already made by you**, not by me, and treated as confirmed:
+- SRS baseline: **v1.2** (v1.1 audited, plus your D-08 resolution — see the Open-Decision Register).
 - Frontend framework: **React + Vite (SPA)**.
 
 ## 3. Repository state

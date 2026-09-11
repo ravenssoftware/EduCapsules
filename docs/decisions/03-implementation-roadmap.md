@@ -36,7 +36,7 @@ This is a valid topological ordering of the SRS's own dependencies (§7 authoriz
 | 10 | §13 | QBN | `apps/api/src/modules/question-bank/` |
 | 11 | §12, §45.1 | ACT | `apps/api/src/modules/activities/` |
 | 12 | §12.6, §45.2, DB-013 | ACT, DB | `apps/api/src/modules/submissions/` |
-| 13 | §17, §45.3 | GRD, PRG | `apps/api/src/modules/grading/` — **blocked on D-08 (grade scale) before real logic is written** |
+| 13 | §17, §45.3 | GRD, PRG | `apps/api/src/modules/grading/` — D-08 resolved (grading scale configurable per Organization, GRD-013..020); no longer blocked |
 | 14 | §19, §24, §25, S-02/06/07/08/09/12/13 | TCH, UI | `apps/web/src/features/teacher/` |
 | 15 | §20, §24, §25, S-01/10/11/14/15 | STU, UI | `apps/web/src/features/student/` |
 | 16 | §21, S-03 | AST | `apps/web/src/features/assistant/` |
