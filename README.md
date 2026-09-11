@@ -6,7 +6,7 @@ A multi-role educational platform (Teacher, Assistant, Student, Parent, Admin) b
 
 ## Status
 
-**Phase 0 — Specification & Decision Freeze.** No application code yet. See [`docs/README.md`](docs/README.md) for the full documentation index, including the open-decision register and implementation roadmap.
+**Phase 1 — System Architecture.** No application code yet — Phase 1 is architecture documentation only. A backend/frontend stack proposal is awaiting Project Owner approval (see [`docs/decisions/05-phase1-decisions-pending-approval.md`](docs/decisions/05-phase1-decisions-pending-approval.md)) before Phase 2 scaffolds any code. See [`docs/README.md`](docs/README.md) for the full documentation index.
 
 ## Getting started
 
