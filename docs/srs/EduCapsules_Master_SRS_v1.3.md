@@ -4,7 +4,7 @@
 
 **MASTER SOFTWARE REQUIREMENTS SPECIFICATION**
 
-**Version 1.2 · Audited & Reconciled Baseline**
+**Version 1.3 · Audited & Reconciled Baseline**
 
 11 September 2026 (v1.1 audit pass; supersedes v1.0 of 8 September 2026)
 
@@ -30,23 +30,23 @@
 
 ## 1.1 Identification
 
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **Field**            **Value**
-  -------------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -------------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **Product**          EduCapsules
 
   **Document**         Master Software Requirements Specification
 
-  **Version**          1.2 --- Audited & Reconciled Baseline (supersedes 1.1)
+  **Version**          1.3 --- Audited & Reconciled Baseline (supersedes 1.2)
 
   **Date**             11 September 2026
 
-  **Status**           Draft for Project Owner acceptance. v1.1 was a systematic audit pass over v1.0 (no confirmed decision reversed); v1.2 additionally resolves D-08 (grading scale) as directed by the Project Owner. Every change is itemised in the change log (§52.5).
+  **Status**           Draft for Project Owner acceptance. v1.1 was a systematic audit pass over v1.0 (no confirmed decision reversed); v1.2 resolved D-08 (grading scale); v1.3 classifies every reconstructed §9/§21 requirement as PROVISIONAL or confirmed-elsewhere, per Project Owner instruction, without changing any requirement's text. Every change is itemised in the change log (§52.5).
 
   **Authority**        Single source of truth (GEN-001). Supersedes all prior EduCapsules specification documents.
 
   **Change control**   A requirement changes only through §1.5: identify → explain → trace dependencies → update all affected sections → update business rules, permissions and acceptance criteria → record in the change log.
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## 1.2 How this document is organised
 
@@ -54,19 +54,19 @@ Sections 2--9 establish the product, its vocabulary and its authorization model 
 
 ## 1.3 Requirement conventions
 
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **Convention**    **Rule**
-  ----------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  ----------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **Identifier**    PREFIX-NNN, permanent, never reused, never renumbered. §51 lists every prefix.
 
   **Priority**      **MUST** (V1 required) · **SHOULD** (important, not V1-blocking) · **COULD** (optional) · **WON\'T** (excluded from this release)
 
-  **Status**        **CONFIRMED** (decided) · **PROPOSED** (this document\'s recommendation, binding on acceptance) · **ASSUMPTION** (working position) · **OPEN** (needs a decision) · **FUTURE** (post-V1)
+  **Status**        **CONFIRMED** (decided) · **PROPOSED** (this document\'s recommendation, binding on acceptance) · **ASSUMPTION** (working position) · **PROVISIONAL** (added in v1.3 \-\-- reconstructed from surrounding material because its source specification was not supplied, per D-16; a defensible inference, not a confirmed instruction, until the Project Owner confirms or corrects it) · **OPEN** (needs a decision) · **FUTURE** (post-V1)
 
   **Wording**       "shall" = binding requirement. "should" = strong recommendation. Anything not stated as a requirement is not one.
 
   **Testability**   Every MUST is written so that it can be objectively verified. Where a numeric target is not yet decided it is marked **TBD** rather than invented.
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## 1.4 Conflicts found in the source material, and how they were resolved
 
@@ -676,7 +676,7 @@ Classroom answers \*who are these students\*. Group answers \*how do we divide t
   **Group**       A subdivision inside exactly one Classroom.                                Grade 10 → Group A, Group B, Group C
   --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-## 9.2 Structural rules --- CONFIRMED
+## 9.2 Structural rules
 
   ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **ID**        **Rule**                                                                                                                                                            **Priority**
@@ -709,6 +709,42 @@ Classroom answers \*who are these students\*. Group answers \*how do we divide t
   ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 9.1 --- Classroom and Group rules. CLS-009/010 are what make a mid-term class change non-destructive.*
+
+**Provenance (added in v1.3, per D-16 --- no requirement text below is changed)**
+
+The source specifications for Classroom and Group ("classroom_details") were never supplied; this section was reconstructed from surrounding material, as recorded in §51 (D-16). Reconstruction does not mean unreliable --- most of the table below is independently corroborated elsewhere in this SRS and is exactly as trustworthy as any other CONFIRMED requirement. A minority (CLS-002, CLS-003, GRP-002) rests on inference alone and is marked PROVISIONAL: safe to build against provisionally, but flagged for explicit Project Owner confirmation before the specific behaviour they describe is treated as final.
+
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**        **Status**                **Basis**
+  ------------- ------------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **CLS-001**   **CONFIRMED elsewhere**   Direct consequence of the golden rule GEN-008 (§4): "Group = subdivision of exactly one Classroom" implies one Classroom may hold many Groups.
+
+  **GRP-001**   **CONFIRMED elsewhere**   Is GEN-008 restated; independently enforced by the Group entity\'s mandatory classroom_id (§37.3.2, corrected in the v1.1 audit).
+
+  **CLS-002**   **PROVISIONAL**           No independent statement elsewhere. §37.3.2 / BR-015 / PER-003 establish only that a Student holds at most one ACTIVE Classroom membership per AcademicPeriod --- narrower than, and not proof of, "may belong to multiple Classrooms" in general. Confirm with the Project Owner before relying on cross-period or cross-Organization multiplicity.
+
+  **CLS-003**   **PROVISIONAL**           A data-modelling inference consistent with the Membership entity design (§37.3.2) but not independently stated as a requirement elsewhere.
+
+  **GRP-002**   **PROVISIONAL**           No independent statement elsewhere; a plausible default (not every Classroom student need be in a Group yet) but a genuine business-rule choice the missing source document may have specified differently.
+
+  **CLS-004**   **CONFIRMED elsewhere**   Restated independently as STU-010 (§20.3): "Students shall never modify their own membership, attendance, grades or role."
+
+  **CLS-005**   **CONFIRMED elsewhere**   Follows directly from the Teacher role definition and scope model (§6.1, §7).
+
+  **CLS-006**   **CONFIRMED elsewhere**   Is GEN-006 (§4) applied to this domain.
+
+  **CLS-007**   **CONFIRMED elsewhere**   Follows directly from PAR-000/PAR-001 (§22).
+
+  **CLS-008**   **CONFIRMED elsewhere**   Consistent with the Activity targeting rule ACT-012 (§12.4).
+
+  **GRP-003**   **CONFIRMED elsewhere**   Consistent with ACT-012 (§12.4).
+
+  **CLS-009**   **CONFIRMED elsewhere**   The Membership entity itself (§37.3.2) is specified this way ("left_at is set rather than the row deleted", citing GEN-018); general pattern also required by DB-003.
+
+  **CLS-010**   **CONFIRMED elsewhere**   Restated in the BR-015 box immediately below, and exercised in the worked use case UC-020 (§46.2); the strongest-corroborated rule in this table.
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+*Table 9.1a --- Provenance of Table 9.1. PROVISIONAL rows do not block Phase 6 architecture; they block only finalising their own specific behaviour.*
 
 +---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | **BR-015 · PROPOSED · WHAT A CLASSROOM OR GROUP CHANGE DOES AND DOES NOT DO (renumbered from BR-014 in v1.1 --- BR-014 was already assigned to the payment revenue-share rule in §30.1)**                                                                                                                                                                                                               |
@@ -1914,6 +1950,40 @@ The Teacher is the primary educational authority. Teacher authority is bounded b
   -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 21.1 --- Assistant requirements.*
+
+**Provenance (added in v1.3, per D-16 --- no requirement text below is changed)**
+
+The source specification for Assistant accounts ("assistant_acc") was never supplied; this section was reconstructed from surrounding material, as recorded in §51 (D-16). As with §9, most of the table below is independently corroborated elsewhere --- several rows (AST-002, AST-008, AST-011) are near-verbatim restatements of golden rules or requirements stated independently in other sections, which is about as strong a confirmation as this SRS ever gives outside an explicit Project Owner sign-off. One row (AST-009) rests on inference alone.
+
+  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**        **Status**                **Basis**
+  ------------- ------------------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **AST-001**   **CONFIRMED elsewhere**   The Teacher/Assistant role distinction is independently drawn in §6.1\'s role table.
+
+  **AST-002**   **CONFIRMED elsewhere**   Is GEN-006 (§4) restated verbatim.
+
+  **AST-003**   **CONFIRMED elsewhere**   Each named task area is independently gated by its own permission code with an explicit "Delegatable to Assistant?" column in the catalogue (§26.2).
+
+  **AST-004**   **CONFIRMED elsewhere**   Follows from GEN-002 and §6.1\'s "never has" column.
+
+  **AST-005**   **CONFIRMED elsewhere**   General audit principle GEN-018 applied to this domain; SEC-010 requires it explicitly for any permission grant/revocation.
+
+  **AST-006**   **CONFIRMED elsewhere**   The AssistantAssignment entity (§37.3.1) independently carries valid_until; SEC-007 requires an expired grant to be treated as absent.
+
+  **AST-007**   **CONFIRMED elsewhere**   Follows from GEN-018/GEN-021; exercised directly in the worked use case UC-012 (§46.2).
+
+  **AST-008**   **CONFIRMED elsewhere**   Is GEN-003 (§4) restated verbatim.
+
+  **AST-009**   **PROVISIONAL**           No independent statement elsewhere. The AssistantAssignment entity supports M:N Teacher--Assistant pairing structurally either way; that an Assistant should be allowed multiple simultaneous delegations in the product is a business decision this reconstruction infers rather than confirms.
+
+  **AST-010**   **CONFIRMED elsewhere**   Matches §6.1\'s "never has: billing" and Table 31.1\'s Billing capability matrix, where every Assistant row is ✖.
+
+  **AST-011**   **CONFIRMED elsewhere**   Is STR-006 (§14.3), independently stated in the Storage section, word for word.
+  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+*Table 21.1a --- Provenance of Table 21.1. AST-009 does not block building the delegation engine (GEN-006/AST-002 are independently confirmed); it blocks only finalising whether an Assistant may hold concurrent assignments from multiple Teachers.*
+
+The §21.3 hard-prohibitions table (below) is, as a whole, an elaboration of the confirmed no-amplification principle (GEN-006, SEC-006) and mostly independently corroborated the same way (e.g. "cannot create/modify/remove another Assistant" matches ASSIGN_ASSISTANT's "No" delegability in §26.2; "cannot manage billing" matches AST-010/Table 31.1; "cannot access unrestricted Teacher Storage" matches AST-011/STR-006). Two rows have no independent citation found and are PROVISIONAL: "Access or modify Parent accounts or remove parent relationships" and "Permanently delete students, or transfer students between unrelated Teachers." Both are conservative (they only ever narrow, never grant, Assistant access), so building against them provisionally carries negligible risk even before confirmation.
 
 ## 21.3 Hard prohibitions
 
@@ -5205,45 +5275,45 @@ A roadmap item is not a promise; it is a decision with a stated trigger. Each it
 
 Every item below is a decision this document deliberately did *not* make, because making it would have required inventing a fact. Each states who decides, and what it blocks.
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **\#**     **Decision required**                                                                                                                                                                                                               **Blocks**                                     **Owner**
-  ---------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ---------------------------------------------- -----------------
-  **D-01**   Read-model strategy for dashboards, progress and leaderboards (§37.5.1).                                                                                                                                                            Schema freeze                                  Engineer
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **\#**     **Decision required**                                                                                                                                                                                                                                                                                                                                                                                                  **Blocks**                                     **Owner**
+  ---------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ---------------------------------------------- -----------------
+  **D-01**   Read-model strategy for dashboards, progress and leaderboards (§37.5.1).                                                                                                                                                                                                                                                                                                                                               Schema freeze                                  Engineer
 
-  **D-02**   Concrete rate-limit budgets per endpoint class (§38.3).                                                                                                                                                                             Load-test plan                                 Engineer
+  **D-02**   Concrete rate-limit budgets per endpoint class (§38.3).                                                                                                                                                                                                                                                                                                                                                                Load-test plan                                 Engineer
 
-  **D-03**   Launch locale set and whether right-to-left layout ships in V1 (§41.2).                                                                                                                                                             UI implementation                              Owner
+  **D-03**   Launch locale set and whether right-to-left layout ships in V1 (§41.2).                                                                                                                                                                                                                                                                                                                                                UI implementation                              Owner
 
-  **D-04**   Full brand token set: type scale, spacing, elevation, motion, icons, dark palette (§42.2).                                                                                                                                          Component library                              Design
+  **D-04**   Full brand token set: type scale, spacing, elevation, motion, icons, dark palette (§42.2).                                                                                                                                                                                                                                                                                                                             Component library                              Design
 
-  **D-05**   Performance thresholds, set from measurement rather than assertion (§43.1).                                                                                                                                                         Launch readiness                               Engineer + QA
+  **D-05**   Performance thresholds, set from measurement rather than assertion (§43.1).                                                                                                                                                                                                                                                                                                                                            Launch readiness                               Engineer + QA
 
-  **D-06**   Retention periods, applicable data-protection regime, and minors\' data rules (§44.3).                                                                                                                                              Production launch                              Owner + counsel
+  **D-06**   Retention periods, applicable data-protection regime, and minors\' data rules (§44.3).                                                                                                                                                                                                                                                                                                                                 Production launch                              Owner + counsel
 
-  **D-07**   V1 capacity model: cohort size, peak concurrent assessment, storage growth (§43.2).                                                                                                                                                 Capacity planning                              Owner
+  **D-07**   V1 capacity model: cohort size, peak concurrent assessment, storage growth (§43.2).                                                                                                                                                                                                                                                                                                                                    Capacity planning                              Owner
 
-  **D-08**   Grade scale definition --- RESOLVED in v1.2: grading scales are configurable per Organization, versioned, and pinned on every Grade (GRD-013\...020, §17.1). Originally: numeric, letter, or configurable per organisation (§17).   Grading implementation                         Owner
+  **D-08**   Grade scale definition --- RESOLVED in v1.2: grading scales are configurable per Organization, versioned, and pinned on every Grade (GRD-013\...020, §17.1). Originally: numeric, letter, or configurable per organisation (§17).                                                                                                                                                                                      Grading implementation                         Owner
 
-  **D-09**   Whether achievements and leaderboards ship in V1 or immediately after (Table 49.1).                                                                                                                                                 Sprint plan                                    Owner
+  **D-09**   Whether achievements and leaderboards ship in V1 or immediately after (Table 49.1).                                                                                                                                                                                                                                                                                                                                    Sprint plan                                    Owner
 
-  **D-10**   Assistant permission defaults: which permissions are delegatable out of the box (§26).                                                                                                                                              Permission catalogue freeze                    Owner
+  **D-10**   Assistant permission defaults: which permissions are delegatable out of the box (§26).                                                                                                                                                                                                                                                                                                                                 Permission catalogue freeze                    Owner
 
-  **D-11**   Whether the Math Knowledge Hub is content in V1 or a distinct product surface (§20).                                                                                                                                                Content model                                  Owner
+  **D-11**   Whether the Math Knowledge Hub is content in V1 or a distinct product surface (§20).                                                                                                                                                                                                                                                                                                                                   Content model                                  Owner
 
-  **D-12**   Payment verification SLA and who performs it at volume (§30).                                                                                                                                                                       Operational readiness                          Owner
+  **D-12**   Payment verification SLA and who performs it at volume (§30).                                                                                                                                                                                                                                                                                                                                                          Operational readiness                          Owner
 
-  **D-13**   Whether teacher content ownership permits platform reuse, and on what terms (§33).                                                                                                                                                  Terms of service                               Owner + counsel
+  **D-13**   Whether teacher content ownership permits platform reuse, and on what terms (§33).                                                                                                                                                                                                                                                                                                                                     Terms of service                               Owner + counsel
 
-  **D-14**   Session and token lifetimes per session type (§35).                                                                                                                                                                                 Auth implementation                            Engineer
+  **D-14**   Session and token lifetimes per session type (§35).                                                                                                                                                                                                                                                                                                                                                                    Auth implementation                            Engineer
 
-  **D-15**   Whether V1 supports more than one organisation in production (§8).                                                                                                                                                                  Tenancy testing scope                          Owner
+  **D-15**   Whether V1 supports more than one organisation in production (§8).                                                                                                                                                                                                                                                                                                                                                     Tenancy testing scope                          Owner
 
-  **D-16**   Confirmation of the two source specifications not supplied with this package (Appendix D).                                                                                                                                          Assistant and classroom requirement sign-off   Owner
+  **D-16**   Confirmation of the two source specifications not supplied with this package (Appendix D). v1.3: every affected requirement in §9 and §21 is now individually classified CONFIRMED-elsewhere or PROVISIONAL (Tables 9.1a, 21.1a); this decision closes when the Project Owner confirms or corrects the PROVISIONAL rows specifically --- CLS-002, CLS-003, GRP-002, AST-009, and the two flagged rows of Table 21.2.   Assistant and classroom requirement sign-off   Owner
 
-  **D-17**   Progress weighting formula per Activity type for the overall completion figure (§17.2).                                                                                                                                             Progress computation implementation            Owner
+  **D-17**   Progress weighting formula per Activity type for the overall completion figure (§17.2).                                                                                                                                                                                                                                                                                                                                Progress computation implementation            Owner
 
-  **D-18**   Leaderboard ranking source, tie rule and reset period (§18.2); default visibility mode is fixed by LDB-009 (disabled until enabled).                                                                                                Enabling any leaderboard                       Owner
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **D-18**   Leaderboard ranking source, tie rule and reset period (§18.2); default visibility mode is fixed by LDB-009 (disabled until enabled).                                                                                                                                                                                                                                                                                   Enabling any leaderboard                       Owner
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 51.1 --- Open decisions register. Items D-03, D-05, D-06, D-07 and D-17 are required before launch (AC-20). \[v1.2: D-08 resolved by the Project Owner --- see the row below and the CONFIRMED box in §17.1; D-17 added to this list since it was omitted when D-17 was first registered in v1.1.\]*
 
@@ -5412,6 +5482,8 @@ This SRS consolidates the specification package supplied by the project owner. I
   1.1           11 Sep 2026   Audit pass        Systematic audit of v1.0 against its own decisions, data model and traceability chain. No CONFIRMED decision reversed. Contradictions resolved: Group/Classroom cardinality (§37.3.2 vs GEN-008/GRP-001); cross-tenant storage deduplication (§37.3.4 vs §14.4); duplicate ID BR-014 split --- classroom/group-change rule renumbered BR-015, payment rule keeps BR-014. Broken cross-references repaired: §3 terminology citation, §17.2/§18.2 open-decision citations (now D-17/D-18), §35.3 citation (D-14), QBN-018→QBN-025, GEN-021→GEN-017, LDB-002→LDB-009, STR-016→STR-023, SEC-012→SEC-014 where it meant assistant delegation, §24.4 illustration count, §49.1/§52.1 section and area citations. New requirements closing gaps the document\'s own structure already implied: GEN-029, SEC-012\...015, ACT-009, STR-023, LDB-009, AUTH-127, ORG-009/010, §8.1 PER-001\...006, CRS-009/010, BR-021. Editorial: §32.3\'s retention table (duplicated §44.3) replaced with a pointer; §44.3 gained a trashed-file retention row. D-17 added to the launch-blocking list in Table 51.1.
 
   1.2           11 Sep 2026   D-08 resolution   Resolves D-08 (§51) per explicit Project Owner decision: grade scales are configurable per Organization, never a single global scale, with the scale and criteria in force at grade creation/release permanently preserved. Adds GRD-013\...020 (§17.1), the GradingScale and GradingScaleVersion entities (§37.3.3, copy-on-write mirroring QuestionVersion/FileVersion), Grade.grading_scale_version_id, the GRADING_SCALE_MANAGE administrative permission (§26.3), the /grading-scales API resource group (§38.2), and validation/UI guidance in §17.1. D-08 marked resolved in §51 and removed from the launch-blocking list; D-17 added to that list, having been omitted when first registered in v1.1. No other CONFIRMED decision changed.
+
+  1.3           11 Sep 2026   D-16 provenance   Resolves the process question in D-16 (§51) per explicit Project Owner instruction, without inventing or modifying any requirement text. Adds a new status, PROVISIONAL (§1.3), for requirements reconstructed from a source specification that was never supplied. Adds provenance tables 9.1a and 21.1a, classifying every CLS-\*/GRP-\* (§9.2) and AST-\* (§21.2, §21.3) requirement as either CONFIRMED elsewhere (independently corroborated by a golden rule, another section, the data model, or a worked use case --- the large majority) or PROVISIONAL (CLS-002, CLS-003, GRP-002, AST-009, and two rows of Table 21.2 --- inference only, no independent corroboration found). Removed the inaccurate blanket "--- CONFIRMED" from the §9.2 heading. D-16\'s register entry updated to point at the new tables. No CONFIRMED decision, and no requirement\'s normative text, changed. Per Project Owner instruction, Phase 5/6 architecture work is not blocked by this --- only the specific PROVISIONAL rows\' final behaviour awaits confirmation.
   ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 52.5 --- Document change log.*

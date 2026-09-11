@@ -28,8 +28,8 @@ This is a valid topological ordering of the SRS's own dependencies (§7 authoriz
 | 2 | §39 (BE-006..010), §41.3–41.5 | BE, INF | repo root, `.github/workflows/`, `packages/config` |
 | 3 | §8, §37.3.1 | ORG, DB | `apps/api/src/modules/identity/`, `database/migrations/0001_*` |
 | 4 | §35, §36 | AUTH, AUD | `apps/api/src/modules/auth/` |
-| 5 | §6, §7, §9, §21, §22, §26 | SEC, CLS/GRP, AST, PAR, ORG | `apps/api/src/modules/authz/` (the centralized policy engine — §7.1's pipeline lives here and nowhere else) |
-| 6 | §8.1 (PER — v1.1), §9, §10 | PER, CLS/GRP, SUB/CRS/CYC/TOP | `apps/api/src/modules/academic-structure/` |
+| 5 | §6, §7, §9, §21, §22, §26 | SEC, CLS/GRP, AST, PAR, ORG | `apps/api/src/modules/authz/` (the centralized policy engine — §7.1's pipeline lives here and nowhere else). D-16 (§9/§21 provenance, v1.3) does not block this — the pipeline itself rests on GEN-006/GEN-008, both independently CONFIRMED |
+| 6 | §8.1 (PER — v1.1), §9, §10 | PER, CLS/GRP, SUB/CRS/CYC/TOP | `apps/api/src/modules/academic-structure/`. Before implementing CLS-002/CLS-003/GRP-002 specifically, check SRS Table 9.1a — they're PROVISIONAL (D-16); everything else in §9 is confirmed elsewhere and unaffected |
 | 7 | §11 | SES | `apps/api/src/modules/teaching-sessions/` |
 | 8 | §14, §37.3.4 | STR | `apps/api/src/modules/storage/` |
 | 9 | §15, §16, §37.3.4 | CNT | `apps/api/src/modules/content-gateway/` |
@@ -39,7 +39,7 @@ This is a valid topological ordering of the SRS's own dependencies (§7 authoriz
 | 13 | §17, §45.3 | GRD, PRG | `apps/api/src/modules/grading/` — D-08 resolved (grading scale configurable per Organization, GRD-013..020); no longer blocked |
 | 14 | §19, §24, §25, S-02/06/07/08/09/12/13 | TCH, UI | `apps/web/src/features/teacher/` |
 | 15 | §20, §24, §25, S-01/10/11/14/15 | STU, UI | `apps/web/src/features/student/` |
-| 16 | §21, S-03 | AST | `apps/web/src/features/assistant/` |
+| 16 | §21, S-03 | AST | `apps/web/src/features/assistant/`. Before implementing AST-009 (concurrent Teacher relationships) specifically, check SRS Table 21.1a — it's PROVISIONAL (D-16); everything else in §21 is confirmed elsewhere and unaffected |
 | 17 | §22, S-04 | PAR | `apps/web/src/features/parent/` |
 | 18 | §27 | MSG | `apps/api/src/modules/communication/` |
 | 19 | §28, §29 | NOT, CAL | `apps/api/src/modules/notifications/`, `apps/api/src/modules/calendar/` |
