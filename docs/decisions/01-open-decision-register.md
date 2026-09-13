@@ -1,7 +1,7 @@
 # Open-Decision Register
 
 **Phase:** 0
-**Source:** SRS v1.4 §51 (Table 51.1), plus D-17/D-18 added by the v1.1 audit. (None of D-01..D-18 are affected by the v1.4 Flutter client-strategy update — see `06-flutter-client-decision.md`; that was a CONFIRMED decision, not an open one.)
+**Source:** SRS v1.0 §51 (Table 51.1) — the official consolidated baseline, plus D-17/D-18 added by the v1.1 audit. (None of D-01..D-18 are affected by the Flutter client-strategy update — see `06-flutter-client-decision.md`; that was a CONFIRMED decision, not an open one.)
 **Rule:** nothing here is decided by implementation. Each row states who decides, whether it blocks anything before launch, and — where it doesn't block launch — the generic, reversible interim behavior the code will implement so that resolving the decision later is a config change, not a rework.
 
 Per Table 51.1 (as of v1.2), **D-03, D-05, D-06, D-07 and D-17 are required before launch** (AC-20). **D-08 is now RESOLVED** (below) — it was launch-blocking until the Project Owner resolved it directly; removed from the list accordingly, and D-17 added (it was omitted from the launch-blocking list when first registered in v1.1 — corrected in the same pass). 17 items remain open; none block starting the build.

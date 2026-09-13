@@ -3,7 +3,7 @@
 Start here on any device: clone the repo, read this file, follow the links.
 
 ## Source of truth
-- [`srs/`](srs/README.md) — the Master SRS (v1.4: v1.1 audit + D-08 grading-scale resolution + D-16 §9/§21 provenance classification + v1.4 Flutter client-strategy update). All requirement IDs referenced anywhere in this repo point here.
+- [`srs/`](srs/README.md) — the Master SRS. **Version 1.0**, the official consolidated baseline (v1.1 audit + D-08 grading-scale resolution + D-16 §9/§21 provenance classification + Flutter client-strategy decision, all consolidated from the internal 0.1–1.4 development iterations — see `srs/README.md` for the naming note). All requirement IDs referenced anywhere in this repo point here.
 
 ## Phase 0 — Specification & Decision Freeze
 - [`decisions/00-architecture-readiness-report.md`](decisions/00-architecture-readiness-report.md) — what the SRS fixes vs. what's genuinely open

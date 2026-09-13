@@ -64,7 +64,7 @@ Every NFR in §43 is measurable or it is not a requirement (GEN-027) — where a
 
 ## 8. Client platform scope (§41.1, Table 41.1; `docs/decisions/06-flutter-client-decision.md`)
 
-V1 ships a Flutter desktop application (Windows/macOS/Linux) as the initial demo target (CONFIRMED, A-14, superseding the earlier web-first decision, A-02). The same Flutter application/codebase is architected from the outset to extend to Android and iOS as a FUTURE RELEASE, not V1 delivery — release timing is a Project Owner decision, not gated on an unmet-requirement trigger. The Installable PWA proposal and the responsive-web-client decision are both SUPERSEDED (SRS Table 41.1, v1.4). Nothing in Phase 1 architecture should budget effort toward a browser-hosted client; distribution is native binaries, not a served web bundle (§1 above).
+V1 ships a Flutter desktop application (Windows/macOS/Linux) as the initial demo target (CONFIRMED, A-14, superseding the earlier web-first decision, A-02). The same Flutter application/codebase is architected from the outset to extend to Android and iOS as a FUTURE RELEASE, not V1 delivery — release timing is a Project Owner decision, not gated on an unmet-requirement trigger. The Installable PWA proposal and the responsive-web-client decision are both SUPERSEDED (SRS Table 41.1). Nothing in Phase 1 architecture should budget effort toward a browser-hosted client; distribution is native binaries, not a served web bundle (§1 above).
 
 ## 9. What this document does not decide
 

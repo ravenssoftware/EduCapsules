@@ -2,7 +2,7 @@
 
 **Phase:** 0 — Specification & Decision Freeze
 **Status:** Draft for Project Owner review
-**Source of truth:** `docs/srs/EduCapsules_Master_SRS_v1.4.docx` (see `docs/srs/README.md` for provenance)
+**Source of truth:** `docs/srs/EduCapsules_Master_SRS_v1.0.docx` — the official consolidated baseline (see `docs/srs/README.md` for provenance and the internal-iteration naming note)
 
 This report states what the SRS already fixes (so it is *not* re-decided here) and what it deliberately leaves open. Per the Project Owner's instruction, **no architectural or product decision in this report is being locked in Phase 0** — items requiring a decision are marked and routed to Phase 1 (System Architecture) for formal sign-off, or to the Project Owner directly where the SRS itself says so.
 
@@ -43,7 +43,7 @@ These are called out explicitly in the SRS itself as requiring Owner (and in som
 The SRS fixes *what* must be true of the backend (§39) and *where* it must run (CON-01/CON-02) but deliberately does not name a language, framework, or ORM. That selection is real architecture work and belongs in Phase 1's "Define backend architecture / database architecture" task, not Phase 0. I have candidate recommendations ready (see the Assumptions Register) and will bring them to you as a formal proposal when Phase 1 starts, rather than assuming them now.
 
 Decisions in this category **already made by you**, not by me, and treated as confirmed:
-- SRS baseline: **v1.4** (v1.1 audited, plus your D-08, D-16 and Flutter client-strategy decisions — see the Open-Decision Register and `06-flutter-client-decision.md`).
+- SRS baseline: **v1.0** — the official consolidated baseline (audited, plus your D-08, D-16 and Flutter client-strategy decisions, all consolidated from the internal 0.1–1.4 development iterations — see the Open-Decision Register and `06-flutter-client-decision.md`).
 - Client technology: **Flutter** — Desktop (Windows/macOS/Linux) for V1, the same codebase extending to Android/iOS as a future release. **Supersedes the earlier React + Vite (SPA) decision** (2026-09-13; see `06-flutter-client-decision.md`).
 
 ## 3. Repository state

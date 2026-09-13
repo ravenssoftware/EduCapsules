@@ -34,7 +34,7 @@ CSV rather than a database: it's diffable in PRs, reviewable without tooling, an
 ## 4. CI enforcement (built in Phase 2, not before)
 
 A script (`scripts/check-traceability.ts`, to be written when Phase 2 sets up CI) will:
-1. Parse the SRS's requirement-ID inventory (extractable from `docs/srs/EduCapsules_Master_SRS_v1.4.md` — every `**XXX-nnn**` bolded ID in a requirements table).
+1. Parse the SRS's requirement-ID inventory (extractable from `docs/srs/EduCapsules_Master_SRS_v1.0.md` — every `**XXX-nnn**` bolded ID in a requirements table).
 2. Fail the build if any `MUST` ID has `status = accepted` claimed without at least one `test_ids` entry that exists in the actual test suite (TRC-002).
 3. This is additive to, not a replacement for, normal test-suite pass/fail — it checks *coverage of the right things*, not just that some tests pass (the SRS is explicit about this: "Coverage Percentage Is Not the Target," §47.2).
 

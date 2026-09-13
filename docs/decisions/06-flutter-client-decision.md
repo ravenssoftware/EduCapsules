@@ -23,7 +23,7 @@ The Project Owner's product strategy is to demonstrate EduCapsules as a desktop 
 
 **Superseded** (was CONFIRMED in SRS v1.0–v1.3, now historical):
 - The responsive web application as the V1 client (SRS §41.1 Table 41.1, §5.2, the "PLATFORM DECISION" box).
-- The Installable PWA proposal (SRS §41.1, §49) — a PWA has no meaning for a native Flutter build; the row is marked SUPERSEDED in SRS v1.4 rather than deleted, for traceability.
+- The Installable PWA proposal (SRS §41.1, §49) — a PWA has no meaning for a native Flutter build; the row is marked SUPERSEDED in the SRS rather than deleted, for traceability.
 - The Assumptions Register's A-02 (React + Vite) — see `02-assumptions-register.md`, marked SUPERSEDED with a pointer here.
 
 **Not changed:**
@@ -33,7 +33,7 @@ The Project Owner's product strategy is to demonstrate EduCapsules as a desktop 
 
 ## Affected documents
 
-- `docs/srs/EduCapsules_Master_SRS_v1.4.docx` / `.md` — see `docs/srs/README.md` and the SRS's own Appendix E (§52.5) for the itemised requirement-level changes.
+- `docs/srs/EduCapsules_Master_SRS_v1.0.docx` / `.md` — the official consolidated baseline; see `docs/srs/README.md` and the SRS's own Appendix E (§52.5) for the itemised requirement-level changes.
 - `docs/decisions/02-assumptions-register.md` — A-02 marked SUPERSEDED, new confirmed entry added.
 - `docs/architecture/*.md` — client-facing references updated from React/Vite/web to Flutter; backend/database/auth/storage/security architecture is otherwise unaffected since none of it depended on the client framework.
 - `docs/decisions/03-implementation-roadmap.md` — Phase 2 and the client-facing role-experience phases (14–17, 22, 26) updated to reference Flutter deliverables instead of a React/Vite web app.
@@ -50,8 +50,8 @@ The Project Owner's product strategy is to demonstrate EduCapsules as a desktop 
 
 - One client codebase to build and test for the desktop demo, extensible to mobile without a rewrite — directly serves the "architected from the beginning for desktop, Android and iOS" requirement.
 - **New risk (SRS R-14, §50.2):** the V1 desktop-first strategy does not directly serve students who own only a low-end mobile phone (SRS CON-05's target population) until the Android/iOS release ships. Mitigation: treat the mobile release as a near-term platform-target addition, not a speculative future rewrite, and avoid scheduling full-population rollout ahead of it.
-- Client-side session/token storage moves from browser cookies to platform secure credential storage (SRS AUTH-125, updated in v1.4) — a lower-risk mechanism for a native client, not a compromise.
-- Distribution moves from web hosting (Cloudflare Pages serving a static bundle) to native binary distribution (installer download for desktop, app stores for the future mobile release) — this removes "static client delivery" as a backend/infrastructure concern (SRS Table 41.3, updated in v1.4).
+- Client-side session/token storage moves from browser cookies to platform secure credential storage (SRS AUTH-125) — a lower-risk mechanism for a native client, not a compromise.
+- Distribution moves from web hosting (Cloudflare Pages serving a static bundle) to native binary distribution (installer download for desktop, app stores for the future mobile release) — this removes "static client delivery" as a backend/infrastructure concern (SRS Table 41.3).
 
 ## Reversibility
 
