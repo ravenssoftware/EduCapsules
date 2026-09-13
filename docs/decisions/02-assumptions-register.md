@@ -1,33 +1,29 @@
 # Assumptions Register
 
-**Phase:** 0
-**Rule:** an assumption here is either (a) already confirmed by the Project Owner, (b) a proposal I will bring back for explicit sign-off at the start of Phase 1 before it's implemented, or (c) a deferred/legal item with no code impact yet. Nothing marked PROPOSED is being built against in Phase 0.
+**Phase:** 2 (register originated in Phase 0; updated as decisions resolve)
+**Rule:** an assumption here is either (a) already confirmed by the Project Owner, (b) a proposal awaiting explicit sign-off before it's implemented, or (c) a deferred/legal item with no code impact yet. Section B is now empty — every stack proposal raised there was approved at Phase 1 close (2026-09-13, see `05-phase1-decisions-pending-approval.md`) and is recorded in Section A below.
 
 ## A. Confirmed by the Project Owner
 
 | # | Assumption | Confirmed | Reversibility if wrong |
 |---|---|---|---|
 | A-01 | SRS v1.1 (audited) is the build baseline, not the originally-attached v1.0 | 2026-09-11 | High — v1.1 only fixes internal contradictions/gaps in v1.0; reverting means re-introducing the duplicate BR-014 ID and the two contradictions it resolved |
-| A-02 | Frontend framework is React + Vite (SPA, no SSR) | 2026-09-11 | Medium — affects Phase 1 frontend architecture and every screen built after; changing later means a rewrite of the web app, not a config change |
+| A-02 | Frontend framework is React + Vite (SPA, no SSR) | 2026-09-11; reconfirmed as item #10 of the Phase 1 stack approval, 2026-09-13 | Medium — affects Phase 1 frontend architecture and every screen built after; changing later means a rewrite of the web app, not a config change |
 | A-03 | D-08 resolved: grade scales configurable per Organization (never global), scale/criteria pinned per Grade at creation/release. Baseline bumped to SRS v1.2. | 2026-09-11 | Low to change the *value* (it's a config-driven, versioned entity by design — GRD-016); high to change the *shape* (per-Organization vs. some other scope) once Phase 13 has built against it |
 | A-04 | D-16 narrowed, not resolved: §9/§21 requirements individually classified CONFIRMED-elsewhere or PROVISIONAL, no text changed. Baseline bumped to SRS v1.3. | 2026-09-11 | N/A — this is a labeling pass, not a design decision; nothing to reverse. The underlying PROVISIONAL items (CLS-002, CLS-003, GRP-002, AST-009, two rows of Table 21.2) remain genuinely open until you confirm them |
+| A-05 | Language: TypeScript, end to end (API, Workers, frontend), one type system shared via `packages/shared` | 2026-09-13 (was B-01) | Low cost to keep; high cost to change (touches everything) |
+| A-06 | API framework: Hono — runs unmodified on both Cloudflare Workers and a Node server, satisfying BE-008's "two implementations exercised in CI" for the transport layer itself | 2026-09-13 (was B-02) | Medium — swappable early, expensive once hundreds of routes exist |
+| A-07 | DB / query layer: Drizzle ORM — first-class D1 and node-postgres dialects from one schema definition, portable SQL migrations, no stored procedures (DB-019) | 2026-09-13 (was B-03) | Medium — schema definitions would need translating to another tool; underlying SQL/migrations stay portable regardless |
+| A-08 | Object storage abstraction: custom `ObjectStore` interface; R2 adapter (MVP), S3-compatible adapter (production) | 2026-09-13 (was B-04) | Low — it's an interface either way; adapters are swappable by design |
+| A-09 | Queue abstraction: custom `JobQueue` interface; Cloudflare Queues adapter (MVP), Redis/BullMQ adapter (production) | 2026-09-13 (was B-05) | Low |
+| A-10 | Monorepo tool: pnpm workspaces — `apps/api`, `apps/web`, `packages/db`, `packages/shared`, `packages/domain` | 2026-09-13 (was B-06) | Low — workspace tooling is the easiest thing here to change later |
+| A-11 | Testing: Vitest (unit/integration), Playwright (E2E) | 2026-09-13 (was B-07) | Low |
+| A-12 | CI: GitHub Actions | 2026-09-13 (was B-08) | Low |
+| A-13 | **Portability directive (Project Owner, 2026-09-13):** the core business/application architecture shall remain portable and shall not become tightly coupled to D1, Cloudflare, or any other infrastructure vendor. Concretely — database access stays behind repository/data-access boundaries; core types stay portable; domain/business logic never relies on D1-specific behavior; a future Postgres migration must never require rewriting the application/domain layer; any feature that genuinely requires a vendor-specific implementation is isolated behind an adapter/interface and documented as such. | 2026-09-13 | N/A — this sharpens and makes explicit what BE-002/BE-008/DB-019 already require of the architecture (see `docs/architecture/backend.md` §5, `docs/architecture/database.md` §1); it does not change any SRS requirement, it raises the bar for how strictly the existing ones are enforced in code review |
 
-## B. Proposed — to be brought to you for explicit approval at Phase 1 kickoff, not decided here
+## B. Proposed — none currently open
 
-These follow directly from constraints the SRS *does* fix (CON-01/CON-02: Cloudflare MVP → InterServer VPS production; BE-008: portability contract; §41.3's explicit Workers/D1/R2/Queues/KV listing) but the specific tool within each constraint is architect's-choice per GEN-013.
-
-| # | Area | Proposal | Rationale | Reversibility |
-|---|---|---|---|---|
-| B-01 | Language | TypeScript, end to end (API, Workers, frontend) | Workers' native language; one type system shared between backend and frontend via `packages/shared` | Low cost to keep; high cost to change (touches everything) — **this is the one I most want your eyes on before Phase 1 starts writing code against it** |
-| B-02 | API framework | Hono | Runs unmodified on both Cloudflare Workers and a Node server — gives BE-008's "two implementations exercised in CI" almost for free, since it's the same application code on both platforms rather than two separate implementations to keep in sync | Medium — swappable early, expensive once hundreds of routes exist |
-| B-03 | DB / query layer | Drizzle ORM | Has first-class dialects for both D1 (SQLite, MVP) and node-postgres (production) from one schema definition; generates portable SQL migrations with no stored procedures, matching DB-019 directly | Medium — schema definitions would need translating to another tool, but the underlying SQL/migrations are portable regardless |
-| B-04 | Object storage abstraction | Custom `ObjectStore` interface; R2 adapter (MVP), S3-compatible adapter (production) | Directly what BE-008 and the §41.3 service-mapping table ask for | Low — it's an interface either way; adapters are swappable by design |
-| B-05 | Queue abstraction | Custom `JobQueue` interface; Cloudflare Queues adapter (MVP), Redis/BullMQ adapter (production) | Same pattern as B-04 | Low |
-| B-06 | Monorepo tool | pnpm workspaces: `apps/api`, `apps/web`, `packages/db`, `packages/shared`, `packages/domain` | Matches the layering §39.1 already requires (a framework-agnostic domain/business-rule layer, BE-002) | Low — workspace tooling is the easiest thing here to change later |
-| B-07 | Testing | Vitest (unit/integration), Playwright (E2E) | TS-native, fast; Playwright/Chromium is already provisioned in this build environment | Low |
-| B-08 | CI | GitHub Actions | Repository already lives on GitHub | Low |
-
-**I am not writing application code against B-01..B-08 until you've confirmed or redirected them.** Phase 0's remaining deliverables (roadmap, traceability baseline) are written to be stack-agnostic so they don't need this decided first.
+All items previously listed here (B-01..B-08) were approved by the Project Owner on 2026-09-13 and moved to Section A above (A-05..A-12). This section is kept as a placeholder for any future stack proposal that needs the same explicit-approval treatment.
 
 ## C. Deferred — legal/operational, no near-term code impact
 

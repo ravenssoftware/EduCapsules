@@ -49,11 +49,13 @@ Every platform primitive is reached only through an interface, with at least two
 
 A service class that calls a Cloudflare SDK directly is a defect regardless of whether it currently works — this is the single highest architectural risk the SRS names (R-01) and the review checklist (§8 below) exists specifically to catch it.
 
-## 6. API framework — decision pending Project Owner approval
+**Portability directive (Project Owner, 2026-09-13 — see `docs/decisions/02-assumptions-register.md` A-13):** this table is not aspirational — the core business/application architecture shall not become tightly coupled to D1, Cloudflare, or any other vendor. Any capability that genuinely has no portable equivalent (e.g., a Cloudflare-only primitive) is still required to sit behind an adapter/interface, with the vendor dependency explicitly documented at the point of isolation, never called directly from domain code or from more than the thinnest possible slice of the transport layer.
 
-**Proposed:** [Hono](https://hono.dev), TypeScript. Hono runs unmodified on both Cloudflare Workers (CON-01, the required MVP runtime) and a Node/container server (CON-02, the required production runtime) — the same application code satisfies BE-008's "two implementations exercised in CI" for the transport layer itself, not just the primitives it calls. Alternatives (Express, Fastify) don't run natively on Workers and would need a compatibility shim, which is exactly the kind of extra moving part BE-008 is trying to avoid.
+## 6. API framework — Hono (APPROVED, 2026-09-13)
 
-This has not been implemented. See `docs/decisions/05-phase1-decisions-pending-approval.md` for the formal ask.
+**Decision:** [Hono](https://hono.dev), TypeScript. Hono runs unmodified on both Cloudflare Workers (CON-01, the required MVP runtime) and a Node/container server (CON-02, the required production runtime) — the same application code satisfies BE-008's "two implementations exercised in CI" for the transport layer itself, not just the primitives it calls. Alternatives (Express, Fastify) don't run natively on Workers and would need a compatibility shim, which is exactly the kind of extra moving part BE-008 is trying to avoid.
+
+Approved by the Project Owner alongside the full Phase 1 stack proposal; see `docs/decisions/05-phase1-decisions-pending-approval.md` for the full approval record and `docs/decisions/02-assumptions-register.md` A-06. Scaffolding begins in Phase 2.
 
 ## 7. Idempotency and concurrency (API-006, DB-013, DB-014, DB-015)
 

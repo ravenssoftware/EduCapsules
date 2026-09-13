@@ -11,7 +11,17 @@ The MVP runs on Cloudflare D1 (SQLite); production runs on PostgreSQL (INF requi
 - **No stored procedures, no database-specific functions in business paths** (DB-019) — every rule that would tempt one lives in the domain layer instead.
 - **Portable types only** (DB-007) — timestamps as UTC ISO-8601/epoch, money as integer minor units + ISO-4217 currency code, no JSONB-specific operators relied upon for correctness (JSON columns are read/written as opaque blobs by the domain layer).
 - **Foreign keys declared even where the MVP engine enforces them weakly** (DB-009) — D1's SQLite FK enforcement depends on `PRAGMA foreign_keys`; the schema declares every FK regardless, and the data-access layer enforces referential integrity in code where the platform doesn't, so production Postgres is a superset of behavior, never a divergent rewrite.
-- **One schema definition, two generated dialects** — the proposed mechanism for this is an ORM with first-class D1 and Postgres dialects (Drizzle — see `docs/decisions/05-phase1-decisions-pending-approval.md`, not yet approved). Whatever tool is approved, the constraint is fixed regardless of tool: a single source-of-truth schema, not two schemas kept in sync by hand.
+- **One schema definition, two generated dialects** — Drizzle ORM, with first-class D1 and Postgres dialects (APPROVED 2026-09-13, `docs/decisions/02-assumptions-register.md` A-07). The constraint that made this the right tool is fixed regardless of tool: a single source-of-truth schema, not two schemas kept in sync by hand.
+
+### Portability directive (Project Owner, 2026-09-13 — A-13)
+
+Approving Drizzle came with an explicit, binding condition: the core business/application architecture shall not become tightly coupled to D1, Cloudflare, or any other vendor. Applied to this layer specifically:
+
+- Every domain-layer function reaches the database only through the repository interfaces described in §2 below — never through a raw Drizzle client, a raw SQL string, or a D1-specific binding, imported outside the `packages/db` adapter implementations.
+- Core types passed between the domain layer and the persistence layer are portable (DB-007) — no SQLite-affinity type or Postgres-specific type (e.g., a native `jsonb` operator, a Postgres array type) is allowed to leak into a shared type domain code depends on.
+- Domain logic never assumes D1-specific behavior (its looser FK enforcement, SQLite's dynamic typing, its transaction/isolation model) — where D1 and Postgres genuinely differ, the domain layer codes to the weaker common guarantee, per §6's transaction-vs-outbox discussion below.
+- A future Postgres cutover (§41.5's migration path, detailed in `observability-and-deployment.md` §2) is a repointed adapter binding plus a data export/import — never a domain-layer rewrite. This is the acceptance bar for every PR touching `packages/db`, alongside the existing BE-008 review checklist in `backend.md` §8.
+- If a feature genuinely needs a D1-only or Postgres-only capability with no portable equivalent, it is isolated behind its own narrow adapter interface and documented as vendor-specific at the point of isolation — it is never allowed to widen into a general-purpose escape hatch other code starts depending on.
 
 ## 2. Tenant isolation — enforcement, not convention (DB-001, DB-011, DB-012, GEN-019)
 

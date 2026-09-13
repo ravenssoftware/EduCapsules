@@ -1,7 +1,7 @@
 # System Architecture
 
 **Phase:** 1 — System Architecture
-**Status:** Draft for Project Owner review. One decision is explicitly pending approval (§7 below) — nothing downstream of it has been implemented.
+**Status:** Approved. The backend/frontend stack (TypeScript, Hono, Drizzle ORM, React + Vite, and supporting tooling) was approved by the Project Owner on 2026-09-13, along with a binding portability directive — see `docs/decisions/05-phase1-decisions-pending-approval.md` and `docs/decisions/02-assumptions-register.md` §A (A-05..A-13). Scaffolding begins in Phase 2.
 **Source:** SRS v1.3 (`docs/srs/`), Phase 0 outputs (`docs/decisions/`)
 
 This is the entry point into the architecture documentation set:
@@ -38,7 +38,7 @@ flowchart TB
     end
 
     subgraph Transport["Transport Layer"]
-        API["API (Hono — proposed, pending approval)"]
+        API["API (Hono)"]
         Gateway["Content Gateway\n(short-lived signed access)"]
     end
 

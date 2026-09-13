@@ -19,7 +19,7 @@ Start here on any device: clone the repo, read this file, follow the links.
 - [`architecture/storage-and-content.md`](architecture/storage-and-content.md) — Teacher Storage, publishing, and the Content Gateway
 - [`architecture/security-and-trust-boundaries.md`](architecture/security-and-trust-boundaries.md) — trust boundaries, security controls, threat-model mapping
 - [`architecture/observability-and-deployment.md`](architecture/observability-and-deployment.md) — deployment topology, migration path, observability, capacity/availability
-- [`decisions/05-phase1-decisions-pending-approval.md`](decisions/05-phase1-decisions-pending-approval.md) — the backend/frontend stack proposals awaiting your sign-off before Phase 2
+- [`decisions/05-phase1-decisions-pending-approval.md`](decisions/05-phase1-decisions-pending-approval.md) — the backend/frontend stack decisions, approved 2026-09-13 (filename kept for link stability)
 
 ## Traceability
 - [`srs-traceability/00-traceability-strategy.md`](srs-traceability/00-traceability-strategy.md) — the mechanism (format, CI enforcement plan, test-level map)
