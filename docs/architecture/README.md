@@ -1,8 +1,8 @@
 # System Architecture
 
 **Phase:** 1 — System Architecture
-**Status:** Approved. The backend/frontend stack (TypeScript, Hono, Drizzle ORM, React + Vite, and supporting tooling) was approved by the Project Owner on 2026-09-13, along with a binding portability directive — see `docs/decisions/05-phase1-decisions-pending-approval.md` and `docs/decisions/02-assumptions-register.md` §A (A-05..A-13). Scaffolding begins in Phase 2.
-**Source:** SRS v1.3 (`docs/srs/`), Phase 0 outputs (`docs/decisions/`)
+**Status:** Approved. The backend stack (TypeScript, Hono, Drizzle ORM, and supporting tooling) was approved by the Project Owner on 2026-09-13, along with a binding portability directive — see `docs/decisions/05-phase1-decisions-pending-approval.md` and `docs/decisions/02-assumptions-register.md` §A (A-05..A-13). **The client is Flutter**, superseding the originally approved React + Vite web client — see `docs/decisions/06-flutter-client-decision.md` (A-14, 2026-09-13): Flutter Desktop (Windows/macOS/Linux) for the V1 demo, with the same codebase extending to Android/iOS as a future release. Scaffolding begins in Phase 2.
+**Source:** SRS v1.4 (`docs/srs/`), Phase 0 outputs (`docs/decisions/`)
 
 This is the entry point into the architecture documentation set:
 
@@ -29,8 +29,8 @@ These are fixed by the SRS (not decided here — see `docs/decisions/00-architec
 
 ```mermaid
 flowchart TB
-    subgraph Client["Client (React + Vite SPA)"]
-        WebApp["Web App"]
+    subgraph Client["Client (Flutter)"]
+        WebApp["Flutter App\n(Desktop V1 — Win/macOS/Linux;\nAndroid/iOS future release, same codebase)"]
     end
 
     subgraph Edge["Edge (Cloudflare)"]

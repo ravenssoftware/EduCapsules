@@ -57,6 +57,7 @@ These come directly from the SRS and don't change no matter which tool is picked
 **Proposal:** `apps/api`, `apps/web`, `packages/db`, `packages/shared`, `packages/domain`.
 **Why:** Matches the layering §39.1 already requires — a framework-agnostic domain/business-rule layer (BE-002) needs to be an independently importable package regardless of tool.
 **Reversibility:** Low — workspace tooling is the easiest item on this list to change later.
+**Update, 2026-09-13:** `apps/web` is superseded by `apps/flutter` — the client is Flutter, not React + Vite, per `docs/decisions/06-flutter-client-decision.md` (A-14). The pnpm-workspaces decision itself is unaffected; only the client app's directory name and contents change. `packages/db`, `packages/shared`, `packages/domain` and `apps/api` are unaffected — they belong to the backend, which never depended on the client framework.
 
 ### 7. Testing (unit/integration) — Vitest — APPROVED
 
@@ -76,9 +77,9 @@ These come directly from the SRS and don't change no matter which tool is picked
 **Why:** No new platform dependency; directly supports NFR-011 (tests gate every merge), NFR-016 (dependency scanning in CI), and the security-testing hooks named in `docs/architecture/security-and-trust-boundaries.md` §8.
 **Reversibility:** Low.
 
-### 10. Frontend framework — React + Vite — APPROVED (reconfirmation)
+### 10. Frontend framework — React + Vite — SUPERSEDED, same day
 
-**Status:** Already confirmed at Phase 0 as A-02 (2026-09-11: React + Vite, SPA, no SSR). Listed here again only because the Project Owner's 2026-09-13 approval message named it explicitly alongside the backend stack. No change in scope or shape from the original A-02 decision.
+**Status:** Was confirmed at Phase 0 as A-02 (2026-09-11: React + Vite, SPA, no SSR) and reconfirmed earlier the same day as this document's approval (2026-09-13). **Later that same day, the Project Owner replaced this with a Flutter client strategy** — Flutter Desktop (Windows/macOS/Linux) for V1, the same codebase extending to Android/iOS as a future release. See `docs/decisions/06-flutter-client-decision.md` and Assumptions Register A-14. **React + Vite is no longer the EduCapsules client**; this entry is retained, marked superseded, for the historical record of what was approved and when — it is not an active decision.
 
 ## 0. Additional binding architectural requirement — portability (Project Owner directive, 2026-09-13)
 

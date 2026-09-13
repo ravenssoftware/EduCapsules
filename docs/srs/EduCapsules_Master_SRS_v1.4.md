@@ -4,9 +4,9 @@
 
 **MASTER SOFTWARE REQUIREMENTS SPECIFICATION**
 
-**Version 1.3 · Audited & Reconciled Baseline**
+**Version 1.4 · Flutter Client Strategy**
 
-11 September 2026 (v1.1 audit pass; supersedes v1.0 of 8 September 2026)
+13 September 2026 (v1.4 Flutter client-strategy update; supersedes v1.3 of 11 September 2026)
 
 ![](media/image1.png){width="6.0in" height="2.749225721784777in"}
 
@@ -30,23 +30,23 @@
 
 ## 1.1 Identification
 
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **Field**            **Value**
-  -------------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **Product**          EduCapsules
 
   **Document**         Master Software Requirements Specification
 
-  **Version**          1.3 --- Audited & Reconciled Baseline (supersedes 1.2)
+  **Version**          1.4 --- Flutter Client Strategy (supersedes 1.3)
 
-  **Date**             11 September 2026
+  **Date**             13 September 2026
 
-  **Status**           Draft for Project Owner acceptance. v1.1 was a systematic audit pass over v1.0 (no confirmed decision reversed); v1.2 resolved D-08 (grading scale); v1.3 classifies every reconstructed §9/§21 requirement as PROVISIONAL or confirmed-elsewhere, per Project Owner instruction, without changing any requirement's text. Every change is itemised in the change log (§52.5).
+  **Status**           Draft for Project Owner acceptance. v1.1 was a systematic audit pass over v1.0 (no confirmed decision reversed); v1.2 resolved D-08 (grading scale); v1.3 classified every reconstructed §9/§21 requirement as PROVISIONAL or confirmed-elsewhere; v1.4 records the Project Owner's client-platform decision --- Flutter (desktop for V1, Android/iOS as a future release from the same codebase) replaces the responsive-web-client decision of v1.0--v1.3 (§5.2, §41.1, §49) --- without altering any unrelated requirement. Every change is itemised in the change log (§52.5).
 
   **Authority**        Single source of truth (GEN-001). Supersedes all prior EduCapsules specification documents.
 
   **Change control**   A requirement changes only through §1.5: identify → explain → trace dependencies → update all affected sections → update business rules, permissions and acceptance criteria → record in the change log.
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## 1.2 How this document is organised
 
@@ -368,7 +368,7 @@ These are the invariants of EduCapsules. Every requirement in this document is c
 
 # 5. System Overview & Context
 
-EduCapsules is a multi-role educational platform: a responsive web client and the backend services behind it, with private object storage, a protected content delivery path, and a single authorization core that every request passes through.
+EduCapsules is a multi-role educational platform: a Flutter client application and the backend services behind it, with private object storage, a protected content delivery path, and a single authorization core that every request passes through.
 
 ![](media/image2.png){width="6.5in" height="3.025157480314961in"}
 
@@ -398,7 +398,7 @@ EduCapsules is a multi-role educational platform: a responsive web client and th
 
 ## 5.2 Client applications
 
-V1 is a responsive web application. The backend security model shall not be coupled to any one client (GEN-004): every client --- web, Windows, macOS, Android, iOS --- is an equal consumer of the same authorised API. Native applications may add content protections the web cannot provide (§19.7), but never \*replace\* server-side decisions.
+V1 is delivered as a Flutter desktop application (Windows, macOS, Linux), architected from the outset so the same application and codebase extends to Android and iOS in a future release without rewriting business logic or UI structure (§41.1). The backend security model shall not be coupled to any one client (GEN-004): every client --- desktop, Android, iOS, or any future client --- is an equal consumer of the same authorised API. Native applications may add content protections a browser-hosted client cannot provide (§19.7), but never \*replace\* server-side decisions.
 
 # 6. Actors & Roles
 
@@ -3188,7 +3188,7 @@ A **Login Session** is a controlled, authenticated period during which a user is
 
   **AUTH-124**   The system shall evaluate session risk signals --- new device, unusual location, impossible travel, abnormal request volume, rapid content extraction, repeated authorization failures, token reuse --- and respond proportionately.                                                                                                                                                                                   **SHOULD**     System
 
-  **AUTH-125**   Browser sessions shall use Secure, HttpOnly, SameSite cookies where the architecture permits.                                                                                                                                                                                                                                                                                                                          **MUST**       System
+  **AUTH-125**   Where a browser-hosted session is used, it shall use Secure, HttpOnly, SameSite cookies; the V1 Flutter desktop client (and any future Android/iOS release) shall store session and refresh tokens using the platform's secure credential storage (OS keychain, keystore or credential locker) and never in plaintext application storage.                                                                             **MUST**       System
 
   **AUTH-126**   Passkeys, hardware security keys and enterprise SSO are FUTURE.                                                                                                                                                                                                                                                                                                                                                        **FUTURE**     System
 
@@ -3884,58 +3884,58 @@ This section states what the backend must *be true of*, not which framework buil
 
 ## 41.1 Client platform scope
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Client**                                                      **V1 status**                       **Notes**
-  --------------------------------------------------------------- ----------------------------------- -----------------------------------------------------------------------------------------------------------------------------------------------
-  **Responsive web application**                                  CONFIRMED --- V1                    The primary and only mandatory V1 client. Must be fully usable on a phone browser, since a large share of students will have no other device.
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Client**                                                                               **V1 status**                                                         **Notes**
+  ---------------------------------------------------------------------------------------- --------------------------------------------------------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Flutter desktop application (Windows, macOS, Linux)**                                  CONFIRMED --- V1 (initial demo release)                               The initial EduCapsules client, delivered first for the desktop demo (§1.5 change control; supersedes the responsive-web-client decision of v1.0--v1.3). Architected from the outset so the same application/codebase extends to Android and iOS without rewriting business logic or UI structure (§5.2).
 
-  **Installable PWA (offline shell, add-to-home-screen, push)**   PROPOSED --- V1 if effort permits   Delivers most of the perceived benefit of a mobile app at a fraction of the cost, and reuses the same codebase.
+  **Flutter mobile applications (Android, iOS) --- same codebase as the desktop client**   CONFIRMED architectural target --- FUTURE RELEASE (not V1 delivery)   Ships from the same Flutter application architecture as the V1 desktop client, with platform-specific behaviour isolated behind small adapters rather than a rewrite (architecture docs). Release timing is a Project Owner decision (§49), not gated on an unmet-requirement trigger.
 
-  **Native mobile applications (iOS, Android)**                   FUTURE                              Justified when a requirement genuinely needs native capability --- stronger content protection, true offline study, or platform DRM.
+  **Responsive web application**                                                           SUPERSEDED                                                            Was CONFIRMED as the V1 client in v1.0--v1.3. Superseded by the Flutter client strategy (Project Owner decision, 13 September 2026 --- §5.2, §1.5). Retained here for traceability; not part of the current implementation target.
 
-  **Desktop applications (Windows, macOS)**                       FUTURE                              No V1 requirement is unmet by the web client. Revisit only if a protected-content or proctoring requirement demands it.
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Installable PWA (offline shell, add-to-home-screen, push)**                            SUPERSEDED                                                            Was PROPOSED in v1.0--v1.3, predicated on a web-client strategy. No longer applicable now that the client is a native Flutter application; a PWA concept does not apply to Flutter desktop/mobile builds.
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 41.1 --- Client platform scope for V1.*
 
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| **PLATFORM DECISION**                                                                                                                                                                                                                                                                                             |
-|                                                                                                                                                                                                                                                                                                                   |
-| V1 ships one responsive web client. This is a deliberate scope decision, not an omission: shipping one excellent web client that works on a low-end Android phone serves the mission better than three half-finished clients. §49 records the native applications as a roadmap item with explicit entry criteria. |
-|                                                                                                                                                                                                                                                                                                                   |
-| *Status: CONFIRMED · Supersedes the multi-platform ambition in the original project context for the V1 timeframe only*                                                                                                                                                                                            |
-+===================================================================================================================================================================================================================================================================================================================+
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| **PLATFORM DECISION**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+|                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| V1 ships a Flutter desktop application (Windows, macOS, Linux) as the initial release target, architected from the outset so the same Flutter codebase extends to Android and iOS without rewriting business logic or UI structure. This supersedes the v1.0--v1.3 web-first platform decision. Native compilation is the primary strategy here, not an afterthought, chosen so the desktop demo and the future mobile releases share one application architecture rather than three separate clients. §49 records the Android/iOS release as a roadmap item --- its entry criterion is a Project Owner release decision, not an unmet-requirement trigger. |
+|                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| *Status: CONFIRMED, 13 September 2026 · Supersedes the v1.0--v1.3 web-first V1 client decision (§1.5 change control; recorded in the change log, §52.5, and in docs/decisions/06-flutter-client-decision.md)*                                                                                                                                                                                                                                                                                                                                                                                                                                               |
++=============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ## 41.2 Frontend requirements
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **ID**       **Requirement**                                                                                                                                                  **Priority**   **Actor**
-  ------------ ---------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------- ------------
-  **FE-001**   The web client shall function on the two most recent major versions of Chrome, Edge, Firefox and Safari, and on Chrome and Safari on mobile.                     **MUST**       Frontend
+  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**       **Requirement**                                                                                                                                                                                                                                                                                               **Priority**   **Actor**
+  ------------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------- ------------
+  **FE-001**   The client shall function on current, officially supported major releases of the target operating system for each shipped platform: Windows, macOS and Linux for the V1 desktop release. Android and iOS OS-version support is defined when the mobile release ships (§49), from the same Flutter codebase.   **MUST**       Frontend
 
-  **FE-002**   The client shall never contain a business rule that is not also enforced by the server; client checks exist only to improve the experience.                      **MUST**       Frontend
+  **FE-002**   The client shall never contain a business rule that is not also enforced by the server; client checks exist only to improve the experience.                                                                                                                                                                   **MUST**       Frontend
 
-  **FE-003**   The client shall never receive data the user is not authorised to see, including in hidden DOM, in a preloaded store, in a source map or in a bundled fixture.   **MUST**       Frontend
+  **FE-003**   The client shall never receive data the user is not authorised to see, including in local widget or application state, in a bundled asset, in a debug/development build artefact, or recoverable from the compiled application package.                                                                       **MUST**       Frontend
 
-  **FE-004**   Protected course content shall never be embedded in JavaScript, in a bundle or in a durable client cache (**GEN-017**).                                          **MUST**       Frontend
+  **FE-004**   Protected course content shall never be embedded in the client application code, in a compiled asset bundle, or in a durable local cache (**GEN-017**).                                                                                                                                                       **MUST**       Frontend
 
-  **FE-005**   Every destructive or irreversible action shall require explicit confirmation naming the object and the consequence.                                              **MUST**       Frontend
+  **FE-005**   Every destructive or irreversible action shall require explicit confirmation naming the object and the consequence.                                                                                                                                                                                           **MUST**       Frontend
 
-  **FE-006**   The client shall autosave long-form work (quiz attempts, grading, content authoring, messages) and shall recover it after a reload or a crash.                   **MUST**       Frontend
+  **FE-006**   The client shall autosave long-form work (quiz attempts, grading, content authoring, messages) and shall recover it after a reload or a crash.                                                                                                                                                                **MUST**       Frontend
 
-  **FE-007**   The client shall present explicit empty, loading, partial, error and offline states for every data-bearing view (§38 UI/UX).                                     **MUST**       Frontend
+  **FE-007**   The client shall present explicit empty, loading, partial, error and offline states for every data-bearing view (§38 UI/UX).                                                                                                                                                                                  **MUST**       Frontend
 
-  **FE-008**   Time-limited assessments shall display a server-authoritative countdown; the client clock shall never determine expiry.                                          **MUST**       Frontend
+  **FE-008**   Time-limited assessments shall display a server-authoritative countdown; the client clock shall never determine expiry.                                                                                                                                                                                       **MUST**       Frontend
 
-  **FE-009**   The client shall be internationalisation-ready: no concatenated sentence fragments, externalised strings, and layout that tolerates a right-to-left direction.   **MUST**       Frontend
+  **FE-009**   The client shall be internationalisation-ready: no concatenated sentence fragments, externalised strings, and layout that tolerates a right-to-left direction.                                                                                                                                                **MUST**       Frontend
 
-  **FE-010**   Initial interactive load on a mid-range mobile device over a 3G-class connection shall be a measured, budgeted target; the budget shall be enforced in CI.       **MUST**       Frontend
+  **FE-010**   Application cold-start time shall be a measured, budgeted target enforced in CI: on reference desktop hardware for the V1 release, and on a mid-range mobile device over a 3G-class connection once the mobile release ships (§49).                                                                           **MUST**       Frontend
 
-  **FE-011**   The client shall degrade usefully when a non-critical subsystem is unavailable: a failed leaderboard or notification feed shall not blank a dashboard.           **MUST**       Frontend
+  **FE-011**   The client shall degrade usefully when a non-critical subsystem is unavailable: a failed leaderboard or notification feed shall not blank a dashboard.                                                                                                                                                        **MUST**       Frontend
 
-  **FE-012**   Client-side logging shall never include tokens, answer keys, grades of other students, or personal data beyond the acting user.                                  **MUST**       Frontend
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **FE-012**   Client-side logging shall never include tokens, answer keys, grades of other students, or personal data beyond the acting user.                                                                                                                                                                               **MUST**       Frontend
+  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 41.2 --- Frontend requirements.*
 
@@ -3956,25 +3956,25 @@ The MVP runs entirely on Cloudflare. Figure 41.1 shows the topology and the boun
 
 *Figure 41.1 --- MVP deployment topology on Cloudflare. Each platform primitive is reached only through the abstraction interfaces required by BE-008.*
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Concern**                   **MVP service**                               **Abstraction that protects portability**
-  ----------------------------- --------------------------------------------- -----------------------------------------------------------------------------------------------
-  **Static client delivery**    Pages                                         Build output is a plain static bundle; no platform-specific runtime in the client.
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Concern**                           **MVP service**                               **Abstraction that protects portability**
+  ------------------------------------- --------------------------------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Client application distribution**   N/A --- not a Cloudflare concern              The Flutter client compiles to native desktop binaries distributed directly (installer download), not served as a web bundle; Cloudflare Pages is not part of the client-delivery path. A future Android/iOS release adds app-store distribution, still outside this table's server-infrastructure scope.
 
-  **Application runtime**       Workers                                       Domain layer is framework-agnostic (BE-002); the Worker is a thin transport adapter.
+  **Application runtime**               Workers                                       Domain layer is framework-agnostic (BE-002); the Worker is a thin transport adapter.
 
-  **Relational data**           D1                                            Repository interfaces + portable SQL (DB-019). No engine-specific types or stored procedures.
+  **Relational data**                   D1                                            Repository interfaces + portable SQL (DB-019). No engine-specific types or stored procedures.
 
-  **Object storage**            R2                                            ObjectStore interface: put, get, signed-url, delete, copy, head.
+  **Object storage**                    R2                                            ObjectStore interface: put, get, signed-url, delete, copy, head.
 
-  **Asynchronous work**         Queues                                        JobQueue interface: enqueue, consume, retry, dead-letter.
+  **Asynchronous work**                 Queues                                        JobQueue interface: enqueue, consume, retry, dead-letter.
 
-  **Cache / ephemeral state**   KV / Durable Objects where genuinely needed   Cache interface; no business state may live only here.
+  **Cache / ephemeral state**           KV / Durable Objects where genuinely needed   Cache interface; no business state may live only here.
 
-  **Edge security**             WAF, DDoS, bot management, TLS                Retained in production (§41.4).
+  **Edge security**                     WAF, DDoS, bot management, TLS                Retained in production (§41.4).
 
-  **DNS**                       Cloudflare DNS                                Retained in production.
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **DNS**                               Cloudflare DNS                                Retained in production.
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 41.3 --- MVP service mapping and the abstraction that keeps each one replaceable.*
 
@@ -4236,31 +4236,31 @@ Colour in EduCapsules carries *meaning*, and the meaning is fixed even if the ex
 
 ## 42.6 Accessibility and responsiveness
 
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **ID**       **Requirement**                                                                                                                     **Priority**   **Actor**
-  ------------ ----------------------------------------------------------------------------------------------------------------------------------- -------------- -------------------
-  **UI-010**   The web client shall conform to WCAG 2.1 Level AA.                                                                                  **MUST**       Frontend, Design
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**       **Requirement**                                                                                                                                                                                                                                             **Priority**   **Actor**
+  ------------ ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------- -------------------
+  **UI-010**   The client application shall conform to WCAG 2.1 Level AA, interpreted through each platform\'s accessibility APIs (e.g. Flutter Semantics mapped to the underlying OS accessibility service).                                                              **MUST**       Frontend, Design
 
-  **UI-011**   Every interactive element shall be reachable and operable by keyboard, in a logical order, with a visible focus indicator.          **MUST**       Frontend
+  **UI-011**   Every interactive element shall be reachable and operable by keyboard, in a logical order, with a visible focus indicator.                                                                                                                                  **MUST**       Frontend
 
-  **UI-012**   All non-decorative images, icons and charts shall have text alternatives; data visualisations shall also be available as a table.   **MUST**       Frontend
+  **UI-012**   All non-decorative images, icons and charts shall have text alternatives; data visualisations shall also be available as a table.                                                                                                                           **MUST**       Frontend
 
-  **UI-013**   Form fields shall have programmatically associated labels; errors shall be announced to assistive technology.                       **MUST**       Frontend
+  **UI-013**   Form fields shall have programmatically associated labels; errors shall be announced to assistive technology.                                                                                                                                               **MUST**       Frontend
 
-  **UI-014**   Modals and drawers shall trap focus while open and restore focus on close.                                                          **MUST**       Frontend
+  **UI-014**   Modals and drawers shall trap focus while open and restore focus on close.                                                                                                                                                                                  **MUST**       Frontend
 
-  **UI-015**   The interface shall support browser zoom to 200% and OS text scaling without loss of content or function.                           **MUST**       Frontend
+  **UI-015**   The interface shall support OS-level display/text scaling up to 200% and each platform\'s accessibility text-size setting without loss of content or function.                                                                                              **MUST**       Frontend
 
-  **UI-016**   Motion shall respect prefers-reduced-motion; no essential information shall be conveyed by animation alone.                         **MUST**       Frontend
+  **UI-016**   Motion shall respect the platform\'s reduce-motion accessibility setting; no essential information shall be conveyed by animation alone.                                                                                                                    **MUST**       Frontend
 
-  **UI-017**   Layout shall be responsive across the defined breakpoints, with the student experience verified on a 360 px viewport.               **MUST**       Frontend
+  **UI-017**   Layout shall be responsive across the defined breakpoints. The student experience is verified on a 360 px viewport once the mobile release ships; the V1 desktop demo verifies responsiveness across the desktop breakpoints (Expanded/Wide, Table 42.9).   **MUST**       Frontend
 
-  **UI-018**   Touch targets shall be at least 44 × 44 CSS pixels.                                                                                 **MUST**       Frontend
+  **UI-018**   Touch targets shall be at least 44 × 44 density-independent pixels (or the equivalent minimum defined by each target platform\'s accessibility guidelines).                                                                                                 **MUST**       Frontend
 
-  **UI-019**   Time-limited assessments shall provide an accommodation mechanism (extended time per student) that is recorded and auditable.       **MUST**       Backend, Frontend
+  **UI-019**   Time-limited assessments shall provide an accommodation mechanism (extended time per student) that is recorded and auditable.                                                                                                                               **MUST**       Backend, Frontend
 
-  **UI-020**   Dark mode shall be supported as a theme built from the same semantic tokens.                                                        **SHOULD**     Frontend, Design
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **UI-020**   Dark mode shall be supported as a theme built from the same semantic tokens.                                                                                                                                                                                **SHOULD**     Frontend, Design
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 42.8 --- Accessibility and responsiveness requirements.*
 
@@ -4326,29 +4326,29 @@ Every requirement in this section is measurable or it is not a requirement (**GE
 
 ## 43.1 Performance
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **ID**         **Metric**                                                                 **Target**                      **Method**
-  -------------- -------------------------------------------------------------------------- ------------------------------- -------------------------------------------------
-  **PERF-001**   API read latency, p95, standard authenticated request under V1 load        TBD --- fixed at load test      Server-side histogram, excluding client network
+  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**         **Metric**                                                                                                                     **Target**                      **Method**
+  -------------- ------------------------------------------------------------------------------------------------------------------------------ ------------------------------- -------------------------------------------------
+  **PERF-001**   API read latency, p95, standard authenticated request under V1 load                                                            TBD --- fixed at load test      Server-side histogram, excluding client network
 
-  **PERF-002**   API read latency, p99                                                      TBD                             As above
+  **PERF-002**   API read latency, p99                                                                                                          TBD                             As above
 
-  **PERF-003**   API write latency, p95 (submission, grade, attendance)                     TBD                             As above
+  **PERF-003**   API write latency, p95 (submission, grade, attendance)                                                                         TBD                             As above
 
-  **PERF-004**   Time to interactive, student dashboard, mid-range Android, 3G-class link   TBD --- budget enforced in CI   Synthetic lab measurement + field RUM
+  **PERF-004**   Application cold-start time, student dashboard, desktop reference hardware (mobile equivalent once the mobile release ships)   TBD --- budget enforced in CI   Synthetic lab measurement + field RUM
 
-  **PERF-005**   Client JavaScript bundle, initial route, compressed                        TBD --- budget in CI            Build-time budget check
+  **PERF-005**   Client application package/installer size, V1 desktop build                                                                    TBD --- budget in CI            Build-time budget check
 
-  **PERF-006**   Quiz answer autosave round trip, p95                                       TBD                             Server histogram
+  **PERF-006**   Quiz answer autosave round trip, p95                                                                                           TBD                             Server histogram
 
-  **PERF-007**   Bulk grade release, 200 students                                           TBD                             Job completion timing
+  **PERF-007**   Bulk grade release, 200 students                                                                                               TBD                             Job completion timing
 
-  **PERF-008**   File upload throughput, 50 MB, typical link                                TBD                             Signed-URL transfer timing
+  **PERF-008**   File upload throughput, 50 MB, typical link                                                                                    TBD                             Signed-URL transfer timing
 
-  **PERF-009**   Protected video start time, p95                                            TBD                             Player telemetry
+  **PERF-009**   Protected video start time, p95                                                                                                TBD                             Player telemetry
 
-  **PERF-010**   Search result latency, question bank, p95                                  TBD                             Server histogram
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **PERF-010**   Search result latency, question bank, p95                                                                                      TBD                             Server histogram
+  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 43.1 --- Performance metrics. Thresholds are deliberately TBD until measured (D-05).*
 
@@ -4442,23 +4442,23 @@ Every requirement in this section is measurable or it is not a requirement (**GE
 
 ## 43.5 Usability, compatibility and localisation
 
-  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **ID**        **Requirement**                                                                                                                       **Verification**
-  ------------- ------------------------------------------------------------------------------------------------------------------------------------- ---------------------------------------------
-  **NFR-020**   A first-time teacher shall complete the create-course → add-cycle → add-topic → publish-homework path without written instructions.   Moderated usability test, ≥ 5 participants
+  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**        **Requirement**                                                                                                                                                                                                                                                      **Verification**
+  ------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------------
+  **NFR-020**   A first-time teacher shall complete the create-course → add-cycle → add-topic → publish-homework path without written instructions.                                                                                                                                  Moderated usability test, ≥ 5 participants
 
-  **NFR-021**   A first-time student shall locate and submit an assigned homework on a phone without assistance.                                      Moderated usability test on a 360 px device
+  **NFR-021**   A first-time student shall locate and submit an assigned homework on the V1 desktop client without assistance; the same usability bar applies to the mobile client once it ships (§49).                                                                              Moderated usability test on the V1 desktop build; repeated on a 360 px mobile viewport once the Android/iOS release exists
 
-  **NFR-022**   Browser support per **FE-001**.                                                                                                       Cross-browser test matrix in CI
+  **NFR-022**   Platform support per **FE-001**.                                                                                                                                                                                                                                     Supported-OS test matrix in CI
 
-  **NFR-023**   The client shall function on a mid-range Android device released within the last four years.                                          Device-lab verification
+  **NFR-023**   The client shall function on officially supported desktop OS versions for the V1 release (Windows, macOS, Linux --- per FE-001); a mid-range Android device released within the last four years becomes the equivalent target once the mobile release ships (§49).   Device-lab verification
 
-  **NFR-024**   All user-facing strings shall be externalised and free of concatenated grammar.                                                       Lint rule + pseudo-localisation build
+  **NFR-024**   All user-facing strings shall be externalised and free of concatenated grammar.                                                                                                                                                                                      Lint rule + pseudo-localisation build
 
-  **NFR-025**   Date, time, number and currency formatting shall follow the user's locale; stored values remain canonical.                            Automated test per locale
+  **NFR-025**   Date, time, number and currency formatting shall follow the user's locale; stored values remain canonical.                                                                                                                                                           Automated test per locale
 
-  **NFR-026**   The launch locale set and RTL support are TBD (**D-03**); the implementation shall not preclude either.                               Architecture review
-  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **NFR-026**   The launch locale set and RTL support are TBD (**D-03**); the implementation shall not preclude either.                                                                                                                                                              Architecture review
+  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 43.5 --- Usability, compatibility and localisation requirements.*
 
@@ -5110,69 +5110,69 @@ Traceability is maintained as a live artefact, not a document appendix. The chai
 
 ## 49.1 V1 scope --- MoSCoW
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Capability**                                                       **V1**   **Note**
-  -------------------------------------------------------------------- -------- ---------------------------------------------------------------------------------
-  **Authentication, MFA, session management, password recovery**       MUST     §35
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Capability**                                                       **V1**           **Note**
+  -------------------------------------------------------------------- ---------------- ------------------------------------------------------------------------------------------------------
+  **Authentication, MFA, session management, password recovery**       MUST             §35
 
-  **Users, scoped roles, permission matrix, admin management**         MUST     §8, §26
+  **Users, scoped roles, permission matrix, admin management**         MUST             §8, §26
 
-  **Classroom, Group, Subject, Course, Cycle, Topic, Enrolment**       MUST     §9, §10
+  **Classroom, Group, Subject, Course, Cycle, Topic, Enrolment**       MUST             §9, §10
 
-  **Teaching sessions and attendance**                                 MUST     §11
+  **Teaching sessions and attendance**                                 MUST             §11
 
-  **Activities: homework, quiz, exam; targeting; windows; attempts**   MUST     §12
+  **Activities: homework, quiz, exam; targeting; windows; attempts**   MUST             §12
 
-  **Question bank with version pinning**                               MUST     §13
+  **Question bank with version pinning**                               MUST             §13
 
-  **Teacher storage, file versioning, references**                     MUST     §14
+  **Teacher storage, file versioning, references**                     MUST             §14
 
-  **Content publishing, protection levels 0--2**                       MUST     §15, §16
+  **Content publishing, protection levels 0--2**                       MUST             §15, §16
 
-  **Grading, feedback, explicit release, grade history**               MUST     §17
+  **Grading, feedback, explicit release, grade history**               MUST             §17
 
-  **Progress tracking**                                                MUST     §17
+  **Progress tracking**                                                MUST             §17
 
-  **Assistant delegation with scope and expiry**                       MUST     §21
+  **Assistant delegation with scope and expiry**                       MUST             §21
 
-  **Parent linking and read-only child view**                          MUST     §22
+  **Parent linking and read-only child view**                          MUST             §22
 
-  **Notifications (in-app + email)**                                   MUST     §28
+  **Notifications (in-app + email)**                                   MUST             §28
 
-  **Audit log**                                                        MUST     §36
+  **Audit log**                                                        MUST             §36
 
-  **Payment recording with evidence and manual verification**          MUST     §30
+  **Payment recording with evidence and manual verification**          MUST             §30
 
-  **Entitlements**                                                     MUST     §31
+  **Entitlements**                                                     MUST             §31
 
-  **Achievements and points**                                          SHOULD   §18 --- core motivational value; low technical risk
+  **Achievements and points**                                          SHOULD           §18 --- core motivational value; low technical risk
 
-  **Leaderboards**                                                     SHOULD   §18 --- ships disabled by default (LDB-009)
+  **Leaderboards**                                                     SHOULD           §18 --- ships disabled by default (LDB-009)
 
-  **Contextual messaging**                                             SHOULD   §27
+  **Contextual messaging**                                             SHOULD           §27
 
-  **Calendar view**                                                    SHOULD   §29
+  **Calendar view**                                                    SHOULD           §29
 
-  **Content protection level 3 (DRM, hardened streaming)**             COULD    Significant cost; justified only by a demonstrated leak problem
+  **Content protection level 3 (DRM, hardened streaming)**             COULD            Significant cost; justified only by a demonstrated leak problem
 
-  **Math Knowledge Hub as a structured content library**               COULD    Deliverable as protected content in V1; the interactive hub is a later product
+  **Math Knowledge Hub as a structured content library**               COULD            Deliverable as protected content in V1; the interactive hub is a later product
 
-  **Analytics beyond per-course reporting**                            COULD    §25
+  **Analytics beyond per-course reporting**                            COULD            §25
 
-  **Installable PWA**                                                  COULD    §41.1
+  **Installable PWA**                                                  SUPERSEDED       §41.1 --- no longer applicable; predicated on the web-client strategy replaced by Flutter
 
-  **Native mobile applications**                                       WON\'T   §49.2
+  **Flutter mobile applications (Android, iOS)**                       FUTURE RELEASE   §49.2 --- same Flutter codebase as the V1 desktop client; release timing is a Project Owner decision
 
-  **Desktop applications**                                             WON\'T   §49.2
+  **Flutter desktop application (Windows, macOS, Linux)**              MUST             §5.2, §41.1 --- the V1 client (Project Owner decision, 13 September 2026)
 
-  **Online payment gateway integration**                               WON\'T   V1 records payments; it does not process them
+  **Online payment gateway integration**                               WON\'T           V1 records payments; it does not process them
 
-  **AI-assisted content, grading or tutoring**                         WON\'T   §49.2 --- requires its own requirements, privacy analysis and evaluation regime
+  **AI-assisted content, grading or tutoring**                         WON\'T           §49.2 --- requires its own requirements, privacy analysis and evaluation regime
 
-  **Public course marketplace**                                        WON\'T   Out of product scope for V1
+  **Public course marketplace**                                        WON\'T           Out of product scope for V1
 
-  **Open student-to-student direct messaging**                         WON\'T   Safeguarding (MSG-004)
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Open student-to-student direct messaging**                         WON\'T           Safeguarding (MSG-004)
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 49.1 --- V1 scope classification.*
 
@@ -5180,27 +5180,27 @@ Traceability is maintained as a live artefact, not a document appendix. The chai
 
 A roadmap item is not a promise; it is a decision with a stated trigger. Each item below states what must be true *before* it is worth building.
 
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Horizon**       **Item**                                            **Entry criteria**
-  ----------------- --------------------------------------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Next**          Installable PWA with offline study                  V1 stable · measured evidence that students lose work or access to connectivity
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Horizon**       **Item**                                                                                **Entry criteria**
+  ----------------- --------------------------------------------------------------------------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Next**          Installable PWA with offline study                                                      V1 stable · measured evidence that students lose work or access to connectivity
 
-  **Next**          Online payment gateway integration                  Transaction volume makes manual verification the bottleneck · a compliant processor selected · EduCapsules still stores no card data
+  **Next**          Online payment gateway integration                                                      Transaction volume makes manual verification the bottleneck · a compliant processor selected · EduCapsules still stores no card data
 
-  **Next**          Richer analytics and cohort reporting               Teachers ask a question the current reports cannot answer · the underlying events are already captured
+  **Next**          Richer analytics and cohort reporting                                                   Teachers ask a question the current reports cannot answer · the underlying events are already captured
 
-  **Later**         Native mobile applications                          A requirement exists that the web client provably cannot meet --- hardened content protection, true offline, or platform DRM
+  **Later**         Flutter mobile applications (Android, iOS) --- same codebase as the V1 desktop client   Project Owner release decision, once the V1 desktop client is stable; no unmet-requirement trigger is needed since the architecture already supports it (§5.2)
 
-  **Later**         Content protection level 3 / DRM                    A demonstrated, measured leakage problem that level 2 does not contain · licensing cost accepted
+  **Later**         Content protection level 3 / DRM                                                        A demonstrated, measured leakage problem that level 2 does not contain · licensing cost accepted
 
-  **Later**         Interactive Math Knowledge Hub                      The content library exists and is used · a specific pedagogical model is defined, not just a topic tree
+  **Later**         Interactive Math Knowledge Hub                                                          The content library exists and is used · a specific pedagogical model is defined, not just a topic tree
 
-  **Later**         Multi-organisation / district administration        More than one organisation is live and shares governance needs
+  **Later**         Multi-organisation / district administration                                            More than one organisation is live and shares governance needs
 
-  **Exploratory**   AI-assisted authoring, feedback and study support   Its own SRS section · a privacy analysis of what student data is processed and where · a defined evaluation method for output quality · a stated position on the use of student work as training data (§33)
+  **Exploratory**   AI-assisted authoring, feedback and study support                                       Its own SRS section · a privacy analysis of what student data is processed and where · a defined evaluation method for output quality · a stated position on the use of student work as training data (§33)
 
-  **Exploratory**   Desktop applications                                A requirement no web or native mobile client can meet
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Exploratory**   Responsive web application                                                              Superseded (§5.2, §41.1) --- no longer the V1 client; would only be revisited if a requirement emerges that the Flutter client provably cannot meet
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 49.2 --- Roadmap with explicit entry criteria.*
 
@@ -5217,9 +5217,9 @@ A roadmap item is not a promise; it is a decision with a stated trigger. Each it
 
 ## 50.1 Constraints
 
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **\#**       **Constraint**                                                                    **Consequence for design**
-  ------------ --------------------------------------------------------------------------------- ------------------------------------------------------------------------------------------------------------------------------------
+  ------------ --------------------------------------------------------------------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **CON-01**   The MVP runs on Cloudflare only (project decision).                               Every platform primitive sits behind an abstraction (BE-008); no Cloudflare SDK call from a service class.
 
   **CON-02**   Production is an InterServer Linux VPS.                                           Single-region, self-managed. Availability targets and DR must be honest about what one VPS provides (§43.3).
@@ -5228,46 +5228,48 @@ A roadmap item is not a promise; it is a decision with a stated trigger. Each it
 
   **CON-04**   Payments are recorded manually with evidence; no gateway in V1.                   Verification is a human workflow with an SLA, and the interface must set that expectation.
 
-  **CON-05**   Students are expected to use low-end mobile devices on constrained connections.   Performance budgets and offline tolerance are functional requirements, not polish.
+  **CON-05**   Students are expected to use low-end mobile devices on constrained connections.   Performance budgets and offline tolerance are functional requirements, not polish. The V1 Flutter desktop demo does not directly serve this constraint; it is addressed when the Android/iOS release ships from the same codebase (§49, R-14).
 
   **CON-06**   Some users are minors.                                                            Guardian consent, safeguarding constraints on messaging, and retention rules for minors\' data are non-negotiable (§32, §33, §44).
 
   **CON-07**   The product\'s commercial value rests on protected teaching content.              Content protection is a core requirement, and the platform must be honest about its limits (GEN-022).
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 50.1 --- Project constraints.*
 
 ## 50.2 Risk register
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **\#**     **Risk**                                                                         **Sev.**   **Mitigation**                                                                                                                                             **Owner**
-  ---------- -------------------------------------------------------------------------------- ---------- ---------------------------------------------------------------------------------------------------------------------------------------------------------- ---------------
-  **R-01**   Platform-primitive leakage welds the product to Cloudflare (§41.3).              High       BE-008 two implementations in CI from sprint one; architecture review gate.                                                                                Engineer
+  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **\#**     **Risk**                                                                                                                                                                 **Sev.**      **Mitigation**                                                                                                                                                                                                                                    **Owner**
+  ---------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ ------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ---------------
+  **R-01**   Platform-primitive leakage welds the product to Cloudflare (§41.3).                                                                                                      High          BE-008 two implementations in CI from sprint one; architecture review gate.                                                                                                                                                                       Engineer
 
-  **R-02**   Migration during an academic period damages assessment or grade data.            High       INF-011 rehearsal; INF-014 window rules; schedule between periods.                                                                                         PM
+  **R-02**   Migration during an academic period damages assessment or grade data.                                                                                                    High          INF-011 rehearsal; INF-014 window rules; schedule between periods.                                                                                                                                                                                PM
 
-  **R-03**   Scope creep exhausts a three-person team before launch.                          High       §49 MoSCoW is contractual; §1.5 change control; roadmap entry criteria.                                                                                    PM
+  **R-03**   Scope creep exhausts a three-person team before launch.                                                                                                                  High          §49 MoSCoW is contractual; §1.5 change control; roadmap entry criteria.                                                                                                                                                                           PM
 
-  **R-04**   Authorisation defect exposes student data or answer keys.                        Critical   §7 single pipeline; full negative permission matrix in CI (Table 47.2); AC-03, AC-04.                                                                      Engineer + QA
+  **R-04**   Authorisation defect exposes student data or answer keys.                                                                                                                Critical      §7 single pipeline; full negative permission matrix in CI (Table 47.2); AC-03, AC-04.                                                                                                                                                             Engineer + QA
 
-  **R-05**   Content leaks despite protection, damaging teacher trust.                        High       Levels 0--3, gateway-only delivery, watermarking, anomaly detection --- and honest communication that no web platform prevents screen capture (GEN-022).   Engineer
+  **R-05**   Content leaks despite protection, damaging teacher trust.                                                                                                                High          Levels 0--3, gateway-only delivery, watermarking, anomaly detection --- and honest communication that no web platform prevents screen capture (GEN-022).                                                                                          Engineer
 
-  **R-06**   Simultaneous cohort assessment overwhelms the MVP platform.                      High       PERF-022 is the primary load scenario; thresholds fixed by measurement (D-05) before launch.                                                               Engineer + QA
+  **R-06**   Simultaneous cohort assessment overwhelms the MVP platform.                                                                                                              High          PERF-022 is the primary load scenario; thresholds fixed by measurement (D-05) before launch.                                                                                                                                                      Engineer + QA
 
-  **R-07**   Manual payment verification becomes the operational bottleneck.                  Medium     Bulk verification tooling; measured queue time; roadmap trigger for gateway integration.                                                                   Owner
+  **R-07**   Manual payment verification becomes the operational bottleneck.                                                                                                          Medium        Bulk verification tooling; measured queue time; roadmap trigger for gateway integration.                                                                                                                                                          Owner
 
-  **R-08**   Retention and minors\' data handling is set without qualified legal advice.      High       D-06 blocks production launch; periods are TBD until counsel confirms.                                                                                     Owner
+  **R-08**   Retention and minors\' data handling is set without qualified legal advice.                                                                                              High          D-06 blocks production launch; periods are TBD until counsel confirms.                                                                                                                                                                            Owner
 
-  **R-09**   Assessment integrity is compromised (shared answers, proxy attempts).            Medium     Question randomisation, version pinning, attempt limits, anomaly signals --- and an explicit statement that V1 does not proctor.                           Engineer
+  **R-09**   Assessment integrity is compromised (shared answers, proxy attempts).                                                                                                    Medium        Question randomisation, version pinning, attempt limits, anomaly signals --- and an explicit statement that V1 does not proctor.                                                                                                                  Engineer
 
-  **R-10**   Leaderboards cause reputational or wellbeing harm.                               Medium     Off by default (LDB-009); visibility modes; no identification of low performers (LDB-005).                                                                 Owner
+  **R-10**   Leaderboards cause reputational or wellbeing harm.                                                                                                                       Medium        Off by default (LDB-009); visibility modes; no identification of low performers (LDB-005).                                                                                                                                                        Owner
 
-  **R-11**   Single-VPS production creates an availability ceiling.                           Medium     Honest NFR-001 target; Cloudflare edge in front; tested restore (INF-007); documented upgrade path.                                                        Engineer
+  **R-11**   Single-VPS production creates an availability ceiling.                                                                                                                   Medium        Honest NFR-001 target; Cloudflare edge in front; tested restore (INF-007); documented upgrade path.                                                                                                                                               Engineer
 
-  **R-12**   Requirements drift as the document ages and code diverges from it.               Medium     NFR-017 --- the SRS changes in the same change that alters behaviour; TRC-003 review gate.                                                                 PM
+  **R-12**   Requirements drift as the document ages and code diverges from it.                                                                                                       Medium        NFR-017 --- the SRS changes in the same change that alters behaviour; TRC-003 review gate.                                                                                                                                                        PM
 
-  **R-13**   Two source specifications were referenced but not supplied (§1.4, Appendix D).   Medium     Assistant and classroom requirements were reconstructed from the surrounding material and are marked for confirmation.                                     Owner
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **R-13**   Two source specifications were referenced but not supplied (§1.4, Appendix D).                                                                                           Medium        Assistant and classroom requirements were reconstructed from the surrounding material and are marked for confirmation.                                                                                                                            Owner
+
+  R-14       The Flutter-Desktop-first V1 strategy (§5.2, §41.1) does not directly serve students who own only a low-end mobile phone until the Android/iOS release ships (CON-05).   Medium-High   Treat the Android/iOS release as a near-term platform-target addition, not a rewrite --- the shared Flutter architecture is built for it from day one (architecture docs); do not schedule full-population rollout ahead of the mobile release.   Owner + PM
+  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 50.2 --- Risk register.*
 
@@ -5470,21 +5472,23 @@ This SRS consolidates the specification package supplied by the project owner. I
 
 ## 52.5 Appendix E --- Document change log
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Version**   **Date**      **Author**        **Summary**
-  ------------- ------------- ----------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **0.1**       ---           Project team      Initial draft specification.
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Version**   **Date**      **Author**                **Summary**
+  ------------- ------------- ------------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **0.1**       ---           Project team              Initial draft specification.
 
-  **0.2**       ---           M. Mahgoub        Consolidated SRS with diagrams, mockups and worked requirements; project team and approval recorded.
+  **0.2**       ---           M. Mahgoub                Consolidated SRS with diagrams, mockups and worked requirements; project team and approval recorded.
 
-  **1.0**       8 Sep 2026    M. Mahgoub        Master SRS. Full reconstruction from the sixteen supplied specifications: conflict resolution (§1.4), 28 architectural golden rules (§4), consolidated data model (§37), API, backend, error, infrastructure, UI/UX, NFR, lifecycle, state machine, use case, QA, traceability, scope, risk and open-decision sections. Requirement IDs reconciled per Appendix B.
+  **1.0**       8 Sep 2026    M. Mahgoub                Master SRS. Full reconstruction from the sixteen supplied specifications: conflict resolution (§1.4), 28 architectural golden rules (§4), consolidated data model (§37), API, backend, error, infrastructure, UI/UX, NFR, lifecycle, state machine, use case, QA, traceability, scope, risk and open-decision sections. Requirement IDs reconciled per Appendix B.
 
-  1.1           11 Sep 2026   Audit pass        Systematic audit of v1.0 against its own decisions, data model and traceability chain. No CONFIRMED decision reversed. Contradictions resolved: Group/Classroom cardinality (§37.3.2 vs GEN-008/GRP-001); cross-tenant storage deduplication (§37.3.4 vs §14.4); duplicate ID BR-014 split --- classroom/group-change rule renumbered BR-015, payment rule keeps BR-014. Broken cross-references repaired: §3 terminology citation, §17.2/§18.2 open-decision citations (now D-17/D-18), §35.3 citation (D-14), QBN-018→QBN-025, GEN-021→GEN-017, LDB-002→LDB-009, STR-016→STR-023, SEC-012→SEC-014 where it meant assistant delegation, §24.4 illustration count, §49.1/§52.1 section and area citations. New requirements closing gaps the document\'s own structure already implied: GEN-029, SEC-012\...015, ACT-009, STR-023, LDB-009, AUTH-127, ORG-009/010, §8.1 PER-001\...006, CRS-009/010, BR-021. Editorial: §32.3\'s retention table (duplicated §44.3) replaced with a pointer; §44.3 gained a trashed-file retention row. D-17 added to the launch-blocking list in Table 51.1.
+  1.1           11 Sep 2026   Audit pass                Systematic audit of v1.0 against its own decisions, data model and traceability chain. No CONFIRMED decision reversed. Contradictions resolved: Group/Classroom cardinality (§37.3.2 vs GEN-008/GRP-001); cross-tenant storage deduplication (§37.3.4 vs §14.4); duplicate ID BR-014 split --- classroom/group-change rule renumbered BR-015, payment rule keeps BR-014. Broken cross-references repaired: §3 terminology citation, §17.2/§18.2 open-decision citations (now D-17/D-18), §35.3 citation (D-14), QBN-018→QBN-025, GEN-021→GEN-017, LDB-002→LDB-009, STR-016→STR-023, SEC-012→SEC-014 where it meant assistant delegation, §24.4 illustration count, §49.1/§52.1 section and area citations. New requirements closing gaps the document\'s own structure already implied: GEN-029, SEC-012\...015, ACT-009, STR-023, LDB-009, AUTH-127, ORG-009/010, §8.1 PER-001\...006, CRS-009/010, BR-021. Editorial: §32.3\'s retention table (duplicated §44.3) replaced with a pointer; §44.3 gained a trashed-file retention row. D-17 added to the launch-blocking list in Table 51.1.
 
-  1.2           11 Sep 2026   D-08 resolution   Resolves D-08 (§51) per explicit Project Owner decision: grade scales are configurable per Organization, never a single global scale, with the scale and criteria in force at grade creation/release permanently preserved. Adds GRD-013\...020 (§17.1), the GradingScale and GradingScaleVersion entities (§37.3.3, copy-on-write mirroring QuestionVersion/FileVersion), Grade.grading_scale_version_id, the GRADING_SCALE_MANAGE administrative permission (§26.3), the /grading-scales API resource group (§38.2), and validation/UI guidance in §17.1. D-08 marked resolved in §51 and removed from the launch-blocking list; D-17 added to that list, having been omitted when first registered in v1.1. No other CONFIRMED decision changed.
+  1.2           11 Sep 2026   D-08 resolution           Resolves D-08 (§51) per explicit Project Owner decision: grade scales are configurable per Organization, never a single global scale, with the scale and criteria in force at grade creation/release permanently preserved. Adds GRD-013\...020 (§17.1), the GradingScale and GradingScaleVersion entities (§37.3.3, copy-on-write mirroring QuestionVersion/FileVersion), Grade.grading_scale_version_id, the GRADING_SCALE_MANAGE administrative permission (§26.3), the /grading-scales API resource group (§38.2), and validation/UI guidance in §17.1. D-08 marked resolved in §51 and removed from the launch-blocking list; D-17 added to that list, having been omitted when first registered in v1.1. No other CONFIRMED decision changed.
 
-  1.3           11 Sep 2026   D-16 provenance   Resolves the process question in D-16 (§51) per explicit Project Owner instruction, without inventing or modifying any requirement text. Adds a new status, PROVISIONAL (§1.3), for requirements reconstructed from a source specification that was never supplied. Adds provenance tables 9.1a and 21.1a, classifying every CLS-\*/GRP-\* (§9.2) and AST-\* (§21.2, §21.3) requirement as either CONFIRMED elsewhere (independently corroborated by a golden rule, another section, the data model, or a worked use case --- the large majority) or PROVISIONAL (CLS-002, CLS-003, GRP-002, AST-009, and two rows of Table 21.2 --- inference only, no independent corroboration found). Removed the inaccurate blanket "--- CONFIRMED" from the §9.2 heading. D-16\'s register entry updated to point at the new tables. No CONFIRMED decision, and no requirement\'s normative text, changed. Per Project Owner instruction, Phase 5/6 architecture work is not blocked by this --- only the specific PROVISIONAL rows\' final behaviour awaits confirmation.
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  1.3           11 Sep 2026   D-16 provenance           Resolves the process question in D-16 (§51) per explicit Project Owner instruction, without inventing or modifying any requirement text. Adds a new status, PROVISIONAL (§1.3), for requirements reconstructed from a source specification that was never supplied. Adds provenance tables 9.1a and 21.1a, classifying every CLS-\*/GRP-\* (§9.2) and AST-\* (§21.2, §21.3) requirement as either CONFIRMED elsewhere (independently corroborated by a golden rule, another section, the data model, or a worked use case --- the large majority) or PROVISIONAL (CLS-002, CLS-003, GRP-002, AST-009, and two rows of Table 21.2 --- inference only, no independent corroboration found). Removed the inaccurate blanket "--- CONFIRMED" from the §9.2 heading. D-16\'s register entry updated to point at the new tables. No CONFIRMED decision, and no requirement\'s normative text, changed. Per Project Owner instruction, Phase 5/6 architecture work is not blocked by this --- only the specific PROVISIONAL rows\' final behaviour awaits confirmation.
+
+  1.4           13 Sep 2026   Flutter client strategy   Records the Project Owner's client-platform decision (13 September 2026): Flutter replaces the responsive-web-client decision of v1.0--v1.3 as the EduCapsules client technology. V1 ships a Flutter desktop application (Windows/macOS/Linux); the same Flutter application/codebase extends to Android and iOS as a FUTURE RELEASE, not V1 delivery, per an explicit Project Owner release decision rather than an unmet-requirement trigger. Updated: §5.2 (client applications), Table 41.1 and the PLATFORM DECISION box (§41.1), the Static client delivery row of Table 41.3, FE-001/003/004/010 (§41.2), AUTH-125 (§35.2), UI-010/015/016/017/018 (§42.6), PERF-004/005 (§43.1), NFR-021/022/023 (§43.5), Table 49.1 and Table 49.2 (§49), and CON-05 (§50.1, with new risk R-14 added to Table 50.2). No other CONFIRMED decision changed; no unrelated requirement text was modified. Full rationale recorded in docs/decisions/06-flutter-client-decision.md.
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 52.5 --- Document change log.*
 

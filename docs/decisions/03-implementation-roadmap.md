@@ -3,7 +3,7 @@
 **Phase:** 0
 **Status:** Confirms and formalizes the 28-phase roadmap given by the Project Owner. No changes to phase order or scope were made — I cross-checked it against the SRS and it maps cleanly. One gap is flagged below (§3) for awareness, not as a decision requiring approval — it's a sequencing completeness note, not a product change.
 
-This document is stack-agnostic: module paths are indicative (`apps/api/src/modules/<name>`) and will be finalized in Phase 1 once the backend framework proposal (see Assumptions Register, section B) is confirmed.
+Module paths below now reflect the confirmed stack (Assumptions Register §A, A-05..A-14): `apps/api/src/modules/<name>` for the backend, `apps/flutter/lib/features/<name>` for the client. The client path was updated 2026-09-13 when Flutter superseded the earlier React + Vite decision (`06-flutter-client-decision.md`); no phase order or dependency changed.
 
 ## 1. Dependency order (as given, confirmed feasible)
 
@@ -25,7 +25,7 @@ This is a valid topological ordering of the SRS's own dependencies (§7 authoriz
 |---|---|---|---|
 | 0 | §1, §51, Appendix A–E | D, R, CON | `docs/decisions/`, `docs/srs-traceability/` |
 | 1 | §5, §34, §37, §39, §41 | GEN, SEC, DB, BE, INF | `docs/decisions/` (architecture proposal), no code |
-| 2 | §39 (BE-006..010), §41.3–41.5 | BE, INF | repo root, `.github/workflows/`, `packages/config` |
+| 2 | §39 (BE-006..010), §41.3–41.5 | BE, INF | repo root, `.github/workflows/`, `packages/config`, `apps/flutter/` scaffold (client is Flutter, not a React/Vite web app — see `06-flutter-client-decision.md`) |
 | 3 | §8, §37.3.1 | ORG, DB | `apps/api/src/modules/identity/`, `database/migrations/0001_*` |
 | 4 | §35, §36 | AUTH, AUD | `apps/api/src/modules/auth/` |
 | 5 | §6, §7, §9, §21, §22, §26 | SEC, CLS/GRP, AST, PAR, ORG | `apps/api/src/modules/authz/` (the centralized policy engine — §7.1's pipeline lives here and nowhere else). D-16 (§9/§21 provenance, v1.3) does not block this — the pipeline itself rests on GEN-006/GEN-008, both independently CONFIRMED |
@@ -37,19 +37,19 @@ This is a valid topological ordering of the SRS's own dependencies (§7 authoriz
 | 11 | §12, §45.1 | ACT | `apps/api/src/modules/activities/` |
 | 12 | §12.6, §45.2, DB-013 | ACT, DB | `apps/api/src/modules/submissions/` |
 | 13 | §17, §45.3 | GRD, PRG | `apps/api/src/modules/grading/` — D-08 resolved (grading scale configurable per Organization, GRD-013..020); no longer blocked |
-| 14 | §19, §24, §25, S-02/06/07/08/09/12/13 | TCH, UI | `apps/web/src/features/teacher/` |
-| 15 | §20, §24, §25, S-01/10/11/14/15 | STU, UI | `apps/web/src/features/student/` |
-| 16 | §21, S-03 | AST | `apps/web/src/features/assistant/`. Before implementing AST-009 (concurrent Teacher relationships) specifically, check SRS Table 21.1a — it's PROVISIONAL (D-16); everything else in §21 is confirmed elsewhere and unaffected |
-| 17 | §22, S-04 | PAR | `apps/web/src/features/parent/` |
+| 14 | §19, §24, §25, S-02/06/07/08/09/12/13 | TCH, UI | `apps/flutter/lib/features/teacher/` — Flutter screens (Desktop V1; same codebase for the future Android/iOS release), not React components |
+| 15 | §20, §24, §25, S-01/10/11/14/15 | STU, UI | `apps/flutter/lib/features/student/` |
+| 16 | §21, S-03 | AST | `apps/flutter/lib/features/assistant/`. Before implementing AST-009 (concurrent Teacher relationships) specifically, check SRS Table 21.1a — it's PROVISIONAL (D-16); everything else in §21 is confirmed elsewhere and unaffected |
+| 17 | §22, S-04 | PAR | `apps/flutter/lib/features/parent/` |
 | 18 | §27 | MSG | `apps/api/src/modules/communication/` |
 | 19 | §28, §29 | NOT, CAL | `apps/api/src/modules/notifications/`, `apps/api/src/modules/calendar/` |
 | 20 | §18, S-15 | ACH, PTS, LDB | `apps/api/src/modules/gamification/` |
 | 21 | §30, §31 | PAY, BIL | `apps/api/src/modules/payments/` |
-| 22 | §23, §26.3–26.4 | ADM | `apps/api/src/modules/admin/`, `apps/web/src/features/admin/` |
+| 22 | §23, §26.3–26.4 | ADM | `apps/api/src/modules/admin/`, `apps/flutter/lib/features/admin/` |
 | 23 | §34.3–34.4, Threat model | SEC | cross-cutting — no new module, adversarial test pass over all of the above |
 | 24 | §43.1–43.2 | PERF | `tests/performance/` |
 | 25 | §41.4–41.5, §44 | INF, LIF | `infrastructure/`, `scripts/backup/` |
-| 26 | §47 | QA, TC | `tests/` (all levels) |
+| 26 | §47 | QA, TC | `tests/` (all levels) — backend integration/E2E plus Flutter desktop testing (`flutter test` unit/widget, `integration_test` for on-device/desktop flows); Android/iOS testing is added when the mobile release is scheduled, not before |
 | 27 | §48 | TRC | `docs/srs-traceability/` |
 | 28 | §48.1, §51 | AC | `docs/decisions/` (readiness report) |
 

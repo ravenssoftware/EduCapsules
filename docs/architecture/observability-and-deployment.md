@@ -8,8 +8,8 @@ MVP runs entirely on Cloudflare; production runs on an InterServer Linux VPS wit
 
 | Concern | MVP | Production | Portability mechanism |
 |---|---|---|---|
-| Static client | Pages | same static bundle behind the VPS's reverse proxy | plain static build output, no platform runtime baked in |
-| App runtime | Workers | containerized service behind reverse proxy (INF-001) | Hono running unmodified on both (proposed, `backend.md` §6) |
+| Client distribution | N/A — not a Cloudflare concern | N/A — not a server-infrastructure concern | The Flutter client (`06-flutter-client-decision.md`) compiles to native desktop binaries distributed directly (installer download); a future Android/iOS release adds app-store distribution. No static web bundle is served by either target. |
+| App runtime | Workers | containerized service behind reverse proxy (INF-001) | Hono running unmodified on both (`backend.md` §6) |
 | Relational data | D1 | PostgreSQL | one migration set, one schema definition (`database.md` §1, §7) |
 | Object storage | R2 | S3-compatible or local volume + off-site replication | `ObjectStore` interface (`backend.md` §5) |
 | Async work | Queues | Redis-backed durable queue | `JobQueue` interface |
@@ -62,9 +62,9 @@ Deployment is automated and repeatable from a clean environment — no manual se
 
 Every NFR in §43 is measurable or it is not a requirement (GEN-027) — where a realistic target can't yet be derived from a measured load profile, the SRS fixes the *metric and its measurement method* and marks the threshold TBD (D-05) rather than inventing a number that would be either trivially met or impossible. PERF-001..010 (API read/write latency, time-to-interactive, bundle size, autosave round trip, bulk grade release, upload throughput, video start time, search latency) are the ten metrics this architecture must be instrumented to measure from day one — the instrumentation points are fixed now (this is a Phase 2/24 CI-and-load-testing deliverable), even though the thresholds are set later from the first load test against production-shaped data.
 
-## 8. Client platform scope (§41.1, Table 41.1)
+## 8. Client platform scope (§41.1, Table 41.1; `docs/decisions/06-flutter-client-decision.md`)
 
-V1 ships exactly one client: a responsive web application, fully usable on a phone browser (CONFIRMED, already reflected in the A-02 assumption). A PWA shell is PROPOSED-if-effort-permits; native mobile and desktop apps are FUTURE. This is a deliberate scope decision the SRS itself frames as serving the mission better than three half-finished clients — nothing in Phase 1 architecture should budget effort toward a second client.
+V1 ships a Flutter desktop application (Windows/macOS/Linux) as the initial demo target (CONFIRMED, A-14, superseding the earlier web-first decision, A-02). The same Flutter application/codebase is architected from the outset to extend to Android and iOS as a FUTURE RELEASE, not V1 delivery — release timing is a Project Owner decision, not gated on an unmet-requirement trigger. The Installable PWA proposal and the responsive-web-client decision are both SUPERSEDED (SRS Table 41.1, v1.4). Nothing in Phase 1 architecture should budget effort toward a browser-hosted client; distribution is native binaries, not a served web bundle (§1 above).
 
 ## 9. What this document does not decide
 

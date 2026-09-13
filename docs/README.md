@@ -3,7 +3,7 @@
 Start here on any device: clone the repo, read this file, follow the links.
 
 ## Source of truth
-- [`srs/`](srs/README.md) — the Master SRS (v1.3: v1.1 audit + D-08 grading-scale resolution + D-16 §9/§21 provenance classification). All requirement IDs referenced anywhere in this repo point here.
+- [`srs/`](srs/README.md) — the Master SRS (v1.4: v1.1 audit + D-08 grading-scale resolution + D-16 §9/§21 provenance classification + v1.4 Flutter client-strategy update). All requirement IDs referenced anywhere in this repo point here.
 
 ## Phase 0 — Specification & Decision Freeze
 - [`decisions/00-architecture-readiness-report.md`](decisions/00-architecture-readiness-report.md) — what the SRS fixes vs. what's genuinely open
@@ -19,7 +19,8 @@ Start here on any device: clone the repo, read this file, follow the links.
 - [`architecture/storage-and-content.md`](architecture/storage-and-content.md) — Teacher Storage, publishing, and the Content Gateway
 - [`architecture/security-and-trust-boundaries.md`](architecture/security-and-trust-boundaries.md) — trust boundaries, security controls, threat-model mapping
 - [`architecture/observability-and-deployment.md`](architecture/observability-and-deployment.md) — deployment topology, migration path, observability, capacity/availability
-- [`decisions/05-phase1-decisions-pending-approval.md`](decisions/05-phase1-decisions-pending-approval.md) — the backend/frontend stack decisions, approved 2026-09-13 (filename kept for link stability)
+- [`decisions/05-phase1-decisions-pending-approval.md`](decisions/05-phase1-decisions-pending-approval.md) — the backend stack decisions, approved 2026-09-13 (filename kept for link stability)
+- [`decisions/06-flutter-client-decision.md`](decisions/06-flutter-client-decision.md) — **the client is Flutter**, not React + Vite (Project Owner decision, 2026-09-13) — read this before touching any client-facing screen or component
 
 ## Traceability
 - [`srs-traceability/00-traceability-strategy.md`](srs-traceability/00-traceability-strategy.md) — the mechanism (format, CI enforcement plan, test-level map)
