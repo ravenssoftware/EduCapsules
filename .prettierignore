@@ -1,0 +1,9 @@
+apps/flutter/
+**/dist/
+**/build/
+**/coverage/
+pnpm-lock.yaml
+
+# Hand-authored long-form documentation (SRS, architecture, decisions) is
+# edited and reviewed as prose, not auto-formatted as code.
+docs/

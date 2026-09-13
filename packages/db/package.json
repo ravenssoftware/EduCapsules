@@ -1,0 +1,7 @@
+{
+  "name": "@educapsules/db",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Database schema, migrations and repository interfaces. Intentionally empty — Phase 3 (Database Foundation) builds the Drizzle schema and D1/Postgres dialect config here, per docs/architecture/database.md."
+}

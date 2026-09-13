@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+coverage/
+
+# Environment / secrets — never commit real values
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Test artifacts
+playwright-report/
+test-results/
+.vitest-cache/
+
+# Flutter / Dart (apps/flutter)
+apps/flutter/.dart_tool/
+apps/flutter/.flutter-plugins
+apps/flutter/.flutter-plugins-dependencies
+apps/flutter/.packages
+apps/flutter/.pub-cache/
+apps/flutter/.pub/
+apps/flutter/build/
+apps/flutter/**/GeneratedPluginRegistrant.*
+apps/flutter/**/.gradle/
+apps/flutter/**/local.properties
+apps/flutter/**/*.iml
+apps/flutter/android/**/gradle-wrapper.jar
+apps/flutter/ios/Flutter/Flutter.podspec
+apps/flutter/ios/Pods/
+apps/flutter/**/*.g.dart
+apps/flutter/**/*.freezed.dart
+
+# Never commit signing material
+apps/flutter/android/key.properties
+apps/flutter/**/*.jks
+apps/flutter/**/*.keystore
+apps/flutter/ios/**/*.mobileprovision
+apps/flutter/ios/**/*.p12
