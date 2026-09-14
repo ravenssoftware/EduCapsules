@@ -58,12 +58,19 @@ export const users = sqliteTable(
     organizationId: text("organization_id").notNull(),
     email: text("email").notNull(),
     phone: text("phone"),
-    /** Nullable: Phase 4 (Authentication) sets this; not every future auth method needs one. */
+    /** Nullable: not every future auth method (e.g. a future SSO) needs one (AUTH-121, AUTH-126). */
     passwordHash: text("password_hash"),
-    status: text("status").notNull().default("active"),
+    /** Table 44.1 / §45.3 account state machine: PENDING -> ACTIVE -> (SUSPENDED|LOCKED|DEACTIVATED) -> ANONYMISED -> PURGED. */
+    status: text("status").notNull().default("pending"),
     locale: text("locale").notNull(),
     timezone: text("timezone").notNull(),
     mfaEnabled: integer("mfa_enabled", { mode: "boolean" }).notNull().default(false),
+    /** SEC-032/AUTH-117: consecutive failed authentication attempts since the last success; resets on success or on auto-recovery from LOCKED. */
+    failedLoginCount: integer("failed_login_count").notNull().default(0),
+    /** Set alongside status='locked' (SEC-032); the account is eligible to self-recover to 'active' once this passes — see auth module lockout.ts. */
+    lockedUntil: integer("locked_until", { mode: "timestamp_ms" }),
+    /** AUTH-121: verified email is a precondition for PENDING -> ACTIVE. */
+    emailVerifiedAt: integer("email_verified_at", { mode: "timestamp_ms" }),
     /** DB-017: who created this row (e.g. an inviting Admin); null for self-registration. No FK — see schema-overview.md's DB-017 note. */
     createdBy: text("created_by"),
     createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
@@ -85,6 +92,13 @@ export const users = sqliteTable(
       name: "users_organization_fk",
     }),
     index("users_org_idx").on(t.organizationId),
+    // Table 44.1 account states — the full state machine (§45.3), including
+    // the two erasure-pipeline terminal states not reachable by any Phase 4
+    // code path yet (anonymised/purged are Phase 25, DB-003/§44).
+    check(
+      "users_status_check",
+      sql`${t.status} IN ('pending', 'active', 'suspended', 'locked', 'deactivated', 'anonymised', 'purged')`,
+    ),
   ],
 );
 

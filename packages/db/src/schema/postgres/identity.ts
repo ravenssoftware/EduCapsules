@@ -4,6 +4,7 @@ import {
   check,
   foreignKey,
   index,
+  integer,
   pgTable,
   primaryKey,
   text,
@@ -53,10 +54,13 @@ export const users = pgTable(
     email: text("email").notNull(),
     phone: text("phone"),
     passwordHash: text("password_hash"),
-    status: text("status").notNull().default("active"),
+    status: text("status").notNull().default("pending"),
     locale: text("locale").notNull(),
     timezone: text("timezone").notNull(),
     mfaEnabled: boolean("mfa_enabled").notNull().default(false),
+    failedLoginCount: integer("failed_login_count").notNull().default(0),
+    lockedUntil: timestamp("locked_until", { withTimezone: true }),
+    emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
     createdBy: text("created_by"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
@@ -72,6 +76,10 @@ export const users = pgTable(
       name: "users_organization_fk",
     }),
     index("users_org_idx").on(t.organizationId),
+    check(
+      "users_status_check",
+      sql`${t.status} IN ('pending', 'active', 'suspended', 'locked', 'deactivated', 'anonymised', 'purged')`,
+    ),
   ],
 );
 

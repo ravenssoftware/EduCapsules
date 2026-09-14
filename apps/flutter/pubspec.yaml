@@ -35,6 +35,17 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 
+  # AUTH-125: platform-appropriate secure credential storage (OS keychain,
+  # keystore, or credential locker) — the same package/API works unchanged
+  # across Windows/macOS/Linux (V1 desktop) and Android/iOS (future
+  # release), which is exactly the "no rewrite" requirement in §41.1.
+  flutter_secure_storage: ^9.2.2
+
+  # Minimal HTTP client for the /api/v1/auth surface (§38). Kept to the
+  # standard `http` package rather than a heavier client — nothing here
+  # needs interceptors, retries or GraphQL.
+  http: ^1.2.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -22,6 +22,20 @@
       "when": 1789345164257,
       "tag": "0002_panoramic_sentry",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1789346959197,
+      "tag": "0003_panoramic_leopardon",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1789346980931,
+      "tag": "0004_security_events_append_only",
+      "breakpoints": true
     }
   ]
 }

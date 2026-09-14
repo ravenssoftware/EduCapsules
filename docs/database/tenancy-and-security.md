@@ -30,6 +30,8 @@ Tables holding user-visible academic content (`users`, `classrooms`, `groups`, `
 
 `audit_log` never stores credentials, access tokens, or other secrets — only `actor_user_id`/`actor_role`, the action name, a polymorphic `target_type`/`target_id`, opaque before/after references, an `ip_hash` (never a raw IP), and an optional `login_session_id`/`reason`.
 
+**`security_events`** (added Phase 4, DB-004's second named append-only table alongside `audit_log`) gets the exact same treatment — `packages/db/migrations/postgres/0004_security_events_append_only.sql` mirrors the guarded PostgreSQL `REVOKE`, and `packages/db/migrations/sqlite/0004_security_events_append_only.sql` carries the same documented SQLite/D1 gap. It is narrower in purpose than `audit_log`: only the abuse/threat-signal subset of Table 36.2's Authentication events that API-018 specifically requires (`RATE_LIMIT_EXCEEDED`, `LOGIN_BRUTE_FORCE`, `ACCOUNT_LOCKED`, `TOKEN_REUSE_DETECTED`, `SUSPICIOUS_SESSION`) — ordinary authentication events (`LOGIN_SUCCESS`, `LOGIN_FAILED`, `LOGOUT`, `MFA_SUCCESS`, etc.) go to `audit_log` instead, per `docs/auth/authentication.md`. It is also the one table in this schema whose `organization_id` is nullable by design: some events (an anonymous rate-limit trip against the public login endpoint before any credential is even checked) have no resolvable tenant yet.
+
 ## 4. Seed data policy (never a source of implied product requirements)
 
 `packages/db/src/seed/data.ts` has two tiers:

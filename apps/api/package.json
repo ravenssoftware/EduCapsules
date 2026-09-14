@@ -12,13 +12,18 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@educapsules/db": "workspace:*",
     "@educapsules/shared": "workspace:*",
     "@hono/node-server": "^2.1.1",
+    "drizzle-orm": "^0.45.2",
+    "hash-wasm": "^4.12.0",
     "hono": "^4.13.7"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
+    "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^22.20.2",
+    "better-sqlite3": "^13.0.3",
     "tsx": "^4.23.13",
     "typescript": "^6.0.3"
   }

@@ -30,32 +30,38 @@ Drizzle ORM does not offer one table builder that targets both SQLite and Postgr
 
 The implementation instead hand-mirrors two schema modules, kept honest by `packages/db/src/schema/parity.test.ts`, which introspects both via Drizzle's `getTableColumns`/`getTableName` and asserts, per table: the same table-name set across both dialects, the same column-name set, the same `notNull` per column, and the same `primary` status per column. It deliberately does **not** compare concrete SQL types (a portable UTC timestamp is legitimately `integer` in SQLite and `timestamp with time zone` in Postgres) — see §5 below. A schema change that adds a column, constraint, or table to one dialect and not the other fails this test, not just code review.
 
-## 3. Entities implemented (Phase 3 foundation scope only)
+## 3. Entities implemented (Phase 3 foundation + Phase 4 identity/auth)
 
 Per the SRS's authoritative terminology — **Organization → Classroom → Group**; **Subject → Course → Cycle → Topic** — kept distinct, never collapsed:
 
-| Table | Purpose | SRS reference |
-|---|---|---|
-| `organizations` | Tenant root | Table 37.2, ORG-* |
-| `users` | Identity, org-scoped | Table 37.2, DB-012 |
-| `user_profiles` | Display profile, 1:1 with `users` | Table 37.2 |
-| `roles` | System roles (org_id null) + org-custom roles | GEN-006, Table 37.2 |
-| `permissions` | Global permission catalogue | §26 |
-| `role_permissions` | Role ↔ Permission join | §26 |
-| `user_role_assignments` | Scoped role grants (ORG/CLASSROOM/GROUP/SUBJECT/COURSE) | §7.3 |
-| `academic_periods` | Academic year/term | PER-* |
-| `classrooms` | Organization → Classroom | CLS-* |
-| `groups` | Classroom → Group (mandatory container, GEN-008/GRP-001) | GRP-* |
-| `memberships` | User ↔ (Classroom \| Group), polymorphic | GRP-*, CLS-* |
-| `subjects` | Subject catalogue | SUB-* |
-| `courses` | Subject → Course | CRS-* |
-| `course_audiences` | Course ↔ (Classroom \| Group), polymorphic | CRS-* |
-| `cycles` | Course → Cycle | CYC-* |
-| `topics` | Cycle → Topic | TOP-* |
-| `enrollments` | Student ↔ Course, per academic period | CRS-*, PER-* |
-| `audit_log` | Append-only audit trail | DB-004, AUD-* |
+| Table | Purpose | SRS reference | Phase |
+|---|---|---|---|
+| `organizations` | Tenant root | Table 37.2, ORG-* | 3 |
+| `users` | Identity, org-scoped | Table 37.2, DB-012 | 3 (extended in 4) |
+| `user_profiles` | Display profile, 1:1 with `users` | Table 37.2 | 3 |
+| `roles` | System roles (org_id null) + org-custom roles | GEN-006, Table 37.2 | 3 |
+| `permissions` | Global permission catalogue | §26 | 3 |
+| `role_permissions` | Role ↔ Permission join | §26 | 3 |
+| `user_role_assignments` | Scoped role grants (ORG/CLASSROOM/GROUP/SUBJECT/COURSE) | §7.3 | 3 |
+| `academic_periods` | Academic year/term | PER-* | 3 |
+| `classrooms` | Organization → Classroom | CLS-* | 3 |
+| `groups` | Classroom → Group (mandatory container, GEN-008/GRP-001) | GRP-* | 3 |
+| `memberships` | User ↔ (Classroom \| Group), polymorphic | GRP-*, CLS-* | 3 |
+| `subjects` | Subject catalogue | SUB-* | 3 |
+| `courses` | Subject → Course | CRS-* | 3 |
+| `course_audiences` | Course ↔ (Classroom \| Group), polymorphic | CRS-* | 3 |
+| `cycles` | Course → Cycle | CYC-* | 3 |
+| `topics` | Cycle → Topic | TOP-* | 3 |
+| `enrollments` | Student ↔ Course, per academic period | CRS-*, PER-* | 3 |
+| `audit_log` | Append-only audit trail | DB-004, AUD-* | 3 |
+| `login_sessions` | LoginSession — opaque, hash-stored session credentials | Table 37.2, §35, AUTH-101..119 | 4 |
+| `mfa_factors` | TOTP enrollment state, encrypted secret | Table 37.2, AUTH-116/126 | 4 |
+| `mfa_recovery_codes` | Single-use MFA backup codes | AUTH-127 | 4 |
+| `password_reset_tokens` | Single-use, short-lived password-reset credentials | AUTH-121 | 4 |
+| `email_verification_tokens` | Single-use, short-lived email-verification credentials | AUTH-121 | 4 |
+| `security_events` | Append-only abuse/threat signals (rate limits, brute force, token reuse) | DB-004, API-018 | 4 |
 
-No entity outside this list (e.g. Activity, StudentActivity, Submission, TeachingSession, LoginSession — each explicitly distinct per the SRS and this instruction) was implemented; those belong to later phases that own that domain. `Login Session` (auth) and `Teaching Session` (a scheduled class meeting) are different concepts and neither exists yet — Phase 3 is identity and academic structure only.
+No entity outside this list (e.g. Activity, StudentActivity, Submission, TeachingSession — each explicitly distinct per the SRS and this instruction) is implemented; those belong to later phases that own that domain. `Teaching Session` (a scheduled class meeting) is a different concept from `Login Session` and still doesn't exist — see `docs/auth/authentication.md` for the full Phase 4 authentication design.
 
 ## 4. Identifiers (DB-002)
 
@@ -81,8 +87,13 @@ CHECK constraints were added only where the SRS text itself gives an explicit, c
 | `courses.status` | `draft, published, archived` | CRS-002 |
 | `memberships.container_type` | `classroom, group` | Structural — the polymorphic column has exactly these two legal targets by construction, not by business choice |
 | `course_audiences.target_type` | `classroom, group` | Same as above |
+| `users.status` | `pending, active, suspended, locked, deactivated, anonymised, purged` | Table 44.1 / §45.3's full account-state machine (added Phase 4, which owns account lifecycle) |
+| `mfa_factors.type` | `TOTP` | AUTH-126 — the only first-class factor decided so far; others are explicitly FUTURE |
+| `mfa_factors.status` | `pending, active, disabled` | Structural — enrollment lifecycle |
+| `security_events.event_type` | `RATE_LIMIT_EXCEEDED, LOGIN_BRUTE_FORCE, ACCOUNT_LOCKED, TOKEN_REUSE_DETECTED, SUSPICIOUS_SESSION` | Table 36.2's Authentication-domain vocabulary, the subset this table's narrower purpose (API-018) actually raises |
+| `security_events.severity` | `medium, high, critical` | §34.4's own severity vocabulary — no invented `low` tier |
 
-Other status-like columns (`classrooms.status`, `groups.status`, `subjects.status`, `academic_periods.status`, `users.status`, `enrollments.status`) deliberately carry **no** CHECK constraint: their value sets are not enumerated anywhere in the SRS, and locking one in now would silently pre-commit an unstated business rule ahead of the phase that actually owns that entity's lifecycle. This is a scope boundary, not an oversight.
+Other status-like columns (`classrooms.status`, `groups.status`, `subjects.status`, `academic_periods.status`, `enrollments.status`) deliberately carry **no** CHECK constraint: their value sets are not enumerated anywhere in the SRS, and locking one in now would silently pre-commit an unstated business rule ahead of the phase that actually owns that entity's lifecycle. This is a scope boundary, not an oversight.
 
 Two requirements are explicitly **PROVISIONAL** per decision record D-16 (CLS-002/CLS-003/GRP-002): rather than hard-coding one unconfirmed interpretation into a constraint, the schema stays permissive there. See the header comment in `src/schema/sqlite/academic-structure.ts` for the exact citation.
 
