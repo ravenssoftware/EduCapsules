@@ -13,6 +13,29 @@ jobs:
   backend:
     name: Backend (lint, typecheck, test)
     runs-on: ubuntu-latest
+    # A real PostgreSQL service container — the database package's
+    # PostgreSQL behavior tests (packages/db/src/schema/postgres/) connect
+    # to it via DATABASE_URL below rather than merely asserting the
+    # migration command exits successfully (Phase 3 requirement). The
+    # tests skip themselves gracefully when DATABASE_URL is unset (e.g. a
+    # contributor running `pnpm test` without Postgres locally), but here
+    # it is always set, so they always actually run.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: educapsules
+          POSTGRES_PASSWORD: educapsules_ci
+          POSTGRES_DB: educapsules_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U educapsules"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://educapsules:educapsules_ci@localhost:5432/educapsules_ci
     steps:
       - uses: actions/checkout@v4
 
@@ -36,6 +59,26 @@ jobs:
 
       - name: Typecheck
         run: pnpm run typecheck
+
+      - name: Database — apply SQLite migrations (CLI script itself, not just the in-test migrator)
+        working-directory: packages/db
+        env:
+          SQLITE_DB_PATH: ./ci-check.sqlite
+        run: pnpm run db:migrate:sqlite
+
+      - name: Database — seed SQLite (system roles + dev sample data)
+        working-directory: packages/db
+        env:
+          SQLITE_DB_PATH: ./ci-check.sqlite
+        run: pnpm run db:seed:sqlite:dev
+
+      - name: Database — apply PostgreSQL migrations (CLI script itself, not just the in-test migrator)
+        working-directory: packages/db
+        run: pnpm run db:migrate:postgres
+
+      - name: Database — seed PostgreSQL (system roles + dev sample data)
+        working-directory: packages/db
+        run: pnpm run db:seed:postgres:dev
 
       - name: Test
         run: pnpm run test

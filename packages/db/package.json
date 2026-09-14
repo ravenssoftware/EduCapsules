@@ -3,5 +3,33 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "description": "Database schema, migrations and repository interfaces. Intentionally empty — Phase 3 (Database Foundation) builds the Drizzle schema and D1/Postgres dialect config here, per docs/architecture/database.md."
+  "description": "Database schema, migrations, seeds and connection factories. Drizzle ORM, dual-dialect: SQLite/D1 (MVP) and PostgreSQL (production). See docs/database/ for the full schema overview and docs/architecture/database.md for the design rationale.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "db:generate:sqlite": "drizzle-kit generate --config drizzle.sqlite.config.ts",
+    "db:generate:postgres": "drizzle-kit generate --config drizzle.postgres.config.ts",
+    "db:migrate:sqlite": "tsx src/scripts/migrate-sqlite.ts",
+    "db:migrate:postgres": "tsx src/scripts/migrate-postgres.ts",
+    "db:seed:sqlite": "tsx src/scripts/seed-sqlite.ts",
+    "db:seed:sqlite:dev": "tsx src/scripts/seed-sqlite.ts --dev",
+    "db:seed:postgres": "tsx src/scripts/seed-postgres.ts",
+    "db:seed:postgres:dev": "tsx src/scripts/seed-postgres.ts --dev",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@educapsules/shared": "workspace:*",
+    "better-sqlite3": "^13.0.3",
+    "drizzle-orm": "^0.45.2",
+    "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^22.20.2",
+    "@types/pg": "^8.23.1",
+    "drizzle-kit": "^0.31.10",
+    "tsx": "^4.23.13",
+    "typescript": "^6.0.3"
+  }
 }

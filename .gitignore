@@ -29,6 +29,10 @@ playwright-report/
 test-results/
 .vitest-cache/
 
+# Local SQLite database files (dev/CI only — never a source artifact)
+*.sqlite
+*.sqlite3
+
 # Flutter / Dart (apps/flutter)
 apps/flutter/.dart_tool/
 apps/flutter/.flutter-plugins
