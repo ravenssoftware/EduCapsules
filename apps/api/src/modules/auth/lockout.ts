@@ -23,12 +23,12 @@ export function isCurrentlyLocked(user: UserRow, now: Date): boolean {
   );
 }
 
-/** Returns true if this failure just triggered a new lock (caller uses this to decide whether to raise ACCOUNT_LOCKED). */
+/** Returns true if this failure just triggered a new lock (caller uses this to decide whether to raise ACCOUNT_LOCKED), plus the resulting attempt count (progressive-delay.ts keys off this). */
 export async function recordFailedLogin(
   repo: AuthRepository,
   user: UserRow,
   now: Date,
-): Promise<{ locked: boolean }> {
+): Promise<{ locked: boolean; failedLoginCount: number }> {
   // A lock whose timer has already expired self-clears on the next attempt,
   // successful or not, rather than requiring a separate unlock action.
   const startingCount =
@@ -42,7 +42,7 @@ export async function recordFailedLogin(
       lockedUntil: new Date(now.getTime() + LOCKOUT_DURATION_MS),
       updatedAt: now,
     });
-    return { locked: true };
+    return { locked: true, failedLoginCount };
   }
 
   await repo.patchUser(user.organizationId, user.id, {
@@ -50,7 +50,7 @@ export async function recordFailedLogin(
     updatedAt: now,
     ...(user.status === "locked" ? { status: "active" as const, lockedUntil: null } : {}),
   });
-  return { locked: false };
+  return { locked: false, failedLoginCount };
 }
 
 export async function recordSuccessfulLogin(

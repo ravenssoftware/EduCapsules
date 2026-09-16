@@ -2,13 +2,14 @@ import { Hono, type Context } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { optionalEnv } from "@educapsules/shared";
 import type { AppEnv } from "../types.js";
-import { AuthDomainError, type AuthErrorCode } from "../modules/auth/errors.js";
+import { AUTH_ERROR_STATUS, AuthDomainError } from "../modules/auth/errors.js";
 import { ipHashFromRequest, rateLimit, requireSession } from "../modules/auth/middleware.js";
 import {
   InMemoryRateLimiter,
   LOGIN_RATE_LIMIT,
   MFA_RATE_LIMIT,
   PASSWORD_RESET_RATE_LIMIT,
+  REGISTER_RATE_LIMIT,
 } from "../modules/auth/rate-limit.js";
 import * as authService from "../modules/auth/service.js";
 import type { RequestContext } from "../modules/auth/service.js";
@@ -21,23 +22,9 @@ import type { RequestContext } from "../modules/auth/service.js";
  * that middleware's own doc comment for why this is not authorization).
  */
 
-const ERROR_STATUS: Record<AuthErrorCode, number> = {
-  invalid_credentials: 401,
-  account_locked: 423,
-  account_not_active: 403,
-  email_not_verified: 403,
-  mfa_required: 401,
-  mfa_invalid: 400,
-  session_invalid: 401,
-  token_invalid: 400,
-  email_already_registered: 409,
-  validation_failed: 422,
-  rate_limited: 429,
-};
-
 function toHttpException(err: unknown): HTTPException {
   if (err instanceof AuthDomainError) {
-    return new HTTPException(ERROR_STATUS[err.code] as 400, { message: err.message });
+    return new HTTPException(AUTH_ERROR_STATUS[err.code] as 400, { message: err.message });
   }
   throw err;
 }
@@ -91,11 +78,15 @@ const resetLimiter = new InMemoryRateLimiter(
   PASSWORD_RESET_RATE_LIMIT.windowMs,
 );
 const mfaLimiter = new InMemoryRateLimiter(MFA_RATE_LIMIT.limit, MFA_RATE_LIMIT.windowMs);
+const registerLimiter = new InMemoryRateLimiter(
+  REGISTER_RATE_LIMIT.limit,
+  REGISTER_RATE_LIMIT.windowMs,
+);
 
 const byIp = (c: Context<AppEnv>) =>
   c.req.header("cf-connecting-ip") ?? c.req.header("x-forwarded-for") ?? "unknown";
 
-auth.post("/register", async (c) => {
+auth.post("/register", rateLimit(registerLimiter, byIp), async (c) => {
   const body = await readJsonBody(c.req.raw);
   const repo = c.get("authRepository");
   try {
@@ -146,6 +137,9 @@ auth.post("/login", rateLimit(loginLimiter, byIp), async (c) => {
     );
     if (result.outcome === "mfa_required") {
       return c.json({ status: "mfa_required", mfaChallengeToken: result.rawChallengeToken }, 200);
+    }
+    if (result.outcome === "mfa_setup_required") {
+      return c.json({ status: "mfa_setup_required", mfaSetupToken: result.rawSetupToken }, 200);
     }
     return c.json(
       { status: "authenticated", sessionToken: result.rawToken, userId: result.user.id },
@@ -285,7 +279,7 @@ auth.post("/password/change", requireSession(), async (c) => {
   }
 });
 
-auth.post("/mfa/enroll", requireSession(), async (c) => {
+auth.post("/mfa/enroll", requireSession({ allowMfaSetup: true }), async (c) => {
   const repo = c.get("authRepository");
   const session = c.get("session")!;
   const { secretBase32, provisioningUri } = await authService.enrollMfa(
@@ -296,20 +290,23 @@ auth.post("/mfa/enroll", requireSession(), async (c) => {
   return c.json({ secret: secretBase32, provisioningUri });
 });
 
-auth.post("/mfa/confirm", requireSession(), async (c) => {
+auth.post("/mfa/confirm", requireSession({ allowMfaSetup: true }), async (c) => {
   const body = await readJsonBody(c.req.raw);
   const repo = c.get("authRepository");
   const session = c.get("session")!;
   const ctx = await requestContext(c);
   try {
-    const { recoveryCodes } = await authService.confirmMfa(
+    const { recoveryCodes, upgradedSession } = await authService.confirmMfa(
       repo,
-      session.organizationId,
-      session.userId,
+      session,
       requireString(body, "code"),
       ctx,
     );
-    return c.json({ status: "mfa_enabled", recoveryCodes });
+    return c.json({
+      status: "mfa_enabled",
+      recoveryCodes,
+      ...(upgradedSession ? { sessionToken: upgradedSession.rawToken } : {}),
+    });
   } catch (err) {
     throw toHttpException(err);
   }

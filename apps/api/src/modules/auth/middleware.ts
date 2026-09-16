@@ -2,7 +2,7 @@ import type { MiddlewareHandler } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { sha256Hex } from "./crypto.js";
 import { requireValidSession } from "./service.js";
-import { AuthDomainError } from "./errors.js";
+import { AUTH_ERROR_STATUS, AuthDomainError } from "./errors.js";
 import type { AppEnv } from "../../types.js";
 import type { InMemoryRateLimiter } from "./rate-limit.js";
 
@@ -16,7 +16,7 @@ const BEARER_PREFIX = "Bearer ";
  * Phase 5 owns the authorization stages this middleware deliberately stops
  * short of.
  */
-export function requireSession(): MiddlewareHandler<AppEnv> {
+export function requireSession(opts: { allowMfaSetup?: boolean } = {}): MiddlewareHandler<AppEnv> {
   return async (c, next) => {
     const header = c.req.header("authorization");
     if (!header || !header.startsWith(BEARER_PREFIX)) {
@@ -25,11 +25,11 @@ export function requireSession(): MiddlewareHandler<AppEnv> {
     const rawToken = header.slice(BEARER_PREFIX.length).trim();
     const repo = c.get("authRepository");
     try {
-      const session = await requireValidSession(repo, rawToken);
+      const session = await requireValidSession(repo, rawToken, new Date(), opts);
       c.set("session", session);
     } catch (err) {
       if (err instanceof AuthDomainError) {
-        throw new HTTPException(401, { message: err.message });
+        throw new HTTPException(AUTH_ERROR_STATUS[err.code] as 400, { message: err.message });
       }
       throw err;
     }

@@ -25,6 +25,17 @@ export const SESSION_POLICY = {
    * validateSessionToken directly, bypassing that rejection) may consume it.
    */
   mfa_pending: { idleMs: 5 * 60 * 1000, absoluteMs: 5 * 60 * 1000 },
+  /**
+   * AUTH-116: issued instead of a real session when an account holding the
+   * ADMIN role has correctly authenticated but has not yet enrolled MFA.
+   * Like mfa_pending, this is not a Table 35.1 session type and is rejected
+   * outright by requireValidSession() for ordinary protected routes — its
+   * only legitimate use is completing MFA enrollment (/mfa/enroll,
+   * /mfa/confirm), which accept it explicitly. A slightly longer window
+   * than mfa_pending's since scanning a QR code and entering a TOTP code
+   * takes longer than a challenge the user already has a code ready for.
+   */
+  mfa_setup_required: { idleMs: 15 * 60 * 1000, absoluteMs: 15 * 60 * 1000 },
 } as const;
 
 export interface IssuedSession {
@@ -36,7 +47,7 @@ export interface IssuedSession {
 export interface SessionContext {
   organizationId: string;
   userId: string;
-  sessionType: "standard" | "admin" | "mfa_pending";
+  sessionType: "standard" | "admin" | "mfa_pending" | "mfa_setup_required";
   deviceFingerprint?: string | null;
   ipHash?: string | null;
   userAgent?: string | null;

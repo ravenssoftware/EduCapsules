@@ -52,3 +52,4 @@ export class InMemoryRateLimiter implements RateLimiter {
 export const LOGIN_RATE_LIMIT = { limit: 10, windowMs: 60_000 };
 export const PASSWORD_RESET_RATE_LIMIT = { limit: 5, windowMs: 60_000 };
 export const MFA_RATE_LIMIT = { limit: 10, windowMs: 60_000 };
+export const REGISTER_RATE_LIMIT = { limit: 5, windowMs: 60_000 };

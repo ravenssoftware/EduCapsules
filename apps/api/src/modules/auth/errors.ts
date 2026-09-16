@@ -17,6 +17,7 @@ export type AuthErrorCode =
   | "account_not_active"
   | "email_not_verified"
   | "mfa_required"
+  | "admin_mfa_setup_required"
   | "mfa_invalid"
   | "session_invalid"
   | "token_invalid"
@@ -33,3 +34,19 @@ export class AuthDomainError extends Error {
     this.code = code;
   }
 }
+
+/** Single source of truth for code -> HTTP status, shared by the routes layer and the session middleware so the two never drift. */
+export const AUTH_ERROR_STATUS: Record<AuthErrorCode, number> = {
+  invalid_credentials: 401,
+  account_locked: 423,
+  account_not_active: 403,
+  email_not_verified: 403,
+  mfa_required: 401,
+  admin_mfa_setup_required: 403,
+  mfa_invalid: 400,
+  session_invalid: 401,
+  token_invalid: 400,
+  email_already_registered: 409,
+  validation_failed: 422,
+  rate_limited: 429,
+};

@@ -5,6 +5,7 @@ import { generateTotpSecret, totpProvisioningUri, verifyTotpCode } from "./totp.
 import { generateRecoveryCodes, hashRecoveryCode } from "./recovery-codes.js";
 import { AuthDomainError } from "./errors.js";
 import { isCurrentlyLocked, recordFailedLogin, recordSuccessfulLogin } from "./lockout.js";
+import { computeProgressiveDelayMs, sleep } from "./progressive-delay.js";
 import {
   issueSession,
   revokeRotationChain,
@@ -109,7 +110,8 @@ export async function verifyEmail(repo: AuthRepository, rawToken: string): Promi
 
 export type LoginResult =
   | { outcome: "authenticated"; user: UserRow; session: LoginSessionRow; rawToken: string }
-  | { outcome: "mfa_required"; rawChallengeToken: string };
+  | { outcome: "mfa_required"; rawChallengeToken: string }
+  | { outcome: "mfa_setup_required"; rawSetupToken: string };
 
 export async function login(
   repo: AuthRepository,
@@ -143,7 +145,7 @@ export async function login(
 
   const passwordOk = await verifyPassword(input.password, user.passwordHash ?? DUMMY_HASH);
   if (!passwordOk) {
-    const { locked } = await recordFailedLogin(repo, user, now);
+    const { locked, failedLoginCount } = await recordFailedLogin(repo, user, now);
     await writeAudit(repo, user, "LOGIN_FAILED", ctx, now);
     if (locked) {
       await repo.writeSecurityEvent({
@@ -157,6 +159,10 @@ export async function login(
         details: null,
       });
     }
+    // SEC-032/API-017: progressive delay, independent of the IP-based rate
+    // limiter and the hard lockout threshold — see progressive-delay.ts.
+    const delayMs = computeProgressiveDelayMs(failedLoginCount);
+    if (delayMs > 0) await sleep(delayMs);
     throw new AuthDomainError("invalid_credentials", "Email or password is incorrect.");
   }
 
@@ -168,6 +174,35 @@ export async function login(
   }
 
   await recordSuccessfulLogin(repo, user, now);
+
+  const isAdmin = await repo.userHasActiveRole(user.organizationId, user.id, "ADMIN");
+
+  // AUTH-116: MFA is required, not merely offered, for administrative
+  // accounts. There is no role-assignment/admin-management UI in this
+  // codebase yet (that is Phase 5 authorization territory), so an account
+  // can already hold an active ADMIN role assignment (seed/migration/direct
+  // DB action) without ever having been prompted to enroll MFA. Rather than
+  // silently letting such an account sign in MFA-free — or hard-blocking it
+  // with no way to ever complete enrollment, since enrollment itself
+  // requires a session — a restricted mfa_setup_required session is issued
+  // instead of a real one; it is good for nothing except /mfa/enroll and
+  // /mfa/confirm (see requireValidSession's allowMfaSetup option below).
+  if (isAdmin && !user.mfaEnabled) {
+    const { rawToken } = await issueSession(
+      repo,
+      {
+        organizationId: user.organizationId,
+        userId: user.id,
+        sessionType: "mfa_setup_required",
+        ipHash: ctx.ipHash,
+        userAgent: ctx.userAgent,
+        deviceFingerprint: ctx.deviceFingerprint,
+      },
+      uuid7,
+      now,
+    );
+    return { outcome: "mfa_setup_required", rawSetupToken: rawToken };
+  }
 
   if (user.mfaEnabled) {
     const { rawToken } = await issueSession(
@@ -186,15 +221,12 @@ export async function login(
     return { outcome: "mfa_required", rawChallengeToken: rawToken };
   }
 
-  const sessionType = (await repo.userHasActiveRole(user.organizationId, user.id, "ADMIN"))
-    ? "admin"
-    : "standard";
   const { session, rawToken } = await issueSession(
     repo,
     {
       organizationId: user.organizationId,
       userId: user.id,
-      sessionType,
+      sessionType: isAdmin ? "admin" : "standard",
       ipHash: ctx.ipHash,
       userAgent: ctx.userAgent,
       deviceFingerprint: ctx.deviceFingerprint,
@@ -281,6 +313,7 @@ export async function requireValidSession(
   repo: AuthRepository,
   rawToken: string,
   now = new Date(),
+  opts: { allowMfaSetup?: boolean } = {},
 ): Promise<LoginSessionRow> {
   const result = await validateSessionToken(repo, rawToken, now);
   if (result.outcome === "reuse_detected") {
@@ -306,7 +339,28 @@ export async function requireValidSession(
   if (result.session.sessionType === "mfa_pending") {
     throw new AuthDomainError("mfa_required", "Complete the MFA challenge to continue.");
   }
-  await touchSession(repo, result.session, now);
+  // AUTH-116: same treatment as mfa_pending above — an mfa_setup_required
+  // session proves identity but not the required second factor, so it is
+  // rejected for every ordinary protected route. Only the MFA-enrollment
+  // routes pass allowMfaSetup to accept it.
+  if (result.session.sessionType === "mfa_setup_required" && !opts.allowMfaSetup) {
+    throw new AuthDomainError("admin_mfa_setup_required", "Complete MFA enrollment to continue.");
+  }
+  // AUTH-117: suspending (or otherwise deactivating) an account must
+  // restrict its existing sessions, not just block future logins. The
+  // session row itself can stay valid for a long time (up to the standard
+  // 14-day absolute timeout) after an account is suspended, so the
+  // account's *current* status is re-checked on every request rather than
+  // only at issuance — this is what actually enforces the restriction,
+  // since there is no admin-suspend endpoint yet that could instead
+  // proactively revoke the sessions at the moment of suspension.
+  const user = await repo.findUserById(result.session.organizationId, result.session.userId);
+  if (!user || user.status !== "active") {
+    throw new AuthDomainError("session_invalid", "This session is no longer valid.");
+  }
+  if (result.session.sessionType !== "mfa_setup_required") {
+    await touchSession(repo, result.session, now);
+  }
   return result.session;
 }
 
@@ -476,11 +530,14 @@ export async function enrollMfa(
 
 export async function confirmMfa(
   repo: AuthRepository,
-  organizationId: string,
-  userId: string,
+  session: LoginSessionRow,
   code: string,
   ctx: RequestContext,
-): Promise<{ recoveryCodes: string[] }> {
+): Promise<{
+  recoveryCodes: string[];
+  upgradedSession?: { session: LoginSessionRow; rawToken: string };
+}> {
+  const { organizationId, userId } = session;
   const now = new Date();
   const factor = await repo.findMfaFactor(organizationId, userId);
   if (!factor || factor.status === "active") {
@@ -502,7 +559,33 @@ export async function confirmMfa(
 
   const user = await repo.findUserById(organizationId, userId);
   if (user) await writeAudit(repo, user, "MFA_ENROLLED", ctx, now);
-  return { recoveryCodes: plaintextCodes };
+
+  // AUTH-116: an admin who just closed the mandatory-MFA gate from a
+  // restricted mfa_setup_required session should not be forced to log in
+  // again — revoke the setup session and hand back a real one.
+  let upgradedSession: { session: LoginSessionRow; rawToken: string } | undefined;
+  if (session.sessionType === "mfa_setup_required") {
+    await repo.revokeLoginSession(session.id, "mfa_setup_completed", now);
+    upgradedSession = await issueSession(
+      repo,
+      {
+        organizationId,
+        userId,
+        sessionType: "admin",
+        ipHash: session.ipHash,
+        userAgent: session.userAgent,
+        deviceFingerprint: session.deviceFingerprint,
+      },
+      uuid7,
+      now,
+    );
+    if (user) await writeAudit(repo, user, "LOGIN_SUCCESS", ctx, now, upgradedSession.session.id);
+  }
+
+  return {
+    recoveryCodes: plaintextCodes,
+    ...(upgradedSession ? { upgradedSession } : {}),
+  };
 }
 
 export async function disableMfa(
@@ -516,6 +599,16 @@ export async function disableMfa(
   if (!user) throw new AuthDomainError("session_invalid", "Session is invalid.");
   const ok = await verifyPassword(currentPassword, user.passwordHash ?? DUMMY_HASH);
   if (!ok) throw new AuthDomainError("invalid_credentials", "Current password is incorrect.");
+
+  // AUTH-116: an administrative account may not drop below the "MFA
+  // enrolled" state it was required to reach to sign in at all — otherwise
+  // disabling MFA would silently reopen the same gap login() now closes.
+  if (await repo.userHasActiveRole(user.organizationId, user.id, "ADMIN")) {
+    throw new AuthDomainError(
+      "admin_mfa_setup_required",
+      "Administrative accounts must keep multi-factor authentication enabled.",
+    );
+  }
 
   const factor = await repo.findMfaFactor(user.organizationId, user.id);
   if (factor) {

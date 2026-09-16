@@ -380,6 +380,34 @@ describe("rate limiting (SEC-031/API-017)", () => {
     }
     expect(lastStatus).toBe(429);
   });
+
+  it("returns 429 once the registration rate limit is exceeded, and records a RATE_LIMIT_EXCEEDED security event (API-018)", async () => {
+    let lastStatus = 200;
+    const fixedIp = `203.0.113.${77 + (Date.now() % 50)}`;
+    for (let i = 0; i < 8; i++) {
+      const res = await post(
+        "/api/v1/auth/register",
+        {
+          organizationId: ORG_A,
+          email: `regflood-${uuid7()}@example.test`,
+          password: "a-very-strong-password-1",
+        },
+        { "x-forwarded-for": fixedIp },
+      );
+      lastStatus = res.status;
+      if (res.status === 429) {
+        expect(res.headers.get("retry-after")).toBeTruthy();
+        break;
+      }
+    }
+    expect(lastStatus).toBe(429);
+
+    const events = await db
+      .select()
+      .from(sqliteSchema.securityEvents)
+      .where(eq(sqliteSchema.securityEvents.eventType, "RATE_LIMIT_EXCEEDED"));
+    expect(events.length).toBeGreaterThan(0);
+  });
 });
 
 describe("session lifecycle (AUTH-104..110, AUTH-118)", () => {
@@ -657,8 +685,11 @@ describe("MFA enrollment and challenge (AUTH-116, AUTH-126, AUTH-127)", () => {
       { code },
       { authorization: `Bearer ${token}` },
     );
-    const { recoveryCodes } = (await confirmRes.json()) as { recoveryCodes: string[] };
-    return { secret, recoveryCodes, confirmRes };
+    const { recoveryCodes, sessionToken } = (await confirmRes.json()) as {
+      recoveryCodes: string[];
+      sessionToken?: string;
+    };
+    return { secret, recoveryCodes, sessionToken, confirmRes };
   }
 
   it("enrolling and confirming MFA enables it, and login now requires a second step", async () => {
@@ -807,9 +838,7 @@ describe("MFA enrollment and challenge (AUTH-116, AUTH-126, AUTH-127)", () => {
     expect(body.status).toBe("authenticated");
   });
 
-  it("issues an admin-typed session for a user holding the ADMIN role", async () => {
-    const email = `admin-${uuid7()}@example.test`;
-    await registerAndVerify(ORG_A, email);
+  async function makeAdmin(email: string): Promise<string> {
     const userQueryRows = await db
       .select()
       .from(sqliteSchema.users)
@@ -833,14 +862,125 @@ describe("MFA enrollment and challenge (AUTH-116, AUTH-126, AUTH-127)", () => {
         updatedAt: t,
       })
       .run();
+    return user.id;
+  }
 
-    const token = await loginAndGetToken(ORG_A, email);
+  it("blocks an admin-role account without MFA from logging in, and issues a restricted setup token instead (AUTH-116)", async () => {
+    const email = `admin-nomfa-${uuid7()}@example.test`;
+    await registerAndVerify(ORG_A, email);
+    const userId = await makeAdmin(email);
+
+    const loginRes = await post("/api/v1/auth/login", {
+      organizationId: ORG_A,
+      email,
+      password: "a-very-strong-password-1",
+    });
+    expect(loginRes.status).toBe(200);
+    const body = (await loginRes.json()) as { status: string; mfaSetupToken: string };
+    expect(body.status).toBe("mfa_setup_required");
+    expect(body.mfaSetupToken).toBeTruthy();
+
+    // The setup token is good for nothing except completing MFA enrollment.
+    const blocked = await app.request("/api/v1/auth/sessions", {
+      headers: { authorization: `Bearer ${body.mfaSetupToken}` },
+    });
+    expect(blocked.status).toBe(403);
+
+    const sessionsBefore = await db
+      .select()
+      .from(sqliteSchema.loginSessions)
+      .where(eq(sqliteSchema.loginSessions.userId, userId));
+    expect(sessionsBefore.every((s) => s.sessionType !== "admin")).toBe(true);
+  });
+
+  it("lets an admin-role account complete mandatory MFA enrollment via the setup token, then upgrades it to a real admin session (AUTH-116)", async () => {
+    const email = `admin-setup-${uuid7()}@example.test`;
+    await registerAndVerify(ORG_A, email);
+    const userId = await makeAdmin(email);
+
+    const loginRes = await post("/api/v1/auth/login", {
+      organizationId: ORG_A,
+      email,
+      password: "a-very-strong-password-1",
+    });
+    const { mfaSetupToken } = (await loginRes.json()) as { mfaSetupToken: string };
+
+    const { confirmRes, recoveryCodes, sessionToken } = await enrollAndConfirmMfa(mfaSetupToken);
+    expect(confirmRes.status).toBe(200);
+    expect(sessionToken).toBeTruthy();
+    expect(recoveryCodes).toHaveLength(10);
+
     const sessions = await db
       .select()
       .from(sqliteSchema.loginSessions)
-      .where(eq(sqliteSchema.loginSessions.userId, user.id));
-    expect(sessions.some((s) => s.sessionType === "admin")).toBe(true);
-    expect(token).toBeTruthy();
+      .where(eq(sqliteSchema.loginSessions.userId, userId));
+    expect(sessions.some((s) => s.sessionType === "admin" && !s.revokedAt)).toBe(true);
+
+    // The original setup token no longer works for anything, including a
+    // second enrollment attempt.
+    const reuse = await app.request("/api/v1/auth/sessions", {
+      headers: { authorization: `Bearer ${mfaSetupToken}` },
+    });
+    expect(reuse.status).toBe(401);
+
+    // The upgraded real session works normally.
+    const check = await app.request("/api/v1/auth/sessions", {
+      headers: { authorization: `Bearer ${sessionToken}` },
+    });
+    expect(check.status).toBe(200);
+
+    // Subsequent logins go through the ordinary MFA challenge, not the
+    // one-time setup path.
+    const loginRes2 = await post("/api/v1/auth/login", {
+      organizationId: ORG_A,
+      email,
+      password: "a-very-strong-password-1",
+    });
+    const body2 = (await loginRes2.json()) as { status: string };
+    expect(body2.status).toBe("mfa_required");
+  });
+
+  it("refuses to let an admin-role account disable MFA (AUTH-116)", async () => {
+    const email = `admin-keepmfa-${uuid7()}@example.test`;
+    await registerAndVerify(ORG_A, email);
+    await makeAdmin(email);
+
+    const loginRes = await post("/api/v1/auth/login", {
+      organizationId: ORG_A,
+      email,
+      password: "a-very-strong-password-1",
+    });
+    const { mfaSetupToken } = (await loginRes.json()) as { mfaSetupToken: string };
+    const { sessionToken } = await enrollAndConfirmMfa(mfaSetupToken);
+
+    const disable = await post(
+      "/api/v1/auth/mfa/disable",
+      { currentPassword: "a-very-strong-password-1" },
+      { authorization: `Bearer ${sessionToken}` },
+    );
+    expect(disable.status).toBe(403);
+  });
+
+  it("terminates existing sessions once an account is suspended, not just future logins (AUTH-117)", async () => {
+    const email = `suspend-live-${uuid7()}@example.test`;
+    await registerAndVerify(ORG_A, email);
+    const token = await loginAndGetToken(ORG_A, email);
+
+    const before = await app.request("/api/v1/auth/sessions", {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    expect(before.status).toBe(200);
+
+    await db
+      .update(sqliteSchema.users)
+      .set({ status: "suspended" })
+      .where(eq(sqliteSchema.users.email, email))
+      .run();
+
+    const after = await app.request("/api/v1/auth/sessions", {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    expect(after.status).toBe(401);
   });
 });
 
