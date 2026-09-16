@@ -60,6 +60,10 @@ Per the SRS's authoritative terminology — **Organization → Classroom → Gro
 | `password_reset_tokens` | Single-use, short-lived password-reset credentials | AUTH-121 | 4 |
 | `email_verification_tokens` | Single-use, short-lived email-verification credentials | AUTH-121 | 4 |
 | `security_events` | Append-only abuse/threat signals (rate limits, brute force, token reuse) | DB-004, API-018 | 4 |
+| `assistant_assignments` | Assistant delegation record — PENDING/ACTIVE/EXPIRED/REVOKED/SUSPENDED | Table 37.2, §21 AST-* | 5 |
+| `assistant_assignment_scopes` | AssistantAssignment's scope set (§7.3: a combination, not a single pair) | §7.3, §21.1 | 5 |
+| `assistant_assignment_permissions` | AssistantAssignment's delegated permission set — Table 37.2's `PermissionGrant`, realised as a join table | Table 37.2, §21 AST-* | 5 |
+| `parent_links` | Parent<->Student linking — REQUESTED/CONFIRMED/REVOKED | Table 37.2, §22 PAR-* | 5 |
 
 No entity outside this list (e.g. Activity, StudentActivity, Submission, TeachingSession — each explicitly distinct per the SRS and this instruction) is implemented; those belong to later phases that own that domain. `Teaching Session` (a scheduled class meeting) is a different concept from `Login Session` and still doesn't exist — see `docs/auth/authentication.md` for the full Phase 4 authentication design.
 
@@ -92,6 +96,9 @@ CHECK constraints were added only where the SRS text itself gives an explicit, c
 | `mfa_factors.status` | `pending, active, disabled` | Structural — enrollment lifecycle |
 | `security_events.event_type` | `RATE_LIMIT_EXCEEDED, LOGIN_BRUTE_FORCE, ACCOUNT_LOCKED, TOKEN_REUSE_DETECTED, SUSPICIOUS_SESSION` | Table 36.2's Authentication-domain vocabulary, the subset this table's narrower purpose (API-018) actually raises |
 | `security_events.severity` | `medium, high, critical` | §34.4's own severity vocabulary — no invented `low` tier |
+| `assistant_assignments.status` | `pending, active, expired, revoked, suspended` | §45.3's AssistantAssignment lifecycle (added Phase 5) |
+| `assistant_assignment_scopes.scope_type` | `CLASSROOM, GROUP, SUBJECT, COURSE, CYCLE` | §7.3's scope containment list, minus `ORG` — an Assistant assignment is always a bounded delegation, never organization-wide (AST-002, GEN-006) |
+| `parent_links.status` | `requested, confirmed, revoked` | §45.3's ParentLink lifecycle (added Phase 5) |
 
 Other status-like columns (`classrooms.status`, `groups.status`, `subjects.status`, `academic_periods.status`, `enrollments.status`) deliberately carry **no** CHECK constraint: their value sets are not enumerated anywhere in the SRS, and locking one in now would silently pre-commit an unstated business rule ahead of the phase that actually owns that entity's lifecycle. This is a scope boundary, not an oversight.
 

@@ -2,7 +2,7 @@ import { Pool } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { optionalEnv, requireEnv } from "@educapsules/shared";
 import * as schema from "../schema/postgres/index.js";
-import { devSampleData, systemRoleRows } from "../seed/data.js";
+import { devSampleData, permissionRows, rolePermissionRows, systemRoleRows } from "../seed/data.js";
 
 /** Postgres counterpart of seed-sqlite.ts — see that file for the rules. */
 const includeDevData = process.argv.includes("--dev");
@@ -18,6 +18,12 @@ async function main() {
 
   await db.insert(schema.roles).values(systemRoleRows()).onConflictDoNothing();
   console.log(`Seeded ${systemRoleRows().length} system roles`);
+
+  await db.insert(schema.permissions).values(permissionRows()).onConflictDoNothing();
+  await db.insert(schema.rolePermissions).values(rolePermissionRows()).onConflictDoNothing();
+  console.log(
+    `Seeded ${permissionRows().length} permissions and ${rolePermissionRows().length} role-permission grants`,
+  );
 
   if (includeDevData) {
     const sample = devSampleData();

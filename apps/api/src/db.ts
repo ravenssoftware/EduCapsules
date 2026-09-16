@@ -1,6 +1,11 @@
 import { createPostgresDb, createSqliteDb, postgresSchema, sqliteSchema } from "@educapsules/db";
 import { optionalEnv } from "@educapsules/shared";
 import { createAuthRepository, type AuthRepository } from "./modules/auth/repository.js";
+import { createAuthzRepository, type AuthzRepository } from "./modules/authz/repository.js";
+import {
+  createClassroomsRepository,
+  type ClassroomsRepository,
+} from "./modules/classrooms/repository.js";
 
 /**
  * Selects the active database dialect for this process — SQLite (D1
@@ -11,6 +16,8 @@ import { createAuthRepository, type AuthRepository } from "./modules/auth/reposi
  */
 export interface AppDatabase {
   authRepository: AuthRepository;
+  authzRepository: AuthzRepository;
+  classroomsRepository: ClassroomsRepository;
   close: () => Promise<void>;
 }
 
@@ -18,9 +25,19 @@ export function createAppDatabase(): AppDatabase {
   const databaseUrl = process.env.DATABASE_URL;
   if (databaseUrl) {
     const { db, close } = createPostgresDb(databaseUrl);
-    return { authRepository: createAuthRepository(db, postgresSchema), close };
+    return {
+      authRepository: createAuthRepository(db, postgresSchema),
+      authzRepository: createAuthzRepository(db, postgresSchema),
+      classroomsRepository: createClassroomsRepository(db, postgresSchema),
+      close,
+    };
   }
   const sqlitePath = optionalEnv("SQLITE_DB_PATH", "./educapsules.sqlite");
   const db = createSqliteDb(sqlitePath);
-  return { authRepository: createAuthRepository(db, sqliteSchema), close: () => Promise.resolve() };
+  return {
+    authRepository: createAuthRepository(db, sqliteSchema),
+    authzRepository: createAuthzRepository(db, sqliteSchema),
+    classroomsRepository: createClassroomsRepository(db, sqliteSchema),
+    close: () => Promise.resolve(),
+  };
 }

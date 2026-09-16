@@ -36,6 +36,13 @@
       "when": 1789346980931,
       "tag": "0004_security_events_append_only",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1789519292748,
+      "tag": "0005_misty_carlie_cooper",
+      "breakpoints": true
     }
   ]
 }

@@ -6,7 +6,7 @@ A multi-role educational platform (Teacher, Assistant, Student, Parent, Admin) b
 
 ## Status
 
-**Phase 2 — Repository, CI/CD & Environment Foundation.** No business/database features are implemented yet (Phase 3 starts that) — this is the monorepo skeleton, tooling, and CI. The backend stack is TypeScript + Hono (Drizzle ORM, D1/Postgres portability, ObjectStore/JobQueue abstractions, pnpm, Vitest, Playwright, GitHub Actions — see [`docs/decisions/05-phase1-decisions-pending-approval.md`](docs/decisions/05-phase1-decisions-pending-approval.md)). **The client is Flutter** (Desktop for V1; the same codebase extends to Android/iOS as a future release), superseding the originally approved React + Vite web client — see [`docs/decisions/06-flutter-client-decision.md`](docs/decisions/06-flutter-client-decision.md). See [`docs/README.md`](docs/README.md) for the full documentation index.
+**Phase 5 — Roles, Permissions & Authorization, complete.** Phases 3 (database foundation) and 4 (identity & authentication) are also complete; Phase 5 adds the centralized authorization pipeline (`apps/api/src/modules/authz/`), the full §26 permission catalogue as seeded data, Assistant delegation (§21) and ParentLink (§22) lifecycles — see [`docs/authz/authorization.md`](docs/authz/authorization.md) and [`docs/auth/authentication.md`](docs/auth/authentication.md). The backend stack is TypeScript + Hono (Drizzle ORM, D1/Postgres portability, ObjectStore/JobQueue abstractions, pnpm, Vitest, Playwright, GitHub Actions — see [`docs/decisions/05-phase1-decisions-pending-approval.md`](docs/decisions/05-phase1-decisions-pending-approval.md)). **The client is Flutter** (Desktop for V1; the same codebase extends to Android/iOS as a future release), superseding the originally approved React + Vite web client — see [`docs/decisions/06-flutter-client-decision.md`](docs/decisions/06-flutter-client-decision.md). Flutter code exists for the authentication flow but remains unvalidated — no Flutter/Dart SDK has been available in any session so far. See [`docs/README.md`](docs/README.md) for the full documentation index.
 
 ## Repository layout
 
@@ -17,7 +17,7 @@ apps/
 packages/
   shared/       Cross-cutting portable types (RFC 9457 problem details, correlation ids, env config)
   domain/       BE-008 portability-contract interfaces (ObjectStore, JobQueue) + in-memory reference adapters
-  db/           Empty placeholder — Drizzle schema/migrations arrive in Phase 3
+  db/           Drizzle schema, migrations and seed data (dual-dialect: SQLite/D1 and PostgreSQL)
   config/       Shared tsconfig base
 docs/           SRS, architecture, decisions, traceability — the single source of truth
 ```

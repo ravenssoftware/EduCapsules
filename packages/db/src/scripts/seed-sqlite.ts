@@ -2,7 +2,7 @@ import Database from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import { optionalEnv } from "@educapsules/shared";
 import * as schema from "../schema/sqlite/index.js";
-import { devSampleData, systemRoleRows } from "../seed/data.js";
+import { devSampleData, permissionRows, rolePermissionRows, systemRoleRows } from "../seed/data.js";
 
 /**
  * Seeds the five system roles (safe in every environment, including
@@ -25,6 +25,12 @@ const db = drizzle(sqlite, { schema });
 
 db.insert(schema.roles).values(systemRoleRows()).onConflictDoNothing().run();
 console.log(`Seeded ${systemRoleRows().length} system roles into ${filename}`);
+
+db.insert(schema.permissions).values(permissionRows()).onConflictDoNothing().run();
+db.insert(schema.rolePermissions).values(rolePermissionRows()).onConflictDoNothing().run();
+console.log(
+  `Seeded ${permissionRows().length} permissions and ${rolePermissionRows().length} role-permission grants into ${filename}`,
+);
 
 if (includeDevData) {
   const sample = devSampleData();

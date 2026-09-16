@@ -9,6 +9,12 @@
  * duplicate-row error.
  */
 
+import {
+  ADMINISTRATIVE_PERMISSIONS,
+  EDUCATIONAL_PERMISSIONS,
+  PERMISSION_CATALOGUE,
+} from "@educapsules/shared";
+
 const now = () => new Date();
 
 /**
@@ -36,6 +42,92 @@ export function systemRoleRows() {
     createdAt,
     updatedAt: createdAt,
   }));
+}
+
+/**
+ * Phase 5 — the permission catalogue (SRS §26.1). Global rows, safe to seed
+ * in every environment including production, same as the five system
+ * roles: this is a fixed fact the SRS itself states (§26's "closed"
+ * catalogue), not business/product data. Source of truth is
+ * packages/shared/src/permissions.ts — see that file's header for why both
+ * §26.2 and §26.3 are seeded here even though only §26.2 is granted to any
+ * role in Phase 5.
+ */
+export function permissionRows() {
+  const createdAt = now();
+  return PERMISSION_CATALOGUE.map((p) => ({
+    id: p.id,
+    key: p.key,
+    category: p.category,
+    isDelegatable: p.isDelegatable,
+    description: p.description,
+    createdAt,
+    updatedAt: createdAt,
+  }));
+}
+
+/**
+ * Phase 5 — role -> permission baseline grants (Table 37.2's RolePermission:
+ * "Defines the role's baseline").
+ *
+ * TEACHER gets every §26.2 educational permission — Table 26.1's own
+ * "Default holder" column names Teacher for every single row, with no
+ * exceptions.
+ *
+ * ADMIN gets a deliberately conservative, organization-scoped subset of
+ * §26.3, not the whole administrative catalogue: USER_VIEW/SUSPEND/RESTORE
+ * and ORG_VIEW/MANAGE (ORG-007: "Admins manage Organization profile,
+ * membership, subscription, usage and settings"), AUDIT_VIEW (an org's own
+ * audit trail is squarely within its own Admin's remit), and
+ * GRADING_SCALE_MANAGE (GRD-019 names this explicitly: "Operations, Super
+ * (or the Admin capacity of an independent Teacher's own Organization)").
+ * The remaining §26.3 codes (billing, security response, content
+ * moderation, system config, impersonation, private-data access) belong to
+ * the platform-governance sub-roles §23 defines (Platform Owner, Super,
+ * Security, Support, Billing, Moderation) — the Phase 0 roadmap's own later
+ * "Administration" phase, not Phase 5's tenant-scoped ADMIN role. Granting
+ * them here would be inventing authority the SRS attributes to a different,
+ * not-yet-built actor category.
+ *
+ * STUDENT and PARENT get no catalogue grants at all — their access is
+ * relationship-based (Membership, ParentLink respectively — §7.4), not
+ * permission-based. ASSISTANT likewise gets no *static* role grant — every
+ * permission an Assistant ever holds comes from their own AssistantAssignment
+ * (§7.4: "Assistant -> Assignment: exactly the delegated permissions"),
+ * never from the role itself; a static ASSISTANT role_permissions grant
+ * would silently give every Assistant everyone/everywhere access,
+ * contradicting GEN-006's "being an Assistant, on its own, grants nothing".
+ */
+export const ADMIN_PERMISSION_KEYS = [
+  "USER_VIEW",
+  "USER_SUSPEND",
+  "USER_RESTORE",
+  "ORG_VIEW",
+  "ORG_MANAGE",
+  "AUDIT_VIEW",
+  "GRADING_SCALE_MANAGE",
+] as const;
+
+export function rolePermissionRows() {
+  const createdAt = now();
+  const teacherRoleId = SYSTEM_ROLES.find((r) => r.key === "TEACHER")!.id;
+  const adminRoleId = SYSTEM_ROLES.find((r) => r.key === "ADMIN")!.id;
+
+  const teacherGrants = EDUCATIONAL_PERMISSIONS.map((p) => ({
+    roleId: teacherRoleId,
+    permissionId: p.id,
+    createdAt,
+  }));
+
+  const adminGrants = ADMINISTRATIVE_PERMISSIONS.filter((p) =>
+    (ADMIN_PERMISSION_KEYS as readonly string[]).includes(p.key),
+  ).map((p) => ({
+    roleId: adminRoleId,
+    permissionId: p.id,
+    createdAt,
+  }));
+
+  return [...teacherGrants, ...adminGrants];
 }
 
 /**
