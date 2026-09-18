@@ -1,0 +1,143 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend (lint, typecheck, test)
+    runs-on: ubuntu-latest
+    # A real PostgreSQL service container — the database package's
+    # PostgreSQL behavior tests (packages/db/src/schema/postgres/) connect
+    # to it via DATABASE_URL below rather than merely asserting the
+    # migration command exits successfully (Phase 3 requirement). The
+    # tests skip themselves gracefully when DATABASE_URL is unset (e.g. a
+    # contributor running `pnpm test` without Postgres locally), but here
+    # it is always set, so they always actually run.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: educapsules
+          POSTGRES_PASSWORD: educapsules_ci
+          POSTGRES_DB: educapsules_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U educapsules"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://educapsules:educapsules_ci@localhost:5432/educapsules_ci
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Format check
+        run: pnpm run format
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Database — apply SQLite migrations (CLI script itself, not just the in-test migrator)
+        working-directory: packages/db
+        env:
+          SQLITE_DB_PATH: ./ci-check.sqlite
+        run: pnpm run db:migrate:sqlite
+
+      - name: Database — seed SQLite (system roles + dev sample data)
+        working-directory: packages/db
+        env:
+          SQLITE_DB_PATH: ./ci-check.sqlite
+        run: pnpm run db:seed:sqlite:dev
+
+      - name: Database — apply PostgreSQL migrations (CLI script itself, not just the in-test migrator)
+        working-directory: packages/db
+        run: pnpm run db:migrate:postgres
+
+      - name: Database — seed PostgreSQL (system roles + dev sample data)
+        working-directory: packages/db
+        run: pnpm run db:seed:postgres:dev
+
+      - name: Test
+        run: pnpm run test
+
+      - name: E2E smoke test (API only — no browser needed)
+        run: pnpm run test:e2e
+
+  flutter:
+    name: Flutter client (analyze, format, test)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/flutter
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Format check
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Test
+        run: flutter test
+
+  # Placeholder for the desktop build check — kept as a separate job so a
+  # platform-specific toolchain failure never blocks lint/analyze/test
+  # feedback. Extended to macOS/Windows runners when Phase 26 (E2E/desktop
+  # testing) needs cross-platform build verification, not before.
+  flutter-build-linux:
+    name: Flutter client (Linux desktop build)
+    runs-on: ubuntu-latest
+    needs: flutter
+    defaults:
+      run:
+        working-directory: apps/flutter
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install Linux desktop build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libgtk-3-dev
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Linux release
+        run: flutter build linux --release

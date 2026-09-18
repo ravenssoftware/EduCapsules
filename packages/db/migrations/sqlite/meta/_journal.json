@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1789344005814,
+      "tag": "0000_easy_quentin_quire",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1789344020429,
+      "tag": "0001_audit_log_append_only",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1789345164257,
+      "tag": "0002_panoramic_sentry",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1789346959197,
+      "tag": "0003_panoramic_leopardon",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1789346980931,
+      "tag": "0004_security_events_append_only",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1789519292748,
+      "tag": "0005_misty_carlie_cooper",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1789768939921,
+      "tag": "0006_next_emma_frost",
+      "breakpoints": true
+    }
+  ]
+}

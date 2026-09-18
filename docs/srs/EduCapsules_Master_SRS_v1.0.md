@@ -4,9 +4,9 @@
 
 **MASTER SOFTWARE REQUIREMENTS SPECIFICATION**
 
-**Version 1.1 · Audited & Reconciled Baseline**
+**Version 1.0 · Consolidated Baseline**
 
-11 September 2026 (v1.1 audit pass; supersedes v1.0 of 8 September 2026)
+13 September 2026 --- Official Baseline. Consolidates the full internal development history (iterations 0.1 through 1.4; Appendix E, §52.5) into the single authoritative Version 1.0 specification.
 
 ![](media/image1.png){width="6.0in" height="2.749225721784777in"}
 
@@ -30,23 +30,23 @@
 
 ## 1.1 Identification
 
-  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **Field**            **Value**
-  -------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **Product**          EduCapsules
 
   **Document**         Master Software Requirements Specification
 
-  **Version**          1.1 --- Audited & Reconciled Baseline (supersedes 1.0)
+  **Version**          1.0 --- Consolidated Baseline (redesignates the internal development iteration previously tracked as 1.4)
 
-  **Date**             11 September 2026
+  **Date**             13 September 2026
 
-  **Status**           Draft for Project Owner acceptance. This revision is a systematic audit pass over v1.0: every change is itemised in §1.7 and in the change log (§52.5); no confirmed decision was reversed.
+  **Status**           This is the official, complete, consolidated Master SRS baseline --- Version 1.0 --- adopted by the Project Owner as the single authoritative specification for building EduCapsules. It consolidates the full internal development history: the v1.1 audit pass (no confirmed decision reversed), the v1.2 resolution of D-08 (grading scale), the v1.3 classification of every reconstructed §9/§21 requirement as PROVISIONAL or confirmed-elsewhere, and the v1.4 Flutter client-strategy decision (Flutter Desktop for V1, Android/iOS as a future release from the same codebase, replacing the responsive-web-client decision). That internal iteration numbering (0.1 through 1.4) is superseded by this single Version 1.0 designation; the full itemised history is preserved in the change log (§52.5) for traceability.
 
   **Authority**        Single source of truth (GEN-001). Supersedes all prior EduCapsules specification documents.
 
   **Change control**   A requirement changes only through §1.5: identify → explain → trace dependencies → update all affected sections → update business rules, permissions and acceptance criteria → record in the change log.
-  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## 1.2 How this document is organised
 
@@ -54,19 +54,19 @@ Sections 2--9 establish the product, its vocabulary and its authorization model 
 
 ## 1.3 Requirement conventions
 
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **Convention**    **Rule**
-  ----------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  ----------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **Identifier**    PREFIX-NNN, permanent, never reused, never renumbered. §51 lists every prefix.
 
   **Priority**      **MUST** (V1 required) · **SHOULD** (important, not V1-blocking) · **COULD** (optional) · **WON\'T** (excluded from this release)
 
-  **Status**        **CONFIRMED** (decided) · **PROPOSED** (this document\'s recommendation, binding on acceptance) · **ASSUMPTION** (working position) · **OPEN** (needs a decision) · **FUTURE** (post-V1)
+  **Status**        **CONFIRMED** (decided) · **PROPOSED** (this document\'s recommendation, binding on acceptance) · **ASSUMPTION** (working position) · **PROVISIONAL** (added in v1.3 \-\-- reconstructed from surrounding material because its source specification was not supplied, per D-16; a defensible inference, not a confirmed instruction, until the Project Owner confirms or corrects it) · **OPEN** (needs a decision) · **FUTURE** (post-V1)
 
   **Wording**       "shall" = binding requirement. "should" = strong recommendation. Anything not stated as a requirement is not one.
 
   **Testability**   Every MUST is written so that it can be objectively verified. Where a numeric target is not yet decided it is marked **TBD** rather than invented.
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## 1.4 Conflicts found in the source material, and how they were resolved
 
@@ -127,16 +127,19 @@ The source specifications were written at different times. Six genuine conflicts
 
 ## 1.7 What changed in v1.1
 
-v1.0 was audited section by section against its own stated decisions, its data model, its permission catalogue and its traceability chain. This pass **did not** reverse any decision marked CONFIRMED. It corrected internal contradictions, filled gaps the document's own structure already implied, and repaired broken cross-references. Every change is one of four kinds:
+v1.0 was audited section by section against its own stated decisions, its data model, its permission catalogue and its traceability chain. This pass did not reverse any decision marked CONFIRMED. It corrected internal contradictions, filled gaps the document's own structure already implied, and repaired broken cross-references. Every change is one of four kinds:
 
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Kind**                            **Count**   **Example**
-  ------------------------------------ ----------- -----------------------------------------------------------------------------------------------------------------------------------------
-  **Contradiction resolved**          3           Group/classroom cardinality (§9.2 vs §37.3.2); cross-tenant storage deduplication (§14.4 vs §37.3.4); duplicate ID BR-014 (§9.2 vs §30.1)
-  **Broken cross-reference repaired** 14          Citations that pointed at the wrong requirement or the wrong open-decision entry (full list in Appendix E)
-  **Gap closed with a new requirement** 12        SEC-012...015, ACT-009, STR-023, LDB-009, AUTH-127, ORG-009/010, CRS-009/010, GEN-029, BR-021, and an Academic Period subsection (§8.1)
-  **Editorial correction**            2           Figure/illustration count in §24.4; duplicated retention table (§32.3 now references §44.3 instead of repeating it)
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Kind**                                **Example**                                                                                                                                 **Count**   
+  --------------------------------------- ------------------------------------------------------------------------------------------------------------------------------------------- ----------- --------
+  **Contradiction resolved**              Group/Classroom cardinality (§9.2 vs §37.3.2); cross-tenant storage deduplication (§14.4 vs §37.3.4); duplicate ID BR-014 (§9.2 vs §30.1)   3           ---
+
+  **Broken cross-reference repaired**     Citations that pointed at the wrong requirement or the wrong open-decision entry --- full list in Appendix E                                14          ---
+
+  **Gap closed with a new requirement**   SEC-012\...015, ACT-009, STR-023, LDB-009, AUTH-127, ORG-009/010, CRS-009/010, GEN-029, BR-021, and an Academic Period subsection (§8.1)    12          ---
+
+  **Editorial correction**                Figure/illustration count in §24.4; duplicated retention table (§32.3 now references §44.3 instead of repeating it)                         2           ---
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 1.2 --- Amendment summary. The full itemised list, with rationale and affected sections for every change, is Appendix E (§52.5).*
 
@@ -299,73 +302,73 @@ Terminology is a security control in this product: most of the source material\'
 
 These are the invariants of EduCapsules. Every requirement in this document is consistent with them, and any future requirement that contradicts one of them is wrong until this section is deliberately changed. They are numbered GEN and are directly testable.
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **ID**    **Golden rule**                                                                                                                                               **Enforced in**
-  --------- ------------------------------------------------------------------------------------------------------------------------------------------------------------- ---------------------
-  GEN-001   This SRS is the single source of truth for EduCapsules.                                                                                                       §1
+  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**    **Golden rule**                                                                                                                                                                                      **Enforced in**
+  --------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ---------------------
+  GEN-001   This SRS is the single source of truth for EduCapsules.                                                                                                                                              §1
 
-  GEN-002   Admin controls the platform. Teacher controls education. Assistant supports education. Student participates. Parent monitors.                                 §8, §21--§25
+  GEN-002   Admin controls the platform. Teacher controls education. Assistant supports education. Student participates. Parent monitors.                                                                        §8, §21--§25
 
-  GEN-003   The frontend is never a security boundary. Hiding a button is not authorization.                                                                              §9, §31, §40
+  GEN-003   The frontend is never a security boundary. Hiding a button is not authorization.                                                                                                                     §9, §31, §40
 
-  GEN-004   Backend authorization is authoritative and is evaluated on every protected operation.                                                                         §9
+  GEN-004   Backend authorization is authoritative and is evaluated on every protected operation.                                                                                                                §9
 
-  GEN-005   No requirement, permission or business rule changes silently.                                                                                                 §1.5
+  GEN-005   No requirement, permission or business rule changes silently.                                                                                                                                        §1.5
 
-  GEN-006   Assistant access = Assignment + Scope + Permissions. Being an Assistant grants nothing.                                                                       §23
+  GEN-006   Assistant access = Assignment + Scope + Permissions. Being an Assistant grants nothing.                                                                                                              §23
 
-  GEN-007   Parent access is based on a verified Parent↔Student relationship, never on knowing an ID.                                                                     §24
+  GEN-007   Parent access is based on a verified Parent↔Student relationship, never on knowing an ID.                                                                                                            §24
 
-  GEN-008   Classroom = student cohort/category. Group = subdivision of exactly one Classroom.                                                                            §12
+  GEN-008   Classroom = student cohort/category. Group = subdivision of exactly one Classroom.                                                                                                                   §12
 
-  GEN-009   Topic = what is taught.                                                                                                                                       §13
+  GEN-009   Topic = what is taught.                                                                                                                                                                              §13
 
-  GEN-010   Teaching Session = when teaching happens.                                                                                                                     §14
+  GEN-010   Teaching Session = when teaching happens.                                                                                                                                                            §14
 
-  GEN-011   Activity = what the student does.                                                                                                                             §15
+  GEN-011   Activity = what the student does.                                                                                                                                                                    §15
 
-  GEN-012   The Question Bank stores the question; the Activity stores the use of the question; the Submission stores the student\'s response.                            §16
+  GEN-012   The Question Bank stores the question; the Activity stores the use of the question; the Submission stores the student\'s response.                                                                   §16
 
-  GEN-013   Storage stores physical objects; references connect them to educational entities.                                                                             §17
+  GEN-013   Storage stores physical objects; references connect them to educational entities.                                                                                                                    §17
 
-  GEN-014   Upload once → store once → reference everywhere → version when changed.                                                                                       §17
+  GEN-014   Upload once → store once → reference everywhere → version when changed.                                                                                                                              §17
 
-  GEN-015   Published content is version-stable: it never changes underneath a student.                                                                                   §16.5, §17.5, §18.3
+  GEN-015   Published content is version-stable: it never changes underneath a student.                                                                                                                          §16.5, §17.5, §18.3
 
-  GEN-016   Access to a course ≠ access to the original course files.                                                                                                     §19
+  GEN-016   Access to a course ≠ access to the original course files.                                                                                                                                            §19
 
-  GEN-017   Protected content is delivered through controlled, short-lived, revocable access.                                                                             §19
+  GEN-017   Protected content is delivered through controlled, short-lived, revocable access.                                                                                                                    §19
 
-  GEN-018   Security-sensitive actions are auditable and attributable.                                                                                                    §33
+  GEN-018   Security-sensitive actions are auditable and attributable.                                                                                                                                           §33
 
-  GEN-019   Tenant isolation is enforced at every layer.                                                                                                                  §11, §31
+  GEN-019   Tenant isolation is enforced at every layer.                                                                                                                                                         §11, §31
 
-  GEN-020   Payment status never determines a user\'s educational role.                                                                                                   §27, §28
+  GEN-020   Payment status never determines a user\'s educational role.                                                                                                                                          §27, §28
 
-  GEN-021   Historical records remain attributable after an account is deactivated.                                                                                       §33, §43
+  GEN-021   Historical records remain attributable after an account is deactivated.                                                                                                                              §33, §43
 
-  GEN-022   No control shall claim that screenshots or photography are impossible.                                                                                        §19.7
+  GEN-022   No control shall claim that screenshots or photography are impossible.                                                                                                                               §19.7
 
-  GEN-023   Privacy is enforced by architecture, not only by policy.                                                                                                      §29
+  GEN-023   Privacy is enforced by architecture, not only by policy.                                                                                                                                             §29
 
-  GEN-024   Least privilege is the default; new resources start restrictive.                                                                                              §9, §31
+  GEN-024   Least privilege is the default; new resources start restrictive.                                                                                                                                     §9, §31
 
-  GEN-025   No user accesses a resource merely because they know or possess its identifier.                                                                               §9.7
+  GEN-025   No user accesses a resource merely because they know or possess its identifier.                                                                                                                      §9.7
 
-  GEN-026   Correct answers, unreleased grades and private metadata never reach a client that is not entitled to them --- even if the interface would not display them.   §16.9, §19.10
+  GEN-026   Correct answers, unreleased grades and private metadata never reach a client that is not entitled to them --- even if the interface would not display them.                                          §16.9, §19.10
 
-  GEN-027   Deleting an account never silently destroys educational or audit history.                                                                                     §43
+  GEN-027   Deleting an account never silently destroys educational or audit history.                                                                                                                            §43
 
-  GEN-028   Architecture is chosen for security, maintainability and cost --- not for novelty.                                                                            §35
+  GEN-028   Architecture is chosen for security, maintainability and cost --- not for novelty.                                                                                                                   §35
 
-  GEN-029   The vocabulary of §3 is binding and exclusive: a defined term is used consistently, and a bare "session" never appears, in the UI, the API, the schema, tests or this document.  §3
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  GEN-029   The vocabulary of §3 is binding and exclusive: a defined term is used consistently, and a bare \"session\" never appears, in the UI, the API, the schema, tests or this document. (Added in v1.1.)   §3
+  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-*Table 4.1 --- The twenty-nine golden rules. GEN-025 alone prevents a large class of serious vulnerabilities. GEN-029 added in v1.1 to make §3's terminology discipline independently testable (Appendix E).*
+*Table 4.1 --- The twenty-nine golden rules (v1.1 adds GEN-029). GEN-025 alone prevents a large class of serious vulnerabilities.*
 
 # 5. System Overview & Context
 
-EduCapsules is a multi-role educational platform: a responsive web client and the backend services behind it, with private object storage, a protected content delivery path, and a single authorization core that every request passes through.
+EduCapsules is a multi-role educational platform: a Flutter client application and the backend services behind it, with private object storage, a protected content delivery path, and a single authorization core that every request passes through.
 
 ![](media/image2.png){width="6.5in" height="3.025157480314961in"}
 
@@ -395,7 +398,7 @@ EduCapsules is a multi-role educational platform: a responsive web client and th
 
 ## 5.2 Client applications
 
-V1 is a responsive web application. The backend security model shall not be coupled to any one client (GEN-004): every client --- web, Windows, macOS, Android, iOS --- is an equal consumer of the same authorised API. Native applications may add content protections the web cannot provide (§19.7), but never \*replace\* server-side decisions.
+V1 is delivered as a Flutter desktop application (Windows, macOS, Linux), architected from the outset so the same application and codebase extends to Android and iOS in a future release without rewriting business logic or UI structure (§41.1). The backend security model shall not be coupled to any one client (GEN-004): every client --- desktop, Android, iOS, or any future client --- is an equal consumer of the same authorised API. Native applications may add content protections a browser-hosted client cannot provide (§19.7), but never \*replace\* server-side decisions.
 
 # 6. Actors & Roles
 
@@ -548,21 +551,19 @@ Scopes nest. A grant at a wider scope applies to everything inside it; a grant a
   Student → Classroom / Group    Access to content targeted at that membership                 ClassroomMembership / GroupMembership active           STU-002, SEC-015
   ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-*Table 7.2 --- Relationship-based authorization. SEC-012...015 (added in v1.1; previously cited in this table and in §46/§48 but never separately stated) are defined below.*
+*Added in v1.1: SEC-012\...015 were cited in Table 7.2 above and in §46/§48 since v1.0, but were never separately stated as requirements. They are defined here.*
 
-  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **ID**        **Requirement**                                                                                                                                               **Priority**   **Actor**
-  ------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------- -----------
-  **SEC-012**   The Parent → Student relationship shall be re-verified as ACTIVE on every request; a REQUESTED or REVOKED ParentLink shall grant nothing.                       **MUST**       System
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**        **Requirement**                                                                                                                                                                                                                     **Priority**   **Actor**
+  ------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------- -----------
+  **SEC-012**   The Parent → Student relationship shall be re-verified as ACTIVE on every request; a REQUESTED or REVOKED ParentLink shall grant nothing.                                                                                           **MUST**       System
 
-  **SEC-013**   The Teacher → Classroom/Course relationship shall be re-verified on every request against ownership or an organization role assignment, never cached client-side. **MUST**    System
+  **SEC-013**   The Teacher → Classroom/Course relationship shall be re-verified on every request against ownership or an organization role assignment, never cached client-side.                                                                   **MUST**       System
 
-  **SEC-014**   The Assistant → Assignment relationship shall be re-verified on every request: the AssistantAssignment must be ACTIVE, unexpired, and the delegating Teacher must still hold the delegated permission in an equal-or-wider scope. **MUST**  System
+  **SEC-014**   The Assistant → Assignment relationship shall be re-verified on every request: the AssistantAssignment must be ACTIVE, unexpired, and the delegating Teacher must still hold the delegated permission in an equal-or-wider scope.   **MUST**       System
 
-  **SEC-015**   The Student → Classroom/Group relationship shall be re-verified on every request against an active ClassroomMembership or GroupMembership.                     **MUST**       System
-  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-*Table 7.3 --- Relationship re-verification requirements. Each closes the corresponding row of Table 7.2 against caching or stale-grant bypass.*
+  **SEC-015**   The Student → Classroom/Group relationship shall be re-verified on every request against an active ClassroomMembership or GroupMembership.                                                                                          **MUST**       System
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## 7.5 Entitlement
 
@@ -602,31 +603,31 @@ Entitlement is evaluated **after** authorization and answers a different questio
 
 The Organization is the tenant boundary. It may be a school, an institute, or an independent teaching practice operated by a single Teacher --- the model is the same in both cases.
 
-  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **ID**        **Requirement**                                                                                                                                    **Priority**   **Actor**
-  ------------- -------------------------------------------------------------------------------------------------------------------------------------------------- -------------- ------------
-  **ORG-001**   The system shall support Organizations as the tenant boundary for all scoped data.                                                                 **MUST**       System
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**        **Requirement**                                                                                                                                                                                                                                                                                                   **Priority**   **Actor**
+  ------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------- ------------
+  **ORG-001**   The system shall support Organizations as the tenant boundary for all scoped data.                                                                                                                                                                                                                                **MUST**       System
 
-  **ORG-002**   Every scoped record shall carry organization_id, and every query shall filter on it.                                                               **MUST**       System
+  **ORG-002**   Every scoped record shall carry organization_id, and every query shall filter on it.                                                                                                                                                                                                                              **MUST**       System
 
-  **ORG-003**   An Organization shall never be able to access another Organization\'s private data by any request shape.                                           **MUST**       System
+  **ORG-003**   An Organization shall never be able to access another Organization\'s private data by any request shape.                                                                                                                                                                                                          **MUST**       System
 
-  **ORG-004**   Tenant isolation shall be enforced at API authorization, scope validation, object authorization and query layers --- not by frontend filtering.    **MUST**       System
+  **ORG-004**   Tenant isolation shall be enforced at API authorization, scope validation, object authorization and query layers --- not by frontend filtering.                                                                                                                                                                   **MUST**       System
 
-  **ORG-005**   The system shall support an Organization operated by a single independent Teacher without requiring an institutional structure.                    **MUST**       System
+  **ORG-005**   The system shall support an Organization operated by a single independent Teacher without requiring an institutional structure.                                                                                                                                                                                   **MUST**       System
 
-  **ORG-006**   Organization membership shall be an explicit record; it shall not be inferred from a Login Session.                                                **MUST**       System
+  **ORG-006**   Organization membership shall be an explicit record; it shall not be inferred from a Login Session.                                                                                                                                                                                                               **MUST**       System
 
-  **ORG-007**   Authorized Admins shall manage Organization profile, membership, subscription, usage and settings according to administrative permission.          **MUST**       Admin
+  **ORG-007**   Authorized Admins shall manage Organization profile, membership, subscription, usage and settings according to administrative permission.                                                                                                                                                                         **MUST**       Admin
 
-  **ORG-008**   A user may hold different roles in different Organizations; each request shall be evaluated against the Organization owning the target resource.   **SHOULD**     System
+  **ORG-008**   A user may hold different roles in different Organizations; each request shall be evaluated against the Organization owning the target resource.                                                                                                                                                                  **SHOULD**     System
 
-  **ORG-009**   Deactivating or closing an Organization shall follow a defined lifecycle (request → confirm → grace period → read-only → archived) and shall never cascade-delete its users, courses, content, grades or audit records; retention and erasure follow §44 exactly as for an individual account.   **MUST**   Admin
+  **ORG-009**   Deactivating or closing an Organization shall follow a defined lifecycle (request → confirm → grace period → read-only → archived) and shall never cascade-delete its users, courses, content, grades or audit records; retention and erasure follow §44 exactly as for an individual account. (Added in v1.1.)   **MUST**       Admin
 
-  **ORG-010**   Organization closure shall require Platform Owner or Super Admin authorization, a stated reason, and shall be fully audited; it shall not be reachable through an Organization-scoped Admin role alone.   **MUST**   Admin
-  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ORG-010**   Organization closure shall require Platform Owner or Super Admin authorization, a stated reason, and shall be fully audited; it shall not be reachable through an Organization-scoped Admin role alone. (Added in v1.1.)                                                                                          **MUST**       Admin
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-*Table 8.1 --- Organization and tenancy requirements. ORG-009/010 added in v1.1: the Organization entity (§37.3.1) already promised "never a cascade delete... a lifecycle operation (§44)" but no requirement said what that lifecycle is (Appendix E).*
+*Table 8.1 --- Organization and tenancy requirements.*
 
 +---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | **GEN-019 · TENANCY IS A DATA-MODEL PROPERTY, NOT A FILTER**                                                                                                                                                                                                                                                                                            |
@@ -637,23 +638,23 @@ The Organization is the tenant boundary. It may be a school, an institute, or an
 
 ## 8.1 Academic Periods
 
-*Added in v1.1.* AcademicPeriod (§37.3.2) is load-bearing --- Classroom, Enrollment, Course and the leaderboard/progress windows all bind to it, and Table 37.7 states "one active Classroom per student per AcademicPeriod" as an enforced cardinality rule --- but v1.0 defined no functional requirement for who creates, manages or closes one. This subsection closes that gap; it does not introduce a new concept, only specifies the one the data model already depended on.
+Added in v1.1. AcademicPeriod (§37.3.2) is load-bearing --- Classroom, Enrollment, Course and the leaderboard/progress windows all bind to it, and Table 37.7 states "one active Classroom per student per AcademicPeriod" as an enforced cardinality rule --- but v1.0 defined no functional requirement for who creates, manages or closes one. This subsection closes that gap; it does not introduce a new concept, only specifies the one the data model already depended on.
 
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **ID**        **Requirement**                                                                                                                                               **Priority**   **Actor**
-  ------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------- ---------
-  **PER-001**   The system shall support AcademicPeriods scoped to an Organization, each with a name, start date, end date and status.                                        **MUST**       Admin
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**        **Requirement**                                                                                                                                                                         **Priority**   **Actor**
+  ------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------- -----------
+  **PER-001**   The system shall support AcademicPeriods scoped to an Organization, each with a name, start date, end date and status.                                                                  **MUST**       Admin
 
-  **PER-002**   Authorized Admins, and Teachers where the Organization delegates it, shall create and manage AcademicPeriods.                                                 **MUST**       Admin
+  **PER-002**   Authorized Admins, and Teachers where the Organization delegates it, shall create and manage AcademicPeriods.                                                                           **MUST**       Admin
 
-  **PER-003**   A Classroom, Course and Enrollment shall each belong to exactly one AcademicPeriod; a Student shall hold at most one active Classroom membership per AcademicPeriod (BR-015). **MUST**  System
+  **PER-003**   A Classroom, Course and Enrollment shall each belong to exactly one AcademicPeriod; a Student shall hold at most one active Classroom membership per AcademicPeriod (BR-015).           **MUST**       System
 
-  **PER-004**   AcademicPeriods shall not overlap within the same Organization unless the Organization explicitly supports concurrent periods (e.g. parallel tracks); the default is non-overlapping. **MUST**  System
+  **PER-004**   AcademicPeriods shall not overlap within the same Organization unless the Organization explicitly supports concurrent periods (e.g. parallel tracks); the default is non-overlapping.   **MUST**       System
 
-  **PER-005**   Closing an AcademicPeriod shall not delete or hide any Classroom, Enrollment, grade, submission or attendance record created within it; historical data remains queryable by period.  **MUST**  System
+  **PER-005**   Closing an AcademicPeriod shall not delete or hide any Classroom, Enrollment, grade, submission or attendance record created within it; historical data remains queryable by period.    **MUST**       System
 
-  **PER-006**   Creating a new AcademicPeriod shall never modify or move records belonging to a prior one.                                                                     **MUST**       System
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **PER-006**   Creating a new AcademicPeriod shall never modify or move records belonging to a prior one.                                                                                              **MUST**       System
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 8.2 --- Academic Period requirements. Prefix PER, registered in Appendix A.*
 
@@ -675,7 +676,7 @@ Classroom answers \*who are these students\*. Group answers \*how do we divide t
   **Group**       A subdivision inside exactly one Classroom.                                Grade 10 → Group A, Group B, Group C
   --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-## 9.2 Structural rules --- CONFIRMED
+## 9.2 Structural rules
 
   ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **ID**        **Rule**                                                                                                                                                            **Priority**
@@ -709,8 +710,44 @@ Classroom answers \*who are these students\*. Group answers \*how do we divide t
 
 *Table 9.1 --- Classroom and Group rules. CLS-009/010 are what make a mid-term class change non-destructive.*
 
+**Provenance (added in v1.3, per D-16 --- no requirement text below is changed)**
+
+The source specifications for Classroom and Group ("classroom_details") were never supplied; this section was reconstructed from surrounding material, as recorded in §51 (D-16). Reconstruction does not mean unreliable --- most of the table below is independently corroborated elsewhere in this SRS and is exactly as trustworthy as any other CONFIRMED requirement. A minority (CLS-002, CLS-003, GRP-002) rests on inference alone and is marked PROVISIONAL: safe to build against provisionally, but flagged for explicit Project Owner confirmation before the specific behaviour they describe is treated as final.
+
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**        **Status**                **Basis**
+  ------------- ------------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **CLS-001**   **CONFIRMED elsewhere**   Direct consequence of the golden rule GEN-008 (§4): "Group = subdivision of exactly one Classroom" implies one Classroom may hold many Groups.
+
+  **GRP-001**   **CONFIRMED elsewhere**   Is GEN-008 restated; independently enforced by the Group entity\'s mandatory classroom_id (§37.3.2, corrected in the v1.1 audit).
+
+  **CLS-002**   **PROVISIONAL**           No independent statement elsewhere. §37.3.2 / BR-015 / PER-003 establish only that a Student holds at most one ACTIVE Classroom membership per AcademicPeriod --- narrower than, and not proof of, "may belong to multiple Classrooms" in general. Confirm with the Project Owner before relying on cross-period or cross-Organization multiplicity.
+
+  **CLS-003**   **PROVISIONAL**           A data-modelling inference consistent with the Membership entity design (§37.3.2) but not independently stated as a requirement elsewhere.
+
+  **GRP-002**   **PROVISIONAL**           No independent statement elsewhere; a plausible default (not every Classroom student need be in a Group yet) but a genuine business-rule choice the missing source document may have specified differently.
+
+  **CLS-004**   **CONFIRMED elsewhere**   Restated independently as STU-010 (§20.3): "Students shall never modify their own membership, attendance, grades or role."
+
+  **CLS-005**   **CONFIRMED elsewhere**   Follows directly from the Teacher role definition and scope model (§6.1, §7).
+
+  **CLS-006**   **CONFIRMED elsewhere**   Is GEN-006 (§4) applied to this domain.
+
+  **CLS-007**   **CONFIRMED elsewhere**   Follows directly from PAR-000/PAR-001 (§22).
+
+  **CLS-008**   **CONFIRMED elsewhere**   Consistent with the Activity targeting rule ACT-012 (§12.4).
+
+  **GRP-003**   **CONFIRMED elsewhere**   Consistent with ACT-012 (§12.4).
+
+  **CLS-009**   **CONFIRMED elsewhere**   The Membership entity itself (§37.3.2) is specified this way ("left_at is set rather than the row deleted", citing GEN-018); general pattern also required by DB-003.
+
+  **CLS-010**   **CONFIRMED elsewhere**   Restated in the BR-015 box immediately below, and exercised in the worked use case UC-020 (§46.2); the strongest-corroborated rule in this table.
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+*Table 9.1a --- Provenance of Table 9.1. PROVISIONAL rows do not block Phase 6 architecture; they block only finalising their own specific behaviour.*
+
 +---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| **BR-015 · PROPOSED · WHAT A CLASSROOM OR GROUP CHANGE DOES AND DOES NOT DO** (renumbered from BR-014 in v1.1: BR-014 was already assigned to the payment revenue-share rule in §30.1 --- Appendix E)                                                                                                                                                                                                                                                                                                                           |
+| **BR-015 · PROPOSED · WHAT A CLASSROOM OR GROUP CHANGE DOES AND DOES NOT DO (renumbered from BR-014 in v1.1 --- BR-014 was already assigned to the payment revenue-share rule in §30.1)**                                                                                                                                                                                                               |
 |                                                                                                                                                                                                                                                                                                                                                                                                         |
 | Moving a Student ends the current membership with a left_at date and creates a new one. **Grades, submissions, point history and achievements are never moved, recalculated or deleted** --- they stay attached to the Activity and context in which they were earned. The Student\'s new Group leaderboard reflects points earned within that scope; the Student\'s total achievements are unaffected. |
 |                                                                                                                                                                                                                                                                                                                                                                                                         |
@@ -722,45 +759,45 @@ Classroom answers \*who are these students\*. Group answers \*how do we divide t
 
 This is the content tree. It is deliberately independent of the cohort tree in §9: content is authored once and delivered to whichever Classrooms, Groups or Students the Teacher targets (§15.4).
 
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **ID**        **Requirement**                                                                                                                                    **Priority**   **Actor**
-  ------------- -------------------------------------------------------------------------------------------------------------------------------------------------- -------------- ---------------
-  **SUB-001**   The system shall support Subjects belonging to an Organization.                                                                                    **MUST**       Teacher/Admin
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**        **Requirement**                                                                                                                                                                                                                                                                                                                           **Priority**   **Actor**
+  ------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------- ---------------
+  **SUB-001**   The system shall support Subjects belonging to an Organization.                                                                                                                                                                                                                                                                           **MUST**       Teacher/Admin
 
-  **SUB-002**   A Subject may contain multiple Courses.                                                                                                            **MUST**       System
+  **SUB-002**   A Subject may contain multiple Courses.                                                                                                                                                                                                                                                                                                   **MUST**       System
 
-  **CRS-001**   The system shall support Courses belonging to exactly one Subject.                                                                                 **MUST**       Teacher
+  **CRS-001**   The system shall support Courses belonging to exactly one Subject.                                                                                                                                                                                                                                                                        **MUST**       Teacher
 
-  **CRS-002**   Courses shall support draft, published and archived states with defined transitions.                                                               **MUST**       Teacher
+  **CRS-002**   Courses shall support draft, published and archived states with defined transitions.                                                                                                                                                                                                                                                      **MUST**       Teacher
 
-  **CRS-003**   A Course shall record its authoring Teacher permanently.                                                                                           **MUST**       System
+  **CRS-003**   A Course shall record its authoring Teacher permanently.                                                                                                                                                                                                                                                                                  **MUST**       System
 
-  **CYC-001**   A Course may contain multiple Cycles; a Cycle represents a time period or phase and shall have start and end dates.                                **MUST**       Teacher
+  **CYC-001**   A Course may contain multiple Cycles; a Cycle represents a time period or phase and shall have start and end dates.                                                                                                                                                                                                                       **MUST**       Teacher
 
-  **CYC-002**   Cycles shall be ordered within their Course.                                                                                                       **MUST**       Teacher
+  **CYC-002**   Cycles shall be ordered within their Course.                                                                                                                                                                                                                                                                                              **MUST**       Teacher
 
-  **TOP-001**   A Cycle may contain multiple Topics; a Topic is the learning concept being taught.                                                                 **MUST**       Teacher
+  **TOP-001**   A Cycle may contain multiple Topics; a Topic is the learning concept being taught.                                                                                                                                                                                                                                                        **MUST**       Teacher
 
-  **TOP-002**   Topics shall be ordered within their Cycle.                                                                                                        **MUST**       Teacher
+  **TOP-002**   Topics shall be ordered within their Cycle.                                                                                                                                                                                                                                                                                               **MUST**       Teacher
 
-  **TOP-003**   A Topic may be referenced by many Teaching Sessions and by many Activities.                                                                        **MUST**       System
+  **TOP-003**   A Topic may be referenced by many Teaching Sessions and by many Activities.                                                                                                                                                                                                                                                               **MUST**       System
 
-  **CRS-004**   Learning materials shall attach to Courses, Cycles, Topics, Teaching Sessions and Activities through FileReferences, never by duplicating files.   **MUST**       System
+  **CRS-004**   Learning materials shall attach to Courses, Cycles, Topics, Teaching Sessions and Activities through FileReferences, never by duplicating files.                                                                                                                                                                                          **MUST**       System
 
-  **CRS-005**   Students and Parents shall never modify Teacher-owned content.                                                                                     **MUST**       System
+  **CRS-005**   Students and Parents shall never modify Teacher-owned content.                                                                                                                                                                                                                                                                            **MUST**       System
 
-  **CRS-006**   Archiving shall preserve all dependent Activities, submissions, grades and audit records.                                                          **MUST**       System
+  **CRS-006**   Archiving shall preserve all dependent Activities, submissions, grades and audit records.                                                                                                                                                                                                                                                 **MUST**       System
 
-  **CRS-007**   A Course shall not be returned to draft once a Submission exists against any of its Activities; it may only be archived.                           **MUST**       System
+  **CRS-007**   A Course shall not be returned to draft once a Submission exists against any of its Activities; it may only be archived.                                                                                                                                                                                                                  **MUST**       System
 
-  **CRS-008**   Publishing shall be an explicit action separate from creating or uploading.                                                                        **MUST**       Teacher
+  **CRS-008**   Publishing shall be an explicit action separate from creating or uploading.                                                                                                                                                                                                                                                               **MUST**       Teacher
 
-  **CRS-009**   The owning Teacher shall add or remove a co-teacher on a Course via a UserRoleAssignment scoped to that Course; a co-teacher's default permissions equal the owner's educational permissions in that scope but never include ownership transfer, co-teacher management, or Course deletion, which remain owner-only.   **MUST**   Teacher
+  **CRS-009**   The owning Teacher shall add or remove a co-teacher on a Course via a UserRoleAssignment scoped to that Course; a co-teacher\'s default permissions equal the owner\'s educational permissions in that scope but never include ownership transfer, co-teacher management, or Course deletion, which remain owner-only. (Added in v1.1.)   **MUST**       Teacher
 
-  **CRS-010**   Every co-teacher grant, modification and removal shall be audited and visible to all current co-teachers of the Course.                                                                                                                                                                                                    **MUST**   System
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **CRS-010**   Every co-teacher grant, modification and removal shall be audited and visible to all current co-teachers of the Course. (Added in v1.1.)                                                                                                                                                                                                  **MUST**       System
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-*Table 10.1 --- Subject, Course, Cycle and Topic requirements. CRS-009/010 added in v1.1: the Course entity (§37.3.2) already modelled co-teachers via UserRoleAssignment, but no functional requirement described how one is granted, its default scope, or its limits (Appendix E).*
+*Table 10.1 --- Subject, Course, Cycle and Topic requirements.*
 
 ## 10.1 Content lifecycle
 
@@ -911,8 +948,6 @@ Activity is the general container for anything a student is expected to do, comp
   **ACT-001**   The system shall provide Activity as a generic educational task entity with a shared base structure across all types.                                         **MUST**       System
 
   **ACT-002**   The system shall support the Activity types marked V1 in §12.1.                                                                                               **MUST**       System
-
-  **ACT-009**   An Activity with no resolved ActivityTarget shall not transition to OPEN (Table 45.1); it has no recipient and therefore cannot be attempted.                 **MUST**       System
 
   **ACT-011**   Activities shall associate with Classroom, Group, Course, Cycle, Topic and Teaching Session as applicable.                                                    **MUST**       Teacher
 
@@ -1172,57 +1207,57 @@ Teacher Storage is a **private** workspace inside the platform. It is not course
 
 ## 14.3 Core storage requirements
 
-  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **ID**        **Requirement**                                                                                                                                                                                                **Priority**   **Actor**
-  ------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------- ------------
-  **STR-001**   The system shall provide each Teacher with logically isolated private storage.                                                                                                                                 **MUST**       System
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**        **Requirement**                                                                                                                                                                                                                           **Priority**   **Actor**
+  ------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------- ------------
+  **STR-001**   The system shall provide each Teacher with logically isolated private storage.                                                                                                                                                            **MUST**       System
 
-  **STR-002**   Teacher Storage shall not be publicly accessible by default.                                                                                                                                                   **MUST**       System
+  **STR-002**   Teacher Storage shall not be publicly accessible by default.                                                                                                                                                                              **MUST**       System
 
-  **STR-003**   The system shall enforce server-side authorization for every storage operation.                                                                                                                                **MUST**       System
+  **STR-003**   The system shall enforce server-side authorization for every storage operation.                                                                                                                                                           **MUST**       System
 
-  **STR-004**   Students shall have no direct access to Teacher Storage.                                                                                                                                                       **MUST**       System
+  **STR-004**   Students shall have no direct access to Teacher Storage.                                                                                                                                                                                  **MUST**       System
 
-  **STR-005**   Parents shall have no direct access to Teacher Storage.                                                                                                                                                        **MUST**       System
+  **STR-005**   Parents shall have no direct access to Teacher Storage.                                                                                                                                                                                   **MUST**       System
 
-  **STR-006**   Assistants shall access Teacher Storage only where explicitly shared, and only with the granted operations (view · upload · edit · delete · share · publish · download).                                       **MUST**       System
+  **STR-006**   Assistants shall access Teacher Storage only where explicitly shared, and only with the granted operations (view · upload · edit · delete · share · publish · download).                                                                  **MUST**       System
 
-  **STR-007**   Uploaded files shall undergo validation of size, declared MIME type, extension and file signature, and shall be malware-scanned before becoming available.                                                     **MUST**       System
+  **STR-007**   Uploaded files shall undergo validation of size, declared MIME type, extension and file signature, and shall be malware-scanned before becoming available.                                                                                **MUST**       System
 
-  **STR-008**   Protected files shall be encrypted at rest.                                                                                                                                                                    **MUST**       System
+  **STR-008**   Protected files shall be encrypted at rest.                                                                                                                                                                                               **MUST**       System
 
-  **STR-009**   Protected content shall be delivered through authorized content-delivery mechanisms, never through permanent public URLs.                                                                                      **MUST**       System
+  **STR-009**   Protected content shall be delivered through authorized content-delivery mechanisms, never through permanent public URLs.                                                                                                                 **MUST**       System
 
-  **STR-010**   The system shall maintain file metadata, ownership and content hash.                                                                                                                                           **MUST**       System
+  **STR-010**   The system shall maintain file metadata, ownership and content hash.                                                                                                                                                                      **MUST**       System
 
-  **STR-011**   The system shall support configurable per-plan storage quotas.                                                                                                                                                 **MUST**       System
+  **STR-011**   The system shall support configurable per-plan storage quotas.                                                                                                                                                                            **MUST**       System
 
-  **STR-012**   Deleted files shall go to Trash and be recoverable for a defined retention period before purge.                                                                                                                **MUST**       System
+  **STR-012**   Deleted files shall go to Trash and be recoverable for a defined retention period before purge.                                                                                                                                           **MUST**       System
 
-  **STR-013**   The system shall maintain version history where versioning is enabled.                                                                                                                                         **MUST**       System
+  **STR-013**   The system shall maintain version history where versioning is enabled.                                                                                                                                                                    **MUST**       System
 
-  **STR-014**   Security-sensitive storage operations shall be logged: upload · download · delete · restore · rename · move · share · permission change · publish · unpublish · version change.                                **MUST**       System
+  **STR-014**   Security-sensitive storage operations shall be logged: upload · download · delete · restore · rename · move · share · permission change · publish · unpublish · version change.                                                           **MUST**       System
 
-  **STR-015**   A user shall not be able to access another user\'s storage by manipulating file identifiers.                                                                                                                   **MUST**       System
+  **STR-015**   A user shall not be able to access another user\'s storage by manipulating file identifiers.                                                                                                                                              **MUST**       System
 
-  **STR-016**   Teachers shall organise storage with folders, search, filter, sort, tags, favourites and preview.                                                                                                              **MUST**       Teacher
+  **STR-016**   Teachers shall organise storage with folders, search, filter, sort, tags, favourites and preview.                                                                                                                                         **MUST**       Teacher
 
-  **STR-017**   The system shall warn before deleting a file that is currently referenced, stating how many educational resources reference it.                                                                                **MUST**       System
+  **STR-017**   The system shall warn before deleting a file that is currently referenced, stating how many educational resources reference it.                                                                                                           **MUST**       System
 
-  **STR-018**   Reaching a storage quota shall block new uploads but shall never break students\' access to already-published content.                                                                                         **MUST**       System
+  **STR-018**   Reaching a storage quota shall block new uploads but shall never break students\' access to already-published content.                                                                                                                    **MUST**       System
 
-  **STR-019**   The system shall notify the Teacher at defined quota thresholds.                                                                                                                                               **SHOULD**     System
+  **STR-019**   The system shall notify the Teacher at defined quota thresholds.                                                                                                                                                                          **SHOULD**     System
 
-  **STR-020**   Teachers shall download their own original files; downloads shall be authenticated and logged.                                                                                                                 **MUST**       Teacher
+  **STR-020**   Teachers shall download their own original files; downloads shall be authenticated and logged.                                                                                                                                            **MUST**       Teacher
 
-  **STR-021**   External sharing shall be configurable and, where enabled, shall use expiring, revocable links with optional password and download restrictions. Protected course content shall not be externally shareable.   **SHOULD**     Teacher
+  **STR-021**   External sharing shall be configurable and, where enabled, shall use expiring, revocable links with optional password and download restrictions. Protected course content shall not be externally shareable.                              **SHOULD**     Teacher
 
-  **STR-022**   Large files shall be stored in object storage, not in the relational database; the database shall hold metadata and references.                                                                                **MUST**       System
+  **STR-022**   Large files shall be stored in object storage, not in the relational database; the database shall hold metadata and references.                                                                                                           **MUST**       System
 
-  **STR-023**   A File with one or more live FileReferences shall not be purged; it may be trashed, but purge is blocked until every reference is removed. STR-017's warning is presentational; this is the enforced guard behind it. **MUST**  System
-  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **STR-023**   A File with one or more live FileReferences shall not be purged; it may be trashed, but purge is blocked until every reference is removed. STR-017\'s warning is presentational; this is the enforced guard behind it. (Added in v1.1.)   **MUST**       System
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-*Table 14.2 --- Teacher Storage requirements. STR-023 added in v1.1: Table 37.5 and Table 45.3 already stated this as an enforced rule under a mis-cited ID (Appendix E).*
+*Table 14.2 --- Teacher Storage requirements.*
 
 ## 14.4 Import, reference and deduplication
 
@@ -1496,6 +1531,38 @@ This is a major EduCapsules requirement and it is stated honestly. The goal is *
 +=================================================================================================================================================================================================================================================================================+
 +---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
+**Grading Scales (added in v1.2 --- resolves D-08)**
+
+CONFIRMED, by Project Owner decision, 2026: Grade scales shall be configurable per Organization. The system architecture shall support organization-specific grading scales while preserving the exact grading scale and criteria in force at the time each Grade was created or released. No single global grading scale shall be hard-coded. This does not reopen or change any other CONFIRMED decision; it resolves D-08 (§51) and completes what §37.3.3's Grade.grading_scale_snapshot field already anticipated.
+
+  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**        **Requirement**                                                                                                                                                                                                                                                                                    **Priority**   **Actor**
+  ------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------- -----------
+  **GRD-013**   The system shall support exactly one configurable GradingScale per Organization; there shall be no platform-wide grading scale shared across Organizations.                                                                                                                                        **MUST**       System
+
+  **GRD-014**   A GradingScale shall have a scale_type of NUMERIC, PERCENTAGE, LETTER or CUSTOM, with a type-appropriate definition (numeric range and precision; letter or custom bands with thresholds and labels).                                                                                              **MUST**       System
+
+  **GRD-015**   A new Organization shall be provisioned with a default GradingScale (Numeric, 0--100) at creation; authorized Admins shall be able to edit it thereafter.                                                                                                                                          **MUST**       System
+
+  **GRD-016**   Editing a GradingScale\'s type or definition shall create a new GradingScaleVersion; a GradingScaleVersion already referenced by any Grade shall never be mutated.                                                                                                                                 **MUST**       System
+
+  **GRD-017**   Every Grade shall pin the exact GradingScaleVersion in force at the time the grade was created, and shall retain a snapshot of that version\'s definition; neither the pinned version nor the snapshot shall change when the Organization\'s GradingScale is later edited, replaced or archived.   **MUST**       System
+
+  **GRD-018**   Displaying, exporting or recalculating a historical Grade shall use its pinned GradingScaleVersion and snapshot, never the Organization\'s current GradingScale.                                                                                                                                   **MUST**       System
+
+  **GRD-019**   Authorized Admins shall create and edit their Organization\'s GradingScale (GRADING_SCALE_MANAGE, §26.3); Teachers, Assistants and Students shall have read-only access to the scale currently in force and shall never modify it.                                                                 **MUST**       Admin
+
+  **GRD-020**   Every new GradingScaleVersion shall be audited, recording the actor, the prior definition, the new definition and the timestamp.                                                                                                                                                                   **MUST**       System
+  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+*Table 17.1a --- Grading Scale requirements, added in v1.2. Prefix GRD (existing), continuing from GRD-012.*
+
+Validation rules: a GradingScaleVersion's definition shall be rejected if it is internally inconsistent for its scale_type --- for NUMERIC/PERCENTAGE, min \< max and a defined rounding precision; for LETTER/CUSTOM, at least one band, no overlapping thresholds, and every band carrying both a label and a numeric-equivalent value (for GPA-style aggregation). A GradingScale shall not be deleted while any Grade references any of its versions; it may only be superseded by a new version (GRD-016).
+
+UI implications: Admin settings gain a "Grading Scale" screen (Organization settings) where the current GradingScaleVersion is edited via a form matching UX-P3 (states the consequence --- "This creates a new version; N historical grades keep the old scale" --- before saving) and UX-P2 (explains why the control is unavailable to non-Admins rather than hiding it). Teachers see the Organization's current scale as read-only context wherever they enter or view grades (S-12 Grading queue). A released Grade always renders using its own pinned scale, so a student's history never appears to change retroactively even after the Organization edits its scale.
+
+API implications: a new resource group /grading-scales (§38.2) exposes read (current + version history) to Teachers/Assistants/Students within their Organization, and create/update (new version) to Admins holding GRADING_SCALE_MANAGE. GET /grades/{id} and grade-listing endpoints include the pinned grading_scale_version_id and its snapshot in the response so a client never needs a second call to interpret a historical grade correctly.
+
 ## 17.2 Progress requirements
 
   -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1573,34 +1640,34 @@ Gamification is a major EduCapsules component. It is built to be auditable, beca
 
 ## 18.2 Leaderboards
 
-  -------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **ID**        **Requirement**                                                                                                      **Priority**   **Actor**
-  ------------- -------------------------------------------------------------------------------------------------------------------- -------------- -----------------
-  **LDB-001**   The system shall support leaderboards at Group, Classroom, Subject and Cycle scope.                                  **MUST**       System
+  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**        **Requirement**                                                                                                                                                                        **Priority**   **Actor**
+  ------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------- -----------------
+  **LDB-001**   The system shall support leaderboards at Group, Classroom, Subject and Cycle scope.                                                                                                    **MUST**       System
 
-  **LDB-002**   Students shall view leaderboard information subject to privacy rules.                                                **MUST**       Student
+  **LDB-002**   Students shall view leaderboard information subject to privacy rules.                                                                                                                  **MUST**       Student
 
-  **LDB-003**   Parents shall view only their linked child\'s leaderboard position.                                                  **MUST**       Parent
+  **LDB-003**   Parents shall view only their linked child\'s leaderboard position.                                                                                                                    **MUST**       Parent
 
-  **LDB-004**   Leaderboard configuration, including disabling a leaderboard for a Group, shall be permission-controlled.            **MUST**       Teacher/Admin ⚙
+  **LDB-004**   Leaderboard configuration, including disabling a leaderboard for a Group, shall be permission-controlled.                                                                              **MUST**       Teacher/Admin ⚙
 
-  **LDB-005**   Ties shall be resolved by a single documented rule applied consistently across every scope.                          **MUST**       System
+  **LDB-005**   Ties shall be resolved by a single documented rule applied consistently across every scope.                                                                                            **MUST**       System
 
-  **LDB-006**   A leaderboard shall be computed over a defined scope and period and shall never silently mix periods.                **MUST**       System
+  **LDB-006**   A leaderboard shall be computed over a defined scope and period and shall never silently mix periods.                                                                                  **MUST**       System
 
-  **LDB-007**   Assistant leaderboard visibility shall be limited to their assigned scope.                                           **MUST**       System
+  **LDB-007**   Assistant leaderboard visibility shall be limited to their assigned scope.                                                                                                             **MUST**       System
 
-  **LDB-008**   A student shall be able to opt out of appearing to other students without losing their own view of their position.   **SHOULD**     Student
+  **LDB-008**   A student shall be able to opt out of appearing to other students without losing their own view of their position.                                                                     **SHOULD**     Student
 
-  **LDB-009**   A leaderboard shall default to disabled for a newly created scope; it becomes visible only after a Teacher or authorised Assistant explicitly enables it (LDB-004).   **MUST**   System
-  -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **LDB-009**   A leaderboard shall default to disabled for a newly created scope; it becomes visible only after a Teacher or authorised Assistant explicitly enables it (LDB-004). (Added in v1.1.)   **MUST**       System
+  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-*Table 18.2 --- Leaderboard requirements. LDB-009 added in v1.1: the "off by default" behaviour was already stated as fact elsewhere (§37.3.5, §49.1, R-10) but had never been written as a requirement (Appendix E).*
+*Table 18.2 --- Leaderboard requirements.*
 
 +-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | **LEADERBOARDS ARE THE HIGHEST REPUTATIONAL RISK IN THE PRODUCT**                                                                                                                                                                                                                                                                                                 |
 |                                                                                                                                                                                                                                                                                                                                                                   |
-| Done carelessly, a leaderboard publishes a ranked list of which children are struggling. LDB-004 (a Teacher can switch it off), LDB-008 (a student can opt out), LDB-009 (disabled by default) and the privacy rules in §29 exist for that reason. Exact ranking source, tie rule and reset period remain **OPEN** (§50, D-18) and must be decided before any leaderboard is enabled. |
+| Done carelessly, a leaderboard publishes a ranked list of which children are struggling. LDB-004 (a Teacher can switch it off), LDB-008 (a student can opt out) and the privacy rules in §29 exist for that reason. Exact ranking source, tie rule, reset period and default visibility remain **OPEN** (§50, D-18) and must be decided before leaderboards ship. |
 +===================================================================================================================================================================================================================================================================================================================================================================+
 +-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
@@ -1883,6 +1950,40 @@ The Teacher is the primary educational authority. Teacher authority is bounded b
   -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 21.1 --- Assistant requirements.*
+
+**Provenance (added in v1.3, per D-16 --- no requirement text below is changed)**
+
+The source specification for Assistant accounts ("assistant_acc") was never supplied; this section was reconstructed from surrounding material, as recorded in §51 (D-16). As with §9, most of the table below is independently corroborated elsewhere --- several rows (AST-002, AST-008, AST-011) are near-verbatim restatements of golden rules or requirements stated independently in other sections, which is about as strong a confirmation as this SRS ever gives outside an explicit Project Owner sign-off. One row (AST-009) rests on inference alone.
+
+  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**        **Status**                **Basis**
+  ------------- ------------------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **AST-001**   **CONFIRMED elsewhere**   The Teacher/Assistant role distinction is independently drawn in §6.1\'s role table.
+
+  **AST-002**   **CONFIRMED elsewhere**   Is GEN-006 (§4) restated verbatim.
+
+  **AST-003**   **CONFIRMED elsewhere**   Each named task area is independently gated by its own permission code with an explicit "Delegatable to Assistant?" column in the catalogue (§26.2).
+
+  **AST-004**   **CONFIRMED elsewhere**   Follows from GEN-002 and §6.1\'s "never has" column.
+
+  **AST-005**   **CONFIRMED elsewhere**   General audit principle GEN-018 applied to this domain; SEC-010 requires it explicitly for any permission grant/revocation.
+
+  **AST-006**   **CONFIRMED elsewhere**   The AssistantAssignment entity (§37.3.1) independently carries valid_until; SEC-007 requires an expired grant to be treated as absent.
+
+  **AST-007**   **CONFIRMED elsewhere**   Follows from GEN-018/GEN-021; exercised directly in the worked use case UC-012 (§46.2).
+
+  **AST-008**   **CONFIRMED elsewhere**   Is GEN-003 (§4) restated verbatim.
+
+  **AST-009**   **PROVISIONAL**           No independent statement elsewhere. The AssistantAssignment entity supports M:N Teacher--Assistant pairing structurally either way; that an Assistant should be allowed multiple simultaneous delegations in the product is a business decision this reconstruction infers rather than confirms.
+
+  **AST-010**   **CONFIRMED elsewhere**   Matches §6.1\'s "never has: billing" and Table 31.1\'s Billing capability matrix, where every Assistant row is ✖.
+
+  **AST-011**   **CONFIRMED elsewhere**   Is STR-006 (§14.3), independently stated in the Storage section, word for word.
+  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+*Table 21.1a --- Provenance of Table 21.1. AST-009 does not block building the delegation engine (GEN-006/AST-002 are independently confirmed); it blocks only finalising whether an Assistant may hold concurrent assignments from multiple Teachers.*
+
+The §21.3 hard-prohibitions table (below) is, as a whole, an elaboration of the confirmed no-amplification principle (GEN-006, SEC-006) and mostly independently corroborated the same way (e.g. "cannot create/modify/remove another Assistant" matches ASSIGN_ASSISTANT's "No" delegability in §26.2; "cannot manage billing" matches AST-010/Table 31.1; "cannot access unrestricted Teacher Storage" matches AST-011/STR-006). Two rows have no independent citation found and are PROVISIONAL: "Access or modify Parent accounts or remove parent relationships" and "Permanently delete students, or transfer students between unrelated Teachers." Both are conservative (they only ever narrow, never grant, Assistant access), so building against them provisionally carries negligible risk even before confirmation.
 
 ## 21.3 Hard prohibitions
 
@@ -2339,29 +2440,31 @@ The permission catalogue is closed: an action with no permission code cannot be 
 
 ## 26.3 Administrative permission catalogue
 
-  ----------------------------------------------------------------------------------------------------------------------------
-  **Permission**                                       **Allows**                                      **Typical role**
-  ---------------------------------------------------- ----------------------------------------------- -----------------------
-  USER_VIEW · USER_SUSPEND · USER_RESTORE              Account administration                          Operations, Support
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Permission**                                       **Allows**                                                               **Typical role**
+  ---------------------------------------------------- ------------------------------------------------------------------------ -----------------------------------------------------------------------------------------
+  USER_VIEW · USER_SUSPEND · USER_RESTORE              Account administration                                                   Operations, Support
 
-  ORG_VIEW · ORG_MANAGE                                Organization administration                     Operations, Super
+  ORG_VIEW · ORG_MANAGE                                Organization administration                                              Operations, Super
 
-  CONTENT_REVIEW · CONTENT_RESTRICT · CONTENT_REMOVE   Content moderation                              Moderation
+  CONTENT_REVIEW · CONTENT_RESTRICT · CONTENT_REMOVE   Content moderation                                                       Moderation
 
-  BILLING_VIEW · REFUND_MANAGE · PLAN_MANAGE           Commercial operations                           Billing
+  BILLING_VIEW · REFUND_MANAGE · PLAN_MANAGE           Commercial operations                                                    Billing
 
-  SECURITY_VIEW · SECURITY_RESPOND                     Security monitoring and response                Security
+  SECURITY_VIEW · SECURITY_RESPOND                     Security monitoring and response                                         Security
 
-  AUDIT_VIEW                                           Read the audit log                              Security, Super
+  AUDIT_VIEW                                           Read the audit log                                                       Security, Super
 
-  SUPPORT_MANAGE                                       Support tickets and user issues                 Support
+  SUPPORT_MANAGE                                       Support tickets and user issues                                          Support
 
-  SYSTEM_CONFIG · FEATURE_FLAG_MANAGE                  Platform configuration                          Super, Platform Owner
+  SYSTEM_CONFIG · FEATURE_FLAG_MANAGE                  Platform configuration                                                   Super, Platform Owner
 
-  IMPERSONATE_USER                                     Controlled support impersonation                Support (elevated)
+  IMPERSONATE_USER                                     Controlled support impersonation                                         Support (elevated)
 
-  PRIVATE_DATA_ACCESS                                  Exceptional access to restricted private data   Elevated + audited
-  ----------------------------------------------------------------------------------------------------------------------------
+  PRIVATE_DATA_ACCESS                                  Exceptional access to restricted private data                            Elevated + audited
+
+  GRADING_SCALE_MANAGE                                 Create/edit the Organization\'s grading scale (added in v1.2, GRD-019)   Operations, Super (or the Admin capacity of an independent Teacher\'s own Organization)
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 26.2 --- Administrative permission catalogue.*
 
@@ -2765,7 +2868,9 @@ EduCapsules processes children\'s educational records. Privacy is therefore enfo
 
 ## 32.3 Retention
 
-Retention periods are jurisdiction-dependent and are deliberately marked TBD rather than invented; they are the first item for legal review (§33). **The single authoritative retention schedule is Table 44.3** (§44.3, Account Lifecycle, Retention & Deletion) --- it is not repeated here, so that a future retention decision is recorded once and cannot drift between two copies. *v1.1: this section previously carried its own partial retention table with different category boundaries than §44.3's; it is replaced by this pointer to remove the duplication (Appendix E).*
+Retention periods are jurisdiction-dependent and are deliberately marked TBD rather than invented; they are the first item for legal review (§33). The single authoritative retention schedule is Table 44.3 (§44.3, Account Lifecycle, Retention & Deletion) --- it is not repeated here, so a future retention decision is recorded once and cannot drift between two copies.
+
+*v1.1: this section previously carried its own partial retention table with different category boundaries than §44.3; it is replaced by this pointer to remove the duplication.*
 
 # 33. Legal & Policy Requirements
 
@@ -3032,65 +3137,65 @@ A **Login Session** is a controlled, authenticated period during which a user is
 
 ## 35.2 Requirements
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **ID**         **Requirement**                                                                                                                                                                                                                        **Priority**   **Actor**
-  -------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------- ------------
-  **AUTH-101**   The system shall create an authenticated session only after successful authentication.                                                                                                                                                 **MUST**       System
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**         **Requirement**                                                                                                                                                                                                                                                                                                                                                                                                        **Priority**   **Actor**
+  -------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------- ------------
+  **AUTH-101**   The system shall create an authenticated session only after successful authentication.                                                                                                                                                                                                                                                                                                                                 **MUST**       System
 
-  **AUTH-102**   Session credentials shall be generated using cryptographically secure randomness.                                                                                                                                                      **MUST**       System
+  **AUTH-102**   Session credentials shall be generated using cryptographically secure randomness.                                                                                                                                                                                                                                                                                                                                      **MUST**       System
 
-  **AUTH-103**   The system shall never store plaintext passwords or plaintext long-lived session credentials.                                                                                                                                          **MUST**       System
+  **AUTH-103**   The system shall never store plaintext passwords or plaintext long-lived session credentials.                                                                                                                                                                                                                                                                                                                          **MUST**       System
 
-  **AUTH-104**   The system shall support session expiration with configurable idle and absolute timeouts per role.                                                                                                                                     **MUST**       System
+  **AUTH-104**   The system shall support session expiration with configurable idle and absolute timeouts per role.                                                                                                                                                                                                                                                                                                                     **MUST**       System
 
-  **AUTH-105**   The system shall support server-side session revocation.                                                                                                                                                                               **MUST**       System
+  **AUTH-105**   The system shall support server-side session revocation.                                                                                                                                                                                                                                                                                                                                                               **MUST**       System
 
-  **AUTH-106**   The system shall support logout of the current session.                                                                                                                                                                                **MUST**       All
+  **AUTH-106**   The system shall support logout of the current session.                                                                                                                                                                                                                                                                                                                                                                **MUST**       All
 
-  **AUTH-107**   The system shall support revocation of all active sessions.                                                                                                                                                                            **MUST**       All
+  **AUTH-107**   The system shall support revocation of all active sessions.                                                                                                                                                                                                                                                                                                                                                            **MUST**       All
 
-  **AUTH-108**   Users shall see their active sessions and devices with platform, last activity and approximate location.                                                                                                                               **MUST**       All
+  **AUTH-108**   Users shall see their active sessions and devices with platform, last activity and approximate location.                                                                                                                                                                                                                                                                                                               **MUST**       All
 
-  **AUTH-109**   Users shall revoke individual sessions.                                                                                                                                                                                                **MUST**       All
+  **AUTH-109**   Users shall revoke individual sessions.                                                                                                                                                                                                                                                                                                                                                                                **MUST**       All
 
-  **AUTH-110**   The system shall rotate or invalidate session credentials after authentication events, and shall not reuse a pre-authentication session as an authenticated one.                                                                       **MUST**       System
+  **AUTH-110**   The system shall rotate or invalidate session credentials after authentication events, and shall not reuse a pre-authentication session as an authenticated one.                                                                                                                                                                                                                                                       **MUST**       System
 
-  **AUTH-111**   Session credentials shall never appear in URLs or logs.                                                                                                                                                                                **MUST**       System
+  **AUTH-111**   Session credentials shall never appear in URLs or logs.                                                                                                                                                                                                                                                                                                                                                                **MUST**       System
 
-  **AUTH-112**   Authorization shall be enforced independently of session validity.                                                                                                                                                                     **MUST**       System
+  **AUTH-112**   Authorization shall be enforced independently of session validity.                                                                                                                                                                                                                                                                                                                                                     **MUST**       System
 
-  **AUTH-113**   Administrative sessions shall apply stricter controls than ordinary sessions.                                                                                                                                                          **MUST**       System
+  **AUTH-113**   Administrative sessions shall apply stricter controls than ordinary sessions.                                                                                                                                                                                                                                                                                                                                          **MUST**       System
 
-  **AUTH-114**   The system shall record security-relevant session events (§36.2).                                                                                                                                                                      **MUST**       System
+  **AUTH-114**   The system shall record security-relevant session events (§36.2).                                                                                                                                                                                                                                                                                                                                                      **MUST**       System
 
-  **AUTH-115**   The system shall detect and respond to refresh-token or session-token reuse.                                                                                                                                                           **MUST**       System
+  **AUTH-115**   The system shall detect and respond to refresh-token or session-token reuse.                                                                                                                                                                                                                                                                                                                                           **MUST**       System
 
-  **AUTH-116**   The system shall support MFA for roles requiring elevated security, and shall require it for administrative accounts.                                                                                                                  **MUST**       System
+  **AUTH-116**   The system shall support MFA for roles requiring elevated security, and shall require it for administrative accounts.                                                                                                                                                                                                                                                                                                  **MUST**       System
 
-  **AUTH-117**   Suspending an account shall terminate or restrict its sessions.                                                                                                                                                                        **MUST**       System
+  **AUTH-117**   Suspending an account shall terminate or restrict its sessions.                                                                                                                                                                                                                                                                                                                                                        **MUST**       System
 
-  **AUTH-118**   The system shall prevent cross-user and cross-tenant session access.                                                                                                                                                                   **MUST**       System
+  **AUTH-118**   The system shall prevent cross-user and cross-tenant session access.                                                                                                                                                                                                                                                                                                                                                   **MUST**       System
 
-  **AUTH-119**   Changing a password shall revoke existing sessions and establish a new trusted session.                                                                                                                                                **MUST**       System
+  **AUTH-119**   Changing a password shall revoke existing sessions and establish a new trusted session.                                                                                                                                                                                                                                                                                                                                **MUST**       System
 
-  **AUTH-120**   Protected content shall require additional authorization beyond a valid account session (§16).                                                                                                                                         **MUST**       System
+  **AUTH-120**   Protected content shall require additional authorization beyond a valid account session (§16).                                                                                                                                                                                                                                                                                                                         **MUST**       System
 
-  **AUTH-121**   The system shall support email/password authentication, verified email, secure password reset with short-lived single-use tokens, and account recovery.                                                                                **MUST**       System
+  **AUTH-121**   The system shall support email/password authentication, verified email, secure password reset with short-lived single-use tokens, and account recovery.                                                                                                                                                                                                                                                                **MUST**       System
 
-  **AUTH-122**   Password reset and account-existence responses shall not reveal whether an email address is registered.                                                                                                                                **MUST**       System
+  **AUTH-122**   Password reset and account-existence responses shall not reveal whether an email address is registered.                                                                                                                                                                                                                                                                                                                **MUST**       System
 
-  **AUTH-123**   The system shall support concurrent-session limits configurable per role, plan and protection level.                                                                                                                                   **SHOULD**     System
+  **AUTH-123**   The system shall support concurrent-session limits configurable per role, plan and protection level.                                                                                                                                                                                                                                                                                                                   **SHOULD**     System
 
-  **AUTH-124**   The system shall evaluate session risk signals --- new device, unusual location, impossible travel, abnormal request volume, rapid content extraction, repeated authorization failures, token reuse --- and respond proportionately.   **SHOULD**     System
+  **AUTH-124**   The system shall evaluate session risk signals --- new device, unusual location, impossible travel, abnormal request volume, rapid content extraction, repeated authorization failures, token reuse --- and respond proportionately.                                                                                                                                                                                   **SHOULD**     System
 
-  **AUTH-125**   Browser sessions shall use Secure, HttpOnly, SameSite cookies where the architecture permits.                                                                                                                                          **MUST**       System
+  **AUTH-125**   Where a browser-hosted session is used, it shall use Secure, HttpOnly, SameSite cookies; the V1 Flutter desktop client (and any future Android/iOS release) shall store session and refresh tokens using the platform's secure credential storage (OS keychain, keystore or credential locker) and never in plaintext application storage.                                                                             **MUST**       System
 
-  **AUTH-126**   Passkeys, hardware security keys and enterprise SSO are FUTURE.                                                                                                                                                                        **FUTURE**     System
+  **AUTH-126**   Passkeys, hardware security keys and enterprise SSO are FUTURE.                                                                                                                                                                                                                                                                                                                                                        **FUTURE**     System
 
-  **AUTH-127**   Where MFA is enabled or required, the system shall provide a defined recovery path (single-use backup codes issued at enrolment, or admin-assisted reset after identity verification) so that a lost MFA factor cannot permanently lock a user out of their own account. Recovery-code use and admin-assisted MFA reset shall each raise a security-relevant audit event (§36) and a notification per NOT-012. **MUST**  System
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **AUTH-127**   Where MFA is enabled or required, the system shall provide a defined recovery path (single-use backup codes issued at enrolment, or admin-assisted reset after identity verification) so a lost MFA factor cannot permanently lock a user out of their own account. Recovery-code use and admin-assisted MFA reset shall each raise a security-relevant audit event and a notification per NOT-012. (Added in v1.1.)   **MUST**       System
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-*Table 35.2 --- Authentication and login-session requirements. These are the former SES-001...020 plus the additions required by §34; the mapping is in §51.2. AUTH-127 added in v1.1: AUTH-116 mandates MFA but v1.0 specified no recovery path for a lost factor (Appendix E).*
+*Table 35.2 --- Authentication and login-session requirements. These are the former SES-001...020 plus the additions required by §34; the mapping is in §51.2.*
 
 ## 35.3 Session timeouts
 
@@ -3254,14 +3359,14 @@ Each entity is listed with its owner band, its identity rule and the invariant t
 
 ### 37.3.2 Academic structure
 
-  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **Entity**           **Key attributes**                                                                                               **Invariant**
-  -------------------- ---------------------------------------------------------------------------------------------------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -------------------- ---------------------------------------------------------------------------------------------------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **AcademicPeriod**   id, organization_id, name, starts_on, ends_on, status                                                            Enrolment, grading scales and leaderboard windows are bound to a period so historical data does not blend across years.
 
   **Classroom**        id, organization_id, name, grade_level, academic_period_id, homeroom_teacher_id, status                          The administrative unit a student belongs to. A student has exactly one active Classroom per AcademicPeriod (**BR-015**).
 
-  **Group**            id, organization_id, classroom_id (not nullable), name, purpose, status                                          A subdivision of exactly one Classroom (GEN-008, GRP-001); classroom_id is mandatory. *v1.1: this row previously allowed a nullable classroom_id for an organisation-wide, cross-classroom Group, directly contradicting the confirmed golden rule GEN-008 and GRP-001. Corrected to match the confirmed rule rather than the reverse, since GEN-008 is an architectural invariant (§4) and no conflicting decision for it was ever recorded in §1.4 (Appendix E). A working set that must span multiple Classrooms is out of this model; §51 D-15-style scope extensions are the place to raise it if a real need appears.*
+  **Group**            id, organization_id, classroom_id (not nullable), name, purpose, status                                          A subdivision of exactly one Classroom (GEN-008, GRP-001); classroom_id is mandatory. \[v1.1: corrected --- this row previously allowed a nullable classroom_id for a cross-classroom Group, contradicting the confirmed golden rule GEN-008 and GRP-001.\]
 
   **Membership**       id, organization_id, user_id, container_type, container_id, role_in_container, joined_at, left_at, status        Single polymorphic membership table for Classroom and Group. left_at is set rather than the row deleted, so historical attribution survives (**GEN-018**).
 
@@ -3276,52 +3381,56 @@ Each entity is listed with its owner band, its identity rule and the invariant t
   **Topic**            id, organization_id, cycle_id, title, sequence_no, learning_objectives, status                                   The smallest planned academic unit. Activities and lesson content attach here.
 
   **Enrollment**       id, organization_id, student_user_id, course_id, academic_period_id, enrolled_at, withdrawn_at, status, source   Distinct from Membership: membership is structural, enrolment is academic. Withdrawal preserves the row and all grades earned (**BR-015**).
-  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 37.3 --- Academic structure entities.*
 
 ### 37.3.3 Delivery, assessment and results
 
-  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Entity**             **Key attributes**                                                                                                                                                                                                            **Invariant**
-  ---------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **TeachingSession**    id, organization_id, course_id, cycle_id, topic_id, title, scheduled_start, scheduled_end, mode, location, status, conducted_by                                                                                               A scheduled meeting. Cancelling a session does not delete attendance already recorded; the records are marked VOID with a reason (**SES-014**).
+  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Entity**                **Key attributes**                                                                                                                                                                                                            **Invariant**
+  ------------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **TeachingSession**       id, organization_id, course_id, cycle_id, topic_id, title, scheduled_start, scheduled_end, mode, location, status, conducted_by                                                                                               A scheduled meeting. Cancelling a session does not delete attendance already recorded; the records are marked VOID with a reason (**SES-014**).
 
-  **AttendanceRecord**   id, organization_id, teaching_session_id, student_user_id, state, recorded_by, recorded_at, note                                                                                                                              state ∈ {PRESENT, ABSENT, LATE, EXCUSED, VOID}. Any change writes an AttendanceHistory row; the current row always reflects the latest state.
+  **AttendanceRecord**      id, organization_id, teaching_session_id, student_user_id, state, recorded_by, recorded_at, note                                                                                                                              state ∈ {PRESENT, ABSENT, LATE, EXCUSED, VOID}. Any change writes an AttendanceHistory row; the current row always reflects the latest state.
 
-  **Activity**           id, organization_id, course_id, cycle_id, topic_id, type, title, instructions, max_score, weight, opens_at, due_at, closes_at, late_policy, attempt_limit, time_limit_seconds, grading_mode, visibility, status, created_by   The single generic container. Homework, Quiz and Exam are *values of type*, not separate tables (**ACT-001**). Fields not meaningful for a given type are null.
+  **Activity**              id, organization_id, course_id, cycle_id, topic_id, type, title, instructions, max_score, weight, opens_at, due_at, closes_at, late_policy, attempt_limit, time_limit_seconds, grading_mode, visibility, status, created_by   The single generic container. Homework, Quiz and Exam are *values of type*, not separate tables (**ACT-001**). Fields not meaningful for a given type are null.
 
-  **ActivityTarget**     id, activity_id, target_type, target_id                                                                                                                                                                                       target_type ∈ {CLASSROOM, GROUP, STUDENT}. An activity with no target row is not assigned to anyone and cannot open (**ACT-009**).
+  **ActivityTarget**        id, activity_id, target_type, target_id                                                                                                                                                                                       target_type ∈ {CLASSROOM, GROUP, STUDENT}. An activity with no target row is not assigned to anyone and cannot open (**ACT-009**).
 
-  **ActivityQuestion**   id, activity_id, question_version_id, sequence_no, points, is_required                                                                                                                                                        Pins a *version*, not a question. Editing the bank question afterwards cannot alter a published assessment (**QBN-025**).
+  **ActivityQuestion**      id, activity_id, question_version_id, sequence_no, points, is_required                                                                                                                                                        Pins a *version*, not a question. Editing the bank question afterwards cannot alter a published assessment (**QBN-025**).
 
-  **Question**           id, organization_id, subject_id, topic_tag, type, difficulty, owner_user_id, visibility, status                                                                                                                               The stable identity of a bank item. Carries no content; content lives in versions.
+  **Question**              id, organization_id, subject_id, topic_tag, type, difficulty, owner_user_id, visibility, status                                                                                                                               The stable identity of a bank item. Carries no content; content lives in versions.
 
-  **QuestionVersion**    id, question_id, version_no, stem, media_refs, options, answer_key, explanation, created_by, created_at, status                                                                                                               Immutable once referenced by a published activity. answer_key is never serialised to a student-facing response (**GEN-026**).
+  **QuestionVersion**       id, question_id, version_no, stem, media_refs, options, answer_key, explanation, created_by, created_at, status                                                                                                               Immutable once referenced by a published activity. answer_key is never serialised to a student-facing response (**GEN-026**).
 
-  **Submission**         id, organization_id, activity_id, student_user_id, attempt_no, started_at, submitted_at, is_late, state, autosave_ref                                                                                                         Unique on (activity_id, student_user_id, attempt_no). attempt_no ≤ Activity.attempt_limit.
+  **Submission**            id, organization_id, activity_id, student_user_id, attempt_no, started_at, submitted_at, is_late, state, autosave_ref                                                                                                         Unique on (activity_id, student_user_id, attempt_no). attempt_no ≤ Activity.attempt_limit.
 
-  **SubmissionAnswer**   id, submission_id, activity_question_id, response, auto_score, manual_score, grader_comment, graded_by, graded_at                                                                                                             Auto and manual scores are stored separately so an override is visible, not destructive.
+  **SubmissionAnswer**      id, submission_id, activity_question_id, response, auto_score, manual_score, grader_comment, graded_by, graded_at                                                                                                             Auto and manual scores are stored separately so an override is visible, not destructive.
 
-  **SubmissionFile**     id, submission_id, file_id, original_name, uploaded_at                                                                                                                                                                        References the file layer (§37.3.4); submission storage is not a separate storage system.
+  **SubmissionFile**        id, submission_id, file_id, original_name, uploaded_at                                                                                                                                                                        References the file layer (§37.3.4); submission storage is not a separate storage system.
 
-  **Grade**              id, organization_id, activity_id, student_user_id, submission_id, raw_score, max_score, scaled_score, grading_scale_snapshot, state, released_at, released_by                                                                 state ∈ {DRAFT, PENDING_REVIEW, RELEASED, VOID}. A student sees only RELEASED (**GRD-006**).
+  **Grade**                 id, organization_id, activity_id, student_user_id, submission_id, raw_score, max_score, scaled_score, grading_scale_version_id, grading_scale_snapshot, state, released_at, released_by                                       state ∈ {DRAFT, PENDING_REVIEW, RELEASED, VOID}. A student sees only RELEASED (**GRD-006**). Pins its GradingScaleVersion at creation; the pin and its snapshot are immutable thereafter (**GRD-017**).
 
-  **GradeHistory**       id, grade_id, previous_values, new_values, changed_by, changed_at, reason                                                                                                                                                     Append-only. Every change after first release requires a reason (**GRD-009**).
+  **GradeHistory**          id, grade_id, previous_values, new_values, changed_by, changed_at, reason                                                                                                                                                     Append-only. Every change after first release requires a reason (**GRD-009**).
 
-  **Feedback**           id, organization_id, target_type, target_id, author_user_id, body, visibility, created_at                                                                                                                                     Feedback can attach to a submission, an answer or a student-in-course, with independent visibility.
+  **GradingScale**          id, organization_id (unique), name, scale_type, current_version_id, status                                                                                                                                                    Added in v1.2. Exactly one per Organization (GRD-013); scale_type ∈ {NUMERIC, PERCENTAGE, LETTER, CUSTOM}. Editing creates a new GradingScaleVersion (GRD-016); this row is never itself mutated to change grading behaviour.
 
-  **ProgressSnapshot**   id, organization_id, student_user_id, scope_type, scope_id, computed_at, completion_pct, components                                                                                                                           A derived projection, rebuildable from source rows. Never the system of record (**PRG-006**).
-  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **GradingScaleVersion**   id, grading_scale_id, version_no, definition, created_by, created_at, status                                                                                                                                                  Added in v1.2. Copy-on-write, mirroring QuestionVersion/FileVersion. Immutable once referenced by any Grade (GRD-016). definition holds the type-appropriate bands/precision.
+
+  **Feedback**              id, organization_id, target_type, target_id, author_user_id, body, visibility, created_at                                                                                                                                     Feedback can attach to a submission, an answer or a student-in-course, with independent visibility.
+
+  **ProgressSnapshot**      id, organization_id, student_user_id, scope_type, scope_id, computed_at, completion_pct, components                                                                                                                           A derived projection, rebuildable from source rows. Never the system of record (**PRG-006**).
+  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 37.4 --- Delivery, assessment and results entities.*
 
 ### 37.3.4 Content, files and protection
 
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **Entity**               **Key attributes**                                                                                                         **Invariant**
-  ------------------------ -------------------------------------------------------------------------------------------------------------------------- -------------------------------------------------------------------------------------------------------------------------------------
-  **StorageObject**        id, sha256, byte_size, mime_type, storage_backend, storage_key, created_at, refcount                                       The physical blob, private and never publicly addressable. Deduplicated by sha256 *across tenants*, invisibly: the shared object carries no tenant identity itself, and every File row pointing at it keeps its own organization_id, owner and access rules (**STR-IMP-011, STR-IMP-012**). *v1.1: this row previously said cross-tenant deduplication was prohibited, directly contradicting the confirmed design in §14.4; corrected to match §14.4, which is the fuller and earlier-stated decision (Appendix E).*
+  ------------------------ -------------------------------------------------------------------------------------------------------------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **StorageObject**        id, sha256, byte_size, mime_type, storage_backend, storage_key, created_at, refcount                                       The physical blob, private and never publicly addressable. Deduplicated by sha256 *across tenants*, invisibly: the shared object carries no tenant identity itself, and every File row pointing at it keeps its own organization_id, owner and access rules (**STR-IMP-011, STR-IMP-012**). \[v1.1: corrected --- this row previously said cross-tenant deduplication was prohibited, contradicting the confirmed design in §14.4; now matches §14.4.\]
 
   **File**                 id, organization_id, owner_user_id, folder_id, display_name, current_version_id, protection_level, status, deleted_at      The logical, user-visible file. Renaming or moving touches this row only.
 
@@ -3340,7 +3449,7 @@ Each entity is listed with its owner band, its identity rule and the invariant t
   **ContentAbuseSignal**   id, organization_id, user_id, content_item_id, signal_type, score, detected_at, resolution                                 Never an automatic punishment; it raises a case for human review (**CNT-029**).
 
   **Watermark**            id, content_access_event_id, payload_hash, issued_at                                                                       Lets a leaked artefact be traced back to a viewing event without embedding personal data in the artefact itself.
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 37.5 --- Content, file and protection entities.*
 
@@ -3523,9 +3632,9 @@ The API is the contract between every client and the platform. It is the *only* 
 
 The table below fixes the resource vocabulary and the principal operations. It is the *shape* of the API, not the full endpoint list; the OpenAPI specification (API-011) is authoritative for exact paths, parameters and schemas.
 
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **Resource group**                               **Principal operations**                                                                                                         **Primary actors**
-  ------------------------------------------------ -------------------------------------------------------------------------------------------------------------------------------- --------------------------------
+  ------------------------------------------------ -------------------------------------------------------------------------------------------------------------------------------- ------------------------------------------
   **/auth**                                        login · logout · refresh · mfa/challenge · mfa/verify · password/forgot · password/reset · sessions (list, revoke, revoke-all)   All
 
   **/me**                                          profile · preferences · notifications · devices · consents · data-export                                                         All
@@ -3566,6 +3675,8 @@ The table below fixes the resource vocabulary and the principal operations. It i
 
   **/payments**                                    record · evidence-upload · verify · reject · list                                                                                Teacher, Admin
 
+  **/grading-scales**                              read (current + version history) · create/update (new version, Admin only) --- added in v1.2, resolves D-08                      Admin · Teacher/Assistant/Student (read)
+
   **/entitlements**                                list · grant · revoke · check                                                                                                    Admin, internal
 
   **/parents**                                     link-request · confirm · revoke · children · child-summary                                                                       Parent, Admin
@@ -3573,7 +3684,7 @@ The table below fixes the resource vocabulary and the principal operations. It i
   **/admin**                                       audit · reports · impersonation · system-config · moderation-queue                                                               Admin
 
   **/health · /ready**                             liveness · readiness                                                                                                             Infrastructure
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 38.2 --- API resource surface.*
 
@@ -3773,58 +3884,58 @@ This section states what the backend must *be true of*, not which framework buil
 
 ## 41.1 Client platform scope
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Client**                                                      **V1 status**                       **Notes**
-  --------------------------------------------------------------- ----------------------------------- -----------------------------------------------------------------------------------------------------------------------------------------------
-  **Responsive web application**                                  CONFIRMED --- V1                    The primary and only mandatory V1 client. Must be fully usable on a phone browser, since a large share of students will have no other device.
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Client**                                                                               **V1 status**                                                         **Notes**
+  ---------------------------------------------------------------------------------------- --------------------------------------------------------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Flutter desktop application (Windows, macOS, Linux)**                                  CONFIRMED --- V1 (initial demo release)                               The initial EduCapsules client, delivered first for the desktop demo (§1.5 change control; supersedes the responsive-web-client decision of v1.0--v1.3). Architected from the outset so the same application/codebase extends to Android and iOS without rewriting business logic or UI structure (§5.2).
 
-  **Installable PWA (offline shell, add-to-home-screen, push)**   PROPOSED --- V1 if effort permits   Delivers most of the perceived benefit of a mobile app at a fraction of the cost, and reuses the same codebase.
+  **Flutter mobile applications (Android, iOS) --- same codebase as the desktop client**   CONFIRMED architectural target --- FUTURE RELEASE (not V1 delivery)   Ships from the same Flutter application architecture as the V1 desktop client, with platform-specific behaviour isolated behind small adapters rather than a rewrite (architecture docs). Release timing is a Project Owner decision (§49), not gated on an unmet-requirement trigger.
 
-  **Native mobile applications (iOS, Android)**                   FUTURE                              Justified when a requirement genuinely needs native capability --- stronger content protection, true offline study, or platform DRM.
+  **Responsive web application**                                                           SUPERSEDED                                                            Was CONFIRMED as the V1 client in v1.0--v1.3. Superseded by the Flutter client strategy (Project Owner decision, 13 September 2026 --- §5.2, §1.5). Retained here for traceability; not part of the current implementation target.
 
-  **Desktop applications (Windows, macOS)**                       FUTURE                              No V1 requirement is unmet by the web client. Revisit only if a protected-content or proctoring requirement demands it.
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Installable PWA (offline shell, add-to-home-screen, push)**                            SUPERSEDED                                                            Was PROPOSED in v1.0--v1.3, predicated on a web-client strategy. No longer applicable now that the client is a native Flutter application; a PWA concept does not apply to Flutter desktop/mobile builds.
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 41.1 --- Client platform scope for V1.*
 
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| **PLATFORM DECISION**                                                                                                                                                                                                                                                                                             |
-|                                                                                                                                                                                                                                                                                                                   |
-| V1 ships one responsive web client. This is a deliberate scope decision, not an omission: shipping one excellent web client that works on a low-end Android phone serves the mission better than three half-finished clients. §49 records the native applications as a roadmap item with explicit entry criteria. |
-|                                                                                                                                                                                                                                                                                                                   |
-| *Status: CONFIRMED · Supersedes the multi-platform ambition in the original project context for the V1 timeframe only*                                                                                                                                                                                            |
-+===================================================================================================================================================================================================================================================================================================================+
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| **PLATFORM DECISION**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+|                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| V1 ships a Flutter desktop application (Windows, macOS, Linux) as the initial release target, architected from the outset so the same Flutter codebase extends to Android and iOS without rewriting business logic or UI structure. This supersedes the v1.0--v1.3 web-first platform decision. Native compilation is the primary strategy here, not an afterthought, chosen so the desktop demo and the future mobile releases share one application architecture rather than three separate clients. §49 records the Android/iOS release as a roadmap item --- its entry criterion is a Project Owner release decision, not an unmet-requirement trigger. |
+|                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| *Status: CONFIRMED, 13 September 2026 · Supersedes the v1.0--v1.3 web-first V1 client decision (§1.5 change control; recorded in the change log, §52.5, and in docs/decisions/06-flutter-client-decision.md)*                                                                                                                                                                                                                                                                                                                                                                                                                                               |
++=============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ## 41.2 Frontend requirements
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **ID**       **Requirement**                                                                                                                                                  **Priority**   **Actor**
-  ------------ ---------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------- ------------
-  **FE-001**   The web client shall function on the two most recent major versions of Chrome, Edge, Firefox and Safari, and on Chrome and Safari on mobile.                     **MUST**       Frontend
+  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**       **Requirement**                                                                                                                                                                                                                                                                                               **Priority**   **Actor**
+  ------------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------- ------------
+  **FE-001**   The client shall function on current, officially supported major releases of the target operating system for each shipped platform: Windows, macOS and Linux for the V1 desktop release. Android and iOS OS-version support is defined when the mobile release ships (§49), from the same Flutter codebase.   **MUST**       Frontend
 
-  **FE-002**   The client shall never contain a business rule that is not also enforced by the server; client checks exist only to improve the experience.                      **MUST**       Frontend
+  **FE-002**   The client shall never contain a business rule that is not also enforced by the server; client checks exist only to improve the experience.                                                                                                                                                                   **MUST**       Frontend
 
-  **FE-003**   The client shall never receive data the user is not authorised to see, including in hidden DOM, in a preloaded store, in a source map or in a bundled fixture.   **MUST**       Frontend
+  **FE-003**   The client shall never receive data the user is not authorised to see, including in local widget or application state, in a bundled asset, in a debug/development build artefact, or recoverable from the compiled application package.                                                                       **MUST**       Frontend
 
-  **FE-004**   Protected course content shall never be embedded in JavaScript, in a bundle or in a durable client cache (**GEN-017**).                                          **MUST**       Frontend
+  **FE-004**   Protected course content shall never be embedded in the client application code, in a compiled asset bundle, or in a durable local cache (**GEN-017**).                                                                                                                                                       **MUST**       Frontend
 
-  **FE-005**   Every destructive or irreversible action shall require explicit confirmation naming the object and the consequence.                                              **MUST**       Frontend
+  **FE-005**   Every destructive or irreversible action shall require explicit confirmation naming the object and the consequence.                                                                                                                                                                                           **MUST**       Frontend
 
-  **FE-006**   The client shall autosave long-form work (quiz attempts, grading, content authoring, messages) and shall recover it after a reload or a crash.                   **MUST**       Frontend
+  **FE-006**   The client shall autosave long-form work (quiz attempts, grading, content authoring, messages) and shall recover it after a reload or a crash.                                                                                                                                                                **MUST**       Frontend
 
-  **FE-007**   The client shall present explicit empty, loading, partial, error and offline states for every data-bearing view (§38 UI/UX).                                     **MUST**       Frontend
+  **FE-007**   The client shall present explicit empty, loading, partial, error and offline states for every data-bearing view (§38 UI/UX).                                                                                                                                                                                  **MUST**       Frontend
 
-  **FE-008**   Time-limited assessments shall display a server-authoritative countdown; the client clock shall never determine expiry.                                          **MUST**       Frontend
+  **FE-008**   Time-limited assessments shall display a server-authoritative countdown; the client clock shall never determine expiry.                                                                                                                                                                                       **MUST**       Frontend
 
-  **FE-009**   The client shall be internationalisation-ready: no concatenated sentence fragments, externalised strings, and layout that tolerates a right-to-left direction.   **MUST**       Frontend
+  **FE-009**   The client shall be internationalisation-ready: no concatenated sentence fragments, externalised strings, and layout that tolerates a right-to-left direction.                                                                                                                                                **MUST**       Frontend
 
-  **FE-010**   Initial interactive load on a mid-range mobile device over a 3G-class connection shall be a measured, budgeted target; the budget shall be enforced in CI.       **MUST**       Frontend
+  **FE-010**   Application cold-start time shall be a measured, budgeted target enforced in CI: on reference desktop hardware for the V1 release, and on a mid-range mobile device over a 3G-class connection once the mobile release ships (§49).                                                                           **MUST**       Frontend
 
-  **FE-011**   The client shall degrade usefully when a non-critical subsystem is unavailable: a failed leaderboard or notification feed shall not blank a dashboard.           **MUST**       Frontend
+  **FE-011**   The client shall degrade usefully when a non-critical subsystem is unavailable: a failed leaderboard or notification feed shall not blank a dashboard.                                                                                                                                                        **MUST**       Frontend
 
-  **FE-012**   Client-side logging shall never include tokens, answer keys, grades of other students, or personal data beyond the acting user.                                  **MUST**       Frontend
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **FE-012**   Client-side logging shall never include tokens, answer keys, grades of other students, or personal data beyond the acting user.                                                                                                                                                                               **MUST**       Frontend
+  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 41.2 --- Frontend requirements.*
 
@@ -3845,25 +3956,25 @@ The MVP runs entirely on Cloudflare. Figure 41.1 shows the topology and the boun
 
 *Figure 41.1 --- MVP deployment topology on Cloudflare. Each platform primitive is reached only through the abstraction interfaces required by BE-008.*
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Concern**                   **MVP service**                               **Abstraction that protects portability**
-  ----------------------------- --------------------------------------------- -----------------------------------------------------------------------------------------------
-  **Static client delivery**    Pages                                         Build output is a plain static bundle; no platform-specific runtime in the client.
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Concern**                           **MVP service**                               **Abstraction that protects portability**
+  ------------------------------------- --------------------------------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Client application distribution**   N/A --- not a Cloudflare concern              The Flutter client compiles to native desktop binaries distributed directly (installer download), not served as a web bundle; Cloudflare Pages is not part of the client-delivery path. A future Android/iOS release adds app-store distribution, still outside this table's server-infrastructure scope.
 
-  **Application runtime**       Workers                                       Domain layer is framework-agnostic (BE-002); the Worker is a thin transport adapter.
+  **Application runtime**               Workers                                       Domain layer is framework-agnostic (BE-002); the Worker is a thin transport adapter.
 
-  **Relational data**           D1                                            Repository interfaces + portable SQL (DB-019). No engine-specific types or stored procedures.
+  **Relational data**                   D1                                            Repository interfaces + portable SQL (DB-019). No engine-specific types or stored procedures.
 
-  **Object storage**            R2                                            ObjectStore interface: put, get, signed-url, delete, copy, head.
+  **Object storage**                    R2                                            ObjectStore interface: put, get, signed-url, delete, copy, head.
 
-  **Asynchronous work**         Queues                                        JobQueue interface: enqueue, consume, retry, dead-letter.
+  **Asynchronous work**                 Queues                                        JobQueue interface: enqueue, consume, retry, dead-letter.
 
-  **Cache / ephemeral state**   KV / Durable Objects where genuinely needed   Cache interface; no business state may live only here.
+  **Cache / ephemeral state**           KV / Durable Objects where genuinely needed   Cache interface; no business state may live only here.
 
-  **Edge security**             WAF, DDoS, bot management, TLS                Retained in production (§41.4).
+  **Edge security**                     WAF, DDoS, bot management, TLS                Retained in production (§41.4).
 
-  **DNS**                       Cloudflare DNS                                Retained in production.
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **DNS**                               Cloudflare DNS                                Retained in production.
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 41.3 --- MVP service mapping and the abstraction that keeps each one replaceable.*
 
@@ -4125,31 +4236,31 @@ Colour in EduCapsules carries *meaning*, and the meaning is fixed even if the ex
 
 ## 42.6 Accessibility and responsiveness
 
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **ID**       **Requirement**                                                                                                                     **Priority**   **Actor**
-  ------------ ----------------------------------------------------------------------------------------------------------------------------------- -------------- -------------------
-  **UI-010**   The web client shall conform to WCAG 2.1 Level AA.                                                                                  **MUST**       Frontend, Design
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**       **Requirement**                                                                                                                                                                                                                                             **Priority**   **Actor**
+  ------------ ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------- -------------------
+  **UI-010**   The client application shall conform to WCAG 2.1 Level AA, interpreted through each platform\'s accessibility APIs (e.g. Flutter Semantics mapped to the underlying OS accessibility service).                                                              **MUST**       Frontend, Design
 
-  **UI-011**   Every interactive element shall be reachable and operable by keyboard, in a logical order, with a visible focus indicator.          **MUST**       Frontend
+  **UI-011**   Every interactive element shall be reachable and operable by keyboard, in a logical order, with a visible focus indicator.                                                                                                                                  **MUST**       Frontend
 
-  **UI-012**   All non-decorative images, icons and charts shall have text alternatives; data visualisations shall also be available as a table.   **MUST**       Frontend
+  **UI-012**   All non-decorative images, icons and charts shall have text alternatives; data visualisations shall also be available as a table.                                                                                                                           **MUST**       Frontend
 
-  **UI-013**   Form fields shall have programmatically associated labels; errors shall be announced to assistive technology.                       **MUST**       Frontend
+  **UI-013**   Form fields shall have programmatically associated labels; errors shall be announced to assistive technology.                                                                                                                                               **MUST**       Frontend
 
-  **UI-014**   Modals and drawers shall trap focus while open and restore focus on close.                                                          **MUST**       Frontend
+  **UI-014**   Modals and drawers shall trap focus while open and restore focus on close.                                                                                                                                                                                  **MUST**       Frontend
 
-  **UI-015**   The interface shall support browser zoom to 200% and OS text scaling without loss of content or function.                           **MUST**       Frontend
+  **UI-015**   The interface shall support OS-level display/text scaling up to 200% and each platform\'s accessibility text-size setting without loss of content or function.                                                                                              **MUST**       Frontend
 
-  **UI-016**   Motion shall respect prefers-reduced-motion; no essential information shall be conveyed by animation alone.                         **MUST**       Frontend
+  **UI-016**   Motion shall respect the platform\'s reduce-motion accessibility setting; no essential information shall be conveyed by animation alone.                                                                                                                    **MUST**       Frontend
 
-  **UI-017**   Layout shall be responsive across the defined breakpoints, with the student experience verified on a 360 px viewport.               **MUST**       Frontend
+  **UI-017**   Layout shall be responsive across the defined breakpoints. The student experience is verified on a 360 px viewport once the mobile release ships; the V1 desktop demo verifies responsiveness across the desktop breakpoints (Expanded/Wide, Table 42.9).   **MUST**       Frontend
 
-  **UI-018**   Touch targets shall be at least 44 × 44 CSS pixels.                                                                                 **MUST**       Frontend
+  **UI-018**   Touch targets shall be at least 44 × 44 density-independent pixels (or the equivalent minimum defined by each target platform\'s accessibility guidelines).                                                                                                 **MUST**       Frontend
 
-  **UI-019**   Time-limited assessments shall provide an accommodation mechanism (extended time per student) that is recorded and auditable.       **MUST**       Backend, Frontend
+  **UI-019**   Time-limited assessments shall provide an accommodation mechanism (extended time per student) that is recorded and auditable.                                                                                                                               **MUST**       Backend, Frontend
 
-  **UI-020**   Dark mode shall be supported as a theme built from the same semantic tokens.                                                        **SHOULD**     Frontend, Design
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **UI-020**   Dark mode shall be supported as a theme built from the same semantic tokens.                                                                                                                                                                                **SHOULD**     Frontend, Design
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 42.8 --- Accessibility and responsiveness requirements.*
 
@@ -4215,31 +4326,31 @@ Every requirement in this section is measurable or it is not a requirement (**GE
 
 ## 43.1 Performance
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **ID**         **Metric**                                                                 **Target**                      **Method**
-  -------------- -------------------------------------------------------------------------- ------------------------------- -------------------------------------------------
-  **PERF-001**   API read latency, p95, standard authenticated request under V1 load        TBD --- fixed at load test      Server-side histogram, excluding client network
+  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**         **Metric**                                                                                                                     **Target**                      **Method**
+  -------------- ------------------------------------------------------------------------------------------------------------------------------ ------------------------------- -------------------------------------------------
+  **PERF-001**   API read latency, p95, standard authenticated request under V1 load                                                            TBD --- fixed at load test      Server-side histogram, excluding client network
 
-  **PERF-002**   API read latency, p99                                                      TBD                             As above
+  **PERF-002**   API read latency, p99                                                                                                          TBD                             As above
 
-  **PERF-003**   API write latency, p95 (submission, grade, attendance)                     TBD                             As above
+  **PERF-003**   API write latency, p95 (submission, grade, attendance)                                                                         TBD                             As above
 
-  **PERF-004**   Time to interactive, student dashboard, mid-range Android, 3G-class link   TBD --- budget enforced in CI   Synthetic lab measurement + field RUM
+  **PERF-004**   Application cold-start time, student dashboard, desktop reference hardware (mobile equivalent once the mobile release ships)   TBD --- budget enforced in CI   Synthetic lab measurement + field RUM
 
-  **PERF-005**   Client JavaScript bundle, initial route, compressed                        TBD --- budget in CI            Build-time budget check
+  **PERF-005**   Client application package/installer size, V1 desktop build                                                                    TBD --- budget in CI            Build-time budget check
 
-  **PERF-006**   Quiz answer autosave round trip, p95                                       TBD                             Server histogram
+  **PERF-006**   Quiz answer autosave round trip, p95                                                                                           TBD                             Server histogram
 
-  **PERF-007**   Bulk grade release, 200 students                                           TBD                             Job completion timing
+  **PERF-007**   Bulk grade release, 200 students                                                                                               TBD                             Job completion timing
 
-  **PERF-008**   File upload throughput, 50 MB, typical link                                TBD                             Signed-URL transfer timing
+  **PERF-008**   File upload throughput, 50 MB, typical link                                                                                    TBD                             Signed-URL transfer timing
 
-  **PERF-009**   Protected video start time, p95                                            TBD                             Player telemetry
+  **PERF-009**   Protected video start time, p95                                                                                                TBD                             Player telemetry
 
-  **PERF-010**   Search result latency, question bank, p95                                  TBD                             Server histogram
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **PERF-010**   Search result latency, question bank, p95                                                                                      TBD                             Server histogram
+  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-*Table 43.1 --- Performance metrics. Thresholds are deliberately TBD until measured ({red}D-05{}).*
+*Table 43.1 --- Performance metrics. Thresholds are deliberately TBD until measured (D-05).*
 
 +--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | **D-05 --- PERFORMANCE THRESHOLDS**                                                                                                                                                                                                                                                                                                              |
@@ -4331,23 +4442,23 @@ Every requirement in this section is measurable or it is not a requirement (**GE
 
 ## 43.5 Usability, compatibility and localisation
 
-  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **ID**        **Requirement**                                                                                                                       **Verification**
-  ------------- ------------------------------------------------------------------------------------------------------------------------------------- ---------------------------------------------
-  **NFR-020**   A first-time teacher shall complete the create-course → add-cycle → add-topic → publish-homework path without written instructions.   Moderated usability test, ≥ 5 participants
+  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **ID**        **Requirement**                                                                                                                                                                                                                                                      **Verification**
+  ------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------------
+  **NFR-020**   A first-time teacher shall complete the create-course → add-cycle → add-topic → publish-homework path without written instructions.                                                                                                                                  Moderated usability test, ≥ 5 participants
 
-  **NFR-021**   A first-time student shall locate and submit an assigned homework on a phone without assistance.                                      Moderated usability test on a 360 px device
+  **NFR-021**   A first-time student shall locate and submit an assigned homework on the V1 desktop client without assistance; the same usability bar applies to the mobile client once it ships (§49).                                                                              Moderated usability test on the V1 desktop build; repeated on a 360 px mobile viewport once the Android/iOS release exists
 
-  **NFR-022**   Browser support per **FE-001**.                                                                                                       Cross-browser test matrix in CI
+  **NFR-022**   Platform support per **FE-001**.                                                                                                                                                                                                                                     Supported-OS test matrix in CI
 
-  **NFR-023**   The client shall function on a mid-range Android device released within the last four years.                                          Device-lab verification
+  **NFR-023**   The client shall function on officially supported desktop OS versions for the V1 release (Windows, macOS, Linux --- per FE-001); a mid-range Android device released within the last four years becomes the equivalent target once the mobile release ships (§49).   Device-lab verification
 
-  **NFR-024**   All user-facing strings shall be externalised and free of concatenated grammar.                                                       Lint rule + pseudo-localisation build
+  **NFR-024**   All user-facing strings shall be externalised and free of concatenated grammar.                                                                                                                                                                                      Lint rule + pseudo-localisation build
 
-  **NFR-025**   Date, time, number and currency formatting shall follow the user's locale; stored values remain canonical.                            Automated test per locale
+  **NFR-025**   Date, time, number and currency formatting shall follow the user's locale; stored values remain canonical.                                                                                                                                                           Automated test per locale
 
-  **NFR-026**   The launch locale set and RTL support are TBD (**D-03**); the implementation shall not preclude either.                               Architecture review
-  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **NFR-026**   The launch locale set and RTL support are TBD (**D-03**); the implementation shall not preclude either.                                                                                                                                                              Architecture review
+  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 43.5 --- Usability, compatibility and localisation requirements.*
 
@@ -4409,15 +4520,15 @@ Educational records, audit records and personal data have different lifetimes an
 
 *Table 44.2 --- Account lifecycle and erasure requirements.*
 
-> **BR-021 · PROPOSED · OWNERSHIP TRANSFER ON TEACHER DELETION** *(added in v1.1 --- cited by LIF-006 since v1.0 but never separately stated; see Appendix E)*
->
-> When a Teacher account is deleted or permanently deactivated, ownership of that Teacher's Courses, Cycles, Topics, Activities, Question Bank items and Teacher Storage transfers to an Admin-designated successor Teacher within the same Organization, or --- where none is designated --- to the Organization itself pending reassignment. Transfer never deletes or alters existing grades, submissions, attendance or audit records, and every such transfer is itself audited (AUD-002) and notified to affected co-teachers where CRS-009 applies. *Rejected: leaving orphaned courses without an owner, which would leave grading, content-update and student-support authority for live students unreachable.*
+BR-021 · PROPOSED · OWNERSHIP TRANSFER ON TEACHER DELETION (added in v1.1 --- cited by LIF-006 since v1.0 but never separately stated):
+
+When a Teacher account is deleted or permanently deactivated, ownership of that Teacher's Courses, Cycles, Topics, Activities, Question Bank items and Teacher Storage transfers to an Admin-designated successor Teacher within the same Organization, or --- where none is designated --- to the Organization itself pending reassignment. Transfer never deletes or alters existing grades, submissions, attendance or audit records, and every such transfer is itself audited (AUD-002) and notified to affected co-teachers where CRS-009 applies. Rejected: leaving orphaned courses without an owner, which would leave grading, content-update and student-support authority for live students unreachable.
 
 ## 44.3 Retention schedule
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **Data class**                                                                    **Retention basis**             **Period**
-  --------------------------------------------------------------------------------- ------------------------------- ---------------------------------------------------------------------------
+  --------------------------------------------------------------------------------- ------------------------------- -------------------------------------------------------------------------------------------------------------
   **Authentication credentials and MFA factors**                                    Operational                     Until account deletion, then immediate purge
 
   **Login session records**                                                         Security                        TBD --- short (weeks)
@@ -4428,7 +4539,7 @@ Educational records, audit records and personal data have different lifetimes an
 
   **Teacher-authored content and storage**                                          Ownership (§33)                 Until owner deletes or ownership transfers
 
-  **Trashed files pending purge (STR-012, LIF-011)**                                Recoverability window            TBD --- short; long enough that an accidental deletion is recoverable, short enough to bound storage growth
+  **Trashed files pending purge (STR-012, LIF-011)**                                Recoverability window           TBD --- short; long enough that an accidental deletion is recoverable, short enough to bound storage growth
 
   **Content access events**                                                         Security / abuse detection      TBD --- medium (months)
 
@@ -4443,9 +4554,9 @@ Educational records, audit records and personal data have different lifetimes an
   **Analytics aggregates (non-identifying)**                                        Product                         Indefinite once non-identifying
 
   **Backups**                                                                       Recovery                        TBD --- per backup rotation policy (LIF-010)
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-*Table 44.3 --- Retention schedule. Periods are TBD pending legal review ({red}D-06{}).*
+*Table 44.3 --- Retention schedule. Periods are TBD pending legal review (D-06).*
 
 +-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | **D-06 --- RETENTION PERIODS AND APPLICABLE LAW**                                                                                                                                                                                                                                                                                                                                                     |
@@ -4967,31 +5078,31 @@ Traceability is maintained as a live artefact, not a document appendix. The chai
 
 ## 48.3 Traceability matrix --- representative extract
 
-  ------------------------------------------------------------------------------------------------------------------------------------------
-  **Business rule**                             **Requirement**                     **Use case**     **Test case**          **Acceptance**
-  --------------------------------------------- ----------------------------------- ---------------- ---------------------- ----------------
-  **BR-015 · Class change preserves history**   CLS-009, CLS-010, GEN-018, PTS-003  UC-020           TC-020-01...07         AC-08
+  -------------------------------------------------------------------------------------------------------------------------------------------
+  **Business rule**                             **Requirement**                      **Use case**     **Test case**          **Acceptance**
+  --------------------------------------------- ------------------------------------ ---------------- ---------------------- ----------------
+  **BR-015 · Class change preserves history**   CLS-009, CLS-010, GEN-018, PTS-003   UC-020           TC-020-01...07         AC-08
 
-  **Answer keys never leave the server**        GEN-026, QBN-039, API-007, FE-003   UC-006, UC-007   TC-006-04, TC-007-09   AC-04
+  **Answer keys never leave the server**        GEN-026, QBN-039, API-007, FE-003    UC-006, UC-007   TC-006-04, TC-007-09   AC-04
 
-  **Assistants never exceed teachers**          GEN-025, AST-007, SEC-014           UC-011, UC-012   TC-011-01...12         AC-05
+  **Assistants never exceed teachers**          GEN-025, AST-007, SEC-014            UC-011, UC-012   TC-011-01...12         AC-05
 
-  **Grades are released explicitly**            GRD-004, GRD-006, GRD-009           UC-009           TC-009-01...08         AC-01, AC-11
+  **Grades are released explicitly**            GRD-004, GRD-006, GRD-009            UC-009           TC-009-01...08         AC-01, AC-11
 
-  **Parents see only confirmed children**       PAR-002, PAR-006, SEC-012           UC-013, UC-014   TC-013-01...05         AC-06
+  **Parents see only confirmed children**       PAR-002, PAR-006, SEC-012            UC-013, UC-014   TC-013-01...05         AC-06
 
-  **Protected content is gateway-only**         CNT-018, GEN-017, API-012, FE-004   UC-016, UC-017   TC-017-01...09         AC-09
+  **Protected content is gateway-only**         CNT-018, GEN-017, API-012, FE-004    UC-016, UC-017   TC-017-01...09         AC-09
 
-  **No card data is stored**                    PAY-011, PRV-008                    UC-019           TC-019-03              AC-10
+  **No card data is stored**                    PAY-011, PRV-008                     UC-019           TC-019-03              AC-10
 
-  **Payment ≠ entitlement**                     BIL-003, PAY-014                    UC-019           TC-019-05...08         AC-10
+  **Payment ≠ entitlement**                     BIL-003, PAY-014                     UC-019           TC-019-05...08         AC-10
 
-  **Every privileged action is audited**        AUD-002, AUD-004, ADM-021           UC-021           TC-021-01...06         AC-11
+  **Every privileged action is audited**        AUD-002, AUD-004, ADM-021            UC-021           TC-021-01...06         AC-11
 
-  **Tenant isolation**                          DB-001, DB-011, SEC-004             All              TC-MT-01...20          AC-12
+  **Tenant isolation**                          DB-001, DB-011, SEC-004              All              TC-MT-01...20          AC-12
 
-  **A submission is never lost**                NFR-007, DB-013, ERR-008            UC-007, UC-010   TC-007-11, TC-010-06   AC-07
-  ------------------------------------------------------------------------------------------------------------------------------------------
+  **A submission is never lost**                NFR-007, DB-013, ERR-008             UC-007, UC-010   TC-007-11, TC-010-06   AC-07
+  -------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 48.3 --- Representative traceability extract. The complete matrix is maintained per TRC-001.*
 
@@ -4999,69 +5110,69 @@ Traceability is maintained as a live artefact, not a document appendix. The chai
 
 ## 49.1 V1 scope --- MoSCoW
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Capability**                                                       **V1**   **Note**
-  -------------------------------------------------------------------- -------- ---------------------------------------------------------------------------------
-  **Authentication, MFA, session management, password recovery**       MUST     §35
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Capability**                                                       **V1**           **Note**
+  -------------------------------------------------------------------- ---------------- ------------------------------------------------------------------------------------------------------
+  **Authentication, MFA, session management, password recovery**       MUST             §35
 
-  **Users, scoped roles, permission matrix, admin management**         MUST     §8, §26
+  **Users, scoped roles, permission matrix, admin management**         MUST             §8, §26
 
-  **Classroom, Group, Subject, Course, Cycle, Topic, Enrolment**       MUST     §9, §10
+  **Classroom, Group, Subject, Course, Cycle, Topic, Enrolment**       MUST             §9, §10
 
-  **Teaching sessions and attendance**                                 MUST     §11
+  **Teaching sessions and attendance**                                 MUST             §11
 
-  **Activities: homework, quiz, exam; targeting; windows; attempts**   MUST     §12
+  **Activities: homework, quiz, exam; targeting; windows; attempts**   MUST             §12
 
-  **Question bank with version pinning**                               MUST     §13
+  **Question bank with version pinning**                               MUST             §13
 
-  **Teacher storage, file versioning, references**                     MUST     §14
+  **Teacher storage, file versioning, references**                     MUST             §14
 
-  **Content publishing, protection levels 0--2**                       MUST     §15, §16
+  **Content publishing, protection levels 0--2**                       MUST             §15, §16
 
-  **Grading, feedback, explicit release, grade history**               MUST     §17
+  **Grading, feedback, explicit release, grade history**               MUST             §17
 
-  **Progress tracking**                                                MUST     §17
+  **Progress tracking**                                                MUST             §17
 
-  **Assistant delegation with scope and expiry**                       MUST     §21
+  **Assistant delegation with scope and expiry**                       MUST             §21
 
-  **Parent linking and read-only child view**                          MUST     §22
+  **Parent linking and read-only child view**                          MUST             §22
 
-  **Notifications (in-app + email)**                                   MUST     §28
+  **Notifications (in-app + email)**                                   MUST             §28
 
-  **Audit log**                                                        MUST     §36
+  **Audit log**                                                        MUST             §36
 
-  **Payment recording with evidence and manual verification**          MUST     §30
+  **Payment recording with evidence and manual verification**          MUST             §30
 
-  **Entitlements**                                                     MUST     §31
+  **Entitlements**                                                     MUST             §31
 
-  **Achievements and points**                                          SHOULD   §18 --- core motivational value; low technical risk
+  **Achievements and points**                                          SHOULD           §18 --- core motivational value; low technical risk
 
-  **Leaderboards**                                                     SHOULD   §18 --- ships disabled by default (LDB-009)
+  **Leaderboards**                                                     SHOULD           §18 --- ships disabled by default (LDB-009)
 
-  **Contextual messaging**                                             SHOULD   §27
+  **Contextual messaging**                                             SHOULD           §27
 
-  **Calendar view**                                                    SHOULD   §29
+  **Calendar view**                                                    SHOULD           §29
 
-  **Content protection level 3 (DRM, hardened streaming)**             COULD    Significant cost; justified only by a demonstrated leak problem
+  **Content protection level 3 (DRM, hardened streaming)**             COULD            Significant cost; justified only by a demonstrated leak problem
 
-  **Math Knowledge Hub as a structured content library**               COULD    Deliverable as protected content in V1; the interactive hub is a later product
+  **Math Knowledge Hub as a structured content library**               COULD            Deliverable as protected content in V1; the interactive hub is a later product
 
-  **Analytics beyond per-course reporting**                            COULD    §25
+  **Analytics beyond per-course reporting**                            COULD            §25
 
-  **Installable PWA**                                                  COULD    §41.1
+  **Installable PWA**                                                  SUPERSEDED       §41.1 --- no longer applicable; predicated on the web-client strategy replaced by Flutter
 
-  **Native mobile applications**                                       WON\'T   §49.2
+  **Flutter mobile applications (Android, iOS)**                       FUTURE RELEASE   §49.2 --- same Flutter codebase as the V1 desktop client; release timing is a Project Owner decision
 
-  **Desktop applications**                                             WON\'T   §49.2
+  **Flutter desktop application (Windows, macOS, Linux)**              MUST             §5.2, §41.1 --- the V1 client (Project Owner decision, 13 September 2026)
 
-  **Online payment gateway integration**                               WON\'T   V1 records payments; it does not process them
+  **Online payment gateway integration**                               WON\'T           V1 records payments; it does not process them
 
-  **AI-assisted content, grading or tutoring**                         WON\'T   §49.2 --- requires its own requirements, privacy analysis and evaluation regime
+  **AI-assisted content, grading or tutoring**                         WON\'T           §49.2 --- requires its own requirements, privacy analysis and evaluation regime
 
-  **Public course marketplace**                                        WON\'T   Out of product scope for V1
+  **Public course marketplace**                                        WON\'T           Out of product scope for V1
 
-  **Open student-to-student direct messaging**                         WON\'T   Safeguarding (MSG-004)
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Open student-to-student direct messaging**                         WON\'T           Safeguarding (MSG-004)
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 49.1 --- V1 scope classification.*
 
@@ -5069,27 +5180,27 @@ Traceability is maintained as a live artefact, not a document appendix. The chai
 
 A roadmap item is not a promise; it is a decision with a stated trigger. Each item below states what must be true *before* it is worth building.
 
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Horizon**       **Item**                                            **Entry criteria**
-  ----------------- --------------------------------------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Next**          Installable PWA with offline study                  V1 stable · measured evidence that students lose work or access to connectivity
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Horizon**       **Item**                                                                                **Entry criteria**
+  ----------------- --------------------------------------------------------------------------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Next**          Installable PWA with offline study                                                      V1 stable · measured evidence that students lose work or access to connectivity
 
-  **Next**          Online payment gateway integration                  Transaction volume makes manual verification the bottleneck · a compliant processor selected · EduCapsules still stores no card data
+  **Next**          Online payment gateway integration                                                      Transaction volume makes manual verification the bottleneck · a compliant processor selected · EduCapsules still stores no card data
 
-  **Next**          Richer analytics and cohort reporting               Teachers ask a question the current reports cannot answer · the underlying events are already captured
+  **Next**          Richer analytics and cohort reporting                                                   Teachers ask a question the current reports cannot answer · the underlying events are already captured
 
-  **Later**         Native mobile applications                          A requirement exists that the web client provably cannot meet --- hardened content protection, true offline, or platform DRM
+  **Later**         Flutter mobile applications (Android, iOS) --- same codebase as the V1 desktop client   Project Owner release decision, once the V1 desktop client is stable; no unmet-requirement trigger is needed since the architecture already supports it (§5.2)
 
-  **Later**         Content protection level 3 / DRM                    A demonstrated, measured leakage problem that level 2 does not contain · licensing cost accepted
+  **Later**         Content protection level 3 / DRM                                                        A demonstrated, measured leakage problem that level 2 does not contain · licensing cost accepted
 
-  **Later**         Interactive Math Knowledge Hub                      The content library exists and is used · a specific pedagogical model is defined, not just a topic tree
+  **Later**         Interactive Math Knowledge Hub                                                          The content library exists and is used · a specific pedagogical model is defined, not just a topic tree
 
-  **Later**         Multi-organisation / district administration        More than one organisation is live and shares governance needs
+  **Later**         Multi-organisation / district administration                                            More than one organisation is live and shares governance needs
 
-  **Exploratory**   AI-assisted authoring, feedback and study support   Its own SRS section · a privacy analysis of what student data is processed and where · a defined evaluation method for output quality · a stated position on the use of student work as training data (§33)
+  **Exploratory**   AI-assisted authoring, feedback and study support                                       Its own SRS section · a privacy analysis of what student data is processed and where · a defined evaluation method for output quality · a stated position on the use of student work as training data (§33)
 
-  **Exploratory**   Desktop applications                                A requirement no web or native mobile client can meet
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Exploratory**   Responsive web application                                                              Superseded (§5.2, §41.1) --- no longer the V1 client; would only be revisited if a requirement emerges that the Flutter client provably cannot meet
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 49.2 --- Roadmap with explicit entry criteria.*
 
@@ -5106,9 +5217,9 @@ A roadmap item is not a promise; it is a decision with a stated trigger. Each it
 
 ## 50.1 Constraints
 
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **\#**       **Constraint**                                                                    **Consequence for design**
-  ------------ --------------------------------------------------------------------------------- ------------------------------------------------------------------------------------------------------------------------------------
+  ------------ --------------------------------------------------------------------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   **CON-01**   The MVP runs on Cloudflare only (project decision).                               Every platform primitive sits behind an abstraction (BE-008); no Cloudflare SDK call from a service class.
 
   **CON-02**   Production is an InterServer Linux VPS.                                           Single-region, self-managed. Availability targets and DR must be honest about what one VPS provides (§43.3).
@@ -5117,46 +5228,48 @@ A roadmap item is not a promise; it is a decision with a stated trigger. Each it
 
   **CON-04**   Payments are recorded manually with evidence; no gateway in V1.                   Verification is a human workflow with an SLA, and the interface must set that expectation.
 
-  **CON-05**   Students are expected to use low-end mobile devices on constrained connections.   Performance budgets and offline tolerance are functional requirements, not polish.
+  **CON-05**   Students are expected to use low-end mobile devices on constrained connections.   Performance budgets and offline tolerance are functional requirements, not polish. The V1 Flutter desktop demo does not directly serve this constraint; it is addressed when the Android/iOS release ships from the same codebase (§49, R-14).
 
   **CON-06**   Some users are minors.                                                            Guardian consent, safeguarding constraints on messaging, and retention rules for minors\' data are non-negotiable (§32, §33, §44).
 
   **CON-07**   The product\'s commercial value rests on protected teaching content.              Content protection is a core requirement, and the platform must be honest about its limits (GEN-022).
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 50.1 --- Project constraints.*
 
 ## 50.2 Risk register
 
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **\#**     **Risk**                                                                         **Sev.**   **Mitigation**                                                                                                                                             **Owner**
-  ---------- -------------------------------------------------------------------------------- ---------- ---------------------------------------------------------------------------------------------------------------------------------------------------------- ---------------
-  **R-01**   Platform-primitive leakage welds the product to Cloudflare (§41.3).              High       BE-008 two implementations in CI from sprint one; architecture review gate.                                                                                Engineer
+  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **\#**     **Risk**                                                                                                                                                                 **Sev.**      **Mitigation**                                                                                                                                                                                                                                    **Owner**
+  ---------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ ------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ---------------
+  **R-01**   Platform-primitive leakage welds the product to Cloudflare (§41.3).                                                                                                      High          BE-008 two implementations in CI from sprint one; architecture review gate.                                                                                                                                                                       Engineer
 
-  **R-02**   Migration during an academic period damages assessment or grade data.            High       INF-011 rehearsal; INF-014 window rules; schedule between periods.                                                                                         PM
+  **R-02**   Migration during an academic period damages assessment or grade data.                                                                                                    High          INF-011 rehearsal; INF-014 window rules; schedule between periods.                                                                                                                                                                                PM
 
-  **R-03**   Scope creep exhausts a three-person team before launch.                          High       §49 MoSCoW is contractual; §1.5 change control; roadmap entry criteria.                                                                                    PM
+  **R-03**   Scope creep exhausts a three-person team before launch.                                                                                                                  High          §49 MoSCoW is contractual; §1.5 change control; roadmap entry criteria.                                                                                                                                                                           PM
 
-  **R-04**   Authorisation defect exposes student data or answer keys.                        Critical   §7 single pipeline; full negative permission matrix in CI (Table 47.2); AC-03, AC-04.                                                                      Engineer + QA
+  **R-04**   Authorisation defect exposes student data or answer keys.                                                                                                                Critical      §7 single pipeline; full negative permission matrix in CI (Table 47.2); AC-03, AC-04.                                                                                                                                                             Engineer + QA
 
-  **R-05**   Content leaks despite protection, damaging teacher trust.                        High       Levels 0--3, gateway-only delivery, watermarking, anomaly detection --- and honest communication that no web platform prevents screen capture (GEN-022).   Engineer
+  **R-05**   Content leaks despite protection, damaging teacher trust.                                                                                                                High          Levels 0--3, gateway-only delivery, watermarking, anomaly detection --- and honest communication that no web platform prevents screen capture (GEN-022).                                                                                          Engineer
 
-  **R-06**   Simultaneous cohort assessment overwhelms the MVP platform.                      High       PERF-022 is the primary load scenario; thresholds fixed by measurement (D-05) before launch.                                                               Engineer + QA
+  **R-06**   Simultaneous cohort assessment overwhelms the MVP platform.                                                                                                              High          PERF-022 is the primary load scenario; thresholds fixed by measurement (D-05) before launch.                                                                                                                                                      Engineer + QA
 
-  **R-07**   Manual payment verification becomes the operational bottleneck.                  Medium     Bulk verification tooling; measured queue time; roadmap trigger for gateway integration.                                                                   Owner
+  **R-07**   Manual payment verification becomes the operational bottleneck.                                                                                                          Medium        Bulk verification tooling; measured queue time; roadmap trigger for gateway integration.                                                                                                                                                          Owner
 
-  **R-08**   Retention and minors\' data handling is set without qualified legal advice.      High       D-06 blocks production launch; periods are TBD until counsel confirms.                                                                                     Owner
+  **R-08**   Retention and minors\' data handling is set without qualified legal advice.                                                                                              High          D-06 blocks production launch; periods are TBD until counsel confirms.                                                                                                                                                                            Owner
 
-  **R-09**   Assessment integrity is compromised (shared answers, proxy attempts).            Medium     Question randomisation, version pinning, attempt limits, anomaly signals --- and an explicit statement that V1 does not proctor.                           Engineer
+  **R-09**   Assessment integrity is compromised (shared answers, proxy attempts).                                                                                                    Medium        Question randomisation, version pinning, attempt limits, anomaly signals --- and an explicit statement that V1 does not proctor.                                                                                                                  Engineer
 
-  **R-10**   Leaderboards cause reputational or wellbeing harm.                               Medium     Off by default (LDB-009); visibility modes; no identification of low performers (LDB-005).                                                                 Owner
+  **R-10**   Leaderboards cause reputational or wellbeing harm.                                                                                                                       Medium        Off by default (LDB-009); visibility modes; no identification of low performers (LDB-005).                                                                                                                                                        Owner
 
-  **R-11**   Single-VPS production creates an availability ceiling.                           Medium     Honest NFR-001 target; Cloudflare edge in front; tested restore (INF-007); documented upgrade path.                                                        Engineer
+  **R-11**   Single-VPS production creates an availability ceiling.                                                                                                                   Medium        Honest NFR-001 target; Cloudflare edge in front; tested restore (INF-007); documented upgrade path.                                                                                                                                               Engineer
 
-  **R-12**   Requirements drift as the document ages and code diverges from it.               Medium     NFR-017 --- the SRS changes in the same change that alters behaviour; TRC-003 review gate.                                                                 PM
+  **R-12**   Requirements drift as the document ages and code diverges from it.                                                                                                       Medium        NFR-017 --- the SRS changes in the same change that alters behaviour; TRC-003 review gate.                                                                                                                                                        PM
 
-  **R-13**   Two source specifications were referenced but not supplied (§1.4, Appendix D).   Medium     Assistant and classroom requirements were reconstructed from the surrounding material and are marked for confirmation.                                     Owner
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **R-13**   Two source specifications were referenced but not supplied (§1.4, Appendix D).                                                                                           Medium        Assistant and classroom requirements were reconstructed from the surrounding material and are marked for confirmation.                                                                                                                            Owner
+
+  R-14       The Flutter-Desktop-first V1 strategy (§5.2, §41.1) does not directly serve students who own only a low-end mobile phone until the Android/iOS release ships (CON-05).   Medium-High   Treat the Android/iOS release as a near-term platform-target addition, not a rewrite --- the shared Flutter architecture is built for it from day one (architecture docs); do not schedule full-population rollout ahead of the mobile release.   Owner + PM
+  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 50.2 --- Risk register.*
 
@@ -5164,47 +5277,47 @@ A roadmap item is not a promise; it is a decision with a stated trigger. Each it
 
 Every item below is a decision this document deliberately did *not* make, because making it would have required inventing a fact. Each states who decides, and what it blocks.
 
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **\#**     **Decision required**                                                                        **Blocks**                                     **Owner**
-  ---------- -------------------------------------------------------------------------------------------- ---------------------------------------------- -----------------
-  **D-01**   Read-model strategy for dashboards, progress and leaderboards (§37.5.1).                     Schema freeze                                  Engineer
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **\#**     **Decision required**                                                                                                                                                                                                                                                                                                                                                                                                  **Blocks**                                     **Owner**
+  ---------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ---------------------------------------------- -----------------
+  **D-01**   Read-model strategy for dashboards, progress and leaderboards (§37.5.1).                                                                                                                                                                                                                                                                                                                                               Schema freeze                                  Engineer
 
-  **D-02**   Concrete rate-limit budgets per endpoint class (§38.3).                                      Load-test plan                                 Engineer
+  **D-02**   Concrete rate-limit budgets per endpoint class (§38.3).                                                                                                                                                                                                                                                                                                                                                                Load-test plan                                 Engineer
 
-  **D-03**   Launch locale set and whether right-to-left layout ships in V1 (§41.2).                      UI implementation                              Owner
+  **D-03**   Launch locale set and whether right-to-left layout ships in V1 (§41.2).                                                                                                                                                                                                                                                                                                                                                UI implementation                              Owner
 
-  **D-04**   Full brand token set: type scale, spacing, elevation, motion, icons, dark palette (§42.2).   Component library                              Design
+  **D-04**   Full brand token set: type scale, spacing, elevation, motion, icons, dark palette (§42.2).                                                                                                                                                                                                                                                                                                                             Component library                              Design
 
-  **D-05**   Performance thresholds, set from measurement rather than assertion (§43.1).                  Launch readiness                               Engineer + QA
+  **D-05**   Performance thresholds, set from measurement rather than assertion (§43.1).                                                                                                                                                                                                                                                                                                                                            Launch readiness                               Engineer + QA
 
-  **D-06**   Retention periods, applicable data-protection regime, and minors\' data rules (§44.3).       Production launch                              Owner + counsel
+  **D-06**   Retention periods, applicable data-protection regime, and minors\' data rules (§44.3).                                                                                                                                                                                                                                                                                                                                 Production launch                              Owner + counsel
 
-  **D-07**   V1 capacity model: cohort size, peak concurrent assessment, storage growth (§43.2).          Capacity planning                              Owner
+  **D-07**   V1 capacity model: cohort size, peak concurrent assessment, storage growth (§43.2).                                                                                                                                                                                                                                                                                                                                    Capacity planning                              Owner
 
-  **D-08**   Grade scale definition: numeric, letter, or configurable per organisation (§17).             Grading implementation                         Owner
+  **D-08**   Grade scale definition --- RESOLVED in v1.2: grading scales are configurable per Organization, versioned, and pinned on every Grade (GRD-013\...020, §17.1). Originally: numeric, letter, or configurable per organisation (§17).                                                                                                                                                                                      Grading implementation                         Owner
 
-  **D-09**   Whether achievements and leaderboards ship in V1 or immediately after (Table 49.1).          Sprint plan                                    Owner
+  **D-09**   Whether achievements and leaderboards ship in V1 or immediately after (Table 49.1).                                                                                                                                                                                                                                                                                                                                    Sprint plan                                    Owner
 
-  **D-10**   Assistant permission defaults: which permissions are delegatable out of the box (§26).       Permission catalogue freeze                    Owner
+  **D-10**   Assistant permission defaults: which permissions are delegatable out of the box (§26).                                                                                                                                                                                                                                                                                                                                 Permission catalogue freeze                    Owner
 
-  **D-11**   Whether the Math Knowledge Hub is content in V1 or a distinct product surface (§20).         Content model                                  Owner
+  **D-11**   Whether the Math Knowledge Hub is content in V1 or a distinct product surface (§20).                                                                                                                                                                                                                                                                                                                                   Content model                                  Owner
 
-  **D-12**   Payment verification SLA and who performs it at volume (§30).                                Operational readiness                          Owner
+  **D-12**   Payment verification SLA and who performs it at volume (§30).                                                                                                                                                                                                                                                                                                                                                          Operational readiness                          Owner
 
-  **D-13**   Whether teacher content ownership permits platform reuse, and on what terms (§33).           Terms of service                               Owner + counsel
+  **D-13**   Whether teacher content ownership permits platform reuse, and on what terms (§33).                                                                                                                                                                                                                                                                                                                                     Terms of service                               Owner + counsel
 
-  **D-14**   Session and token lifetimes per session type (§35).                                          Auth implementation                            Engineer
+  **D-14**   Session and token lifetimes per session type (§35).                                                                                                                                                                                                                                                                                                                                                                    Auth implementation                            Engineer
 
-  **D-15**   Whether V1 supports more than one organisation in production (§8).                           Tenancy testing scope                          Owner
+  **D-15**   Whether V1 supports more than one organisation in production (§8).                                                                                                                                                                                                                                                                                                                                                     Tenancy testing scope                          Owner
 
-  **D-16**   Confirmation of the two source specifications not supplied with this package (Appendix D).   Assistant and classroom requirement sign-off   Owner
+  **D-16**   Confirmation of the two source specifications not supplied with this package (Appendix D). v1.3: every affected requirement in §9 and §21 is now individually classified CONFIRMED-elsewhere or PROVISIONAL (Tables 9.1a, 21.1a); this decision closes when the Project Owner confirms or corrects the PROVISIONAL rows specifically --- CLS-002, CLS-003, GRP-002, AST-009, and the two flagged rows of Table 21.2.   Assistant and classroom requirement sign-off   Owner
 
-  **D-17**   Progress weighting formula per Activity type for the overall completion figure (§17.2).      Progress computation implementation            Owner
+  **D-17**   Progress weighting formula per Activity type for the overall completion figure (§17.2).                                                                                                                                                                                                                                                                                                                                Progress computation implementation            Owner
 
-  **D-18**   Leaderboard ranking source, tie rule and reset period (§18.2); default visibility mode is fixed by LDB-009 (disabled until enabled).        Enabling any leaderboard                       Owner
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **D-18**   Leaderboard ranking source, tie rule and reset period (§18.2); default visibility mode is fixed by LDB-009 (disabled until enabled).                                                                                                                                                                                                                                                                                   Enabling any leaderboard                       Owner
+  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-*Table 51.1 --- Open decisions register. Items D-03, D-05, D-06, D-07, D-08 and D-17 are required before launch (AC-20). D-18 blocks only the act of enabling a leaderboard, which is off by default (LDB-009) and is not itself launch-blocking. v1.1 added D-17 and D-18 to close two decisions that §17.2 and §18.2 already referenced as OPEN but that were not previously recorded in this register (Appendix E).*
+*Table 51.1 --- Open decisions register. Items D-03, D-05, D-06, D-07 and D-17 are required before launch (AC-20). \[v1.2: D-08 resolved by the Project Owner --- see the row below and the CONFIRMED box in §17.1; D-17 added to this list since it was omitted when D-17 was first registered in v1.1.\]*
 
 +-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | **HOW AN OPEN DECISION CLOSES**                                                                                                                                                                       |
@@ -5219,51 +5332,51 @@ Every item below is a decision this document deliberately did *not* make, becaus
 
 ## 52.1 Appendix A --- Requirement prefix registry
 
-  -------------------------------------------------------------------------------------------------------------------------
-  **Prefix**                  **Area**                               **Prefix**     **Area**
-  --------------------------- -------------------------------------- -------------- ---------------------------------------
-  **GEN**                     Architectural golden rules (§4)        MSG            Communication (§27)
+  ----------------------------------------------------------------------------------------------------------------------------------
+  **Prefix**                  **Area**                                        **Prefix**     **Area**
+  --------------------------- ----------------------------------------------- -------------- ---------------------------------------
+  **GEN**                     Architectural golden rules (§4)                 MSG            Communication (§27)
 
-  **SEC**                     Security & authorisation (§7, §34)     NOT            Notifications (§28)
+  **SEC**                     Security & authorisation (§7, §34)              NOT            Notifications (§28)
 
-  **ORG / PER**                Organisation & tenancy, academic periods (§8)   CAL            Calendar (§29)
+  **ORG / PER**               Organisation & tenancy, academic periods (§8)   CAL            Calendar (§29)
 
-  **CLS / GRP**               Classroom & group (§9)                 PAY            Payments (§30)
+  **CLS / GRP**               Classroom & group (§9)                          PAY            Payments (§30)
 
-  **SUB / CRS / CYC / TOP**   Academic structure (§10)               BIL            Billing & entitlement (§31)
+  **SUB / CRS / CYC / TOP**   Academic structure (§10)                        BIL            Billing & entitlement (§31)
 
-  **SES**                     Teaching sessions & attendance (§11)   PRV            Privacy (§32)
+  **SES**                     Teaching sessions & attendance (§11)            PRV            Privacy (§32)
 
-  **ACT**                     Activities (§12)                       LEG            Legal (§33)
+  **ACT**                     Activities (§12)                                LEG            Legal (§33)
 
-  **QBN**                     Question bank (§13)                    AUTH           Authentication & login sessions (§35)
+  **QBN**                     Question bank (§13)                             AUTH           Authentication & login sessions (§35)
 
-  **STR**                     Teacher storage (§14)                  AUD            Audit (§36)
+  **STR**                     Teacher storage (§14)                           AUD            Audit (§36)
 
-  **CNT**                     Content & protection (§15, §16)        DB             Data model (§37)
+  **CNT**                     Content & protection (§15, §16)                 DB             Data model (§37)
 
-  **GRD**                     Grading (§17)                          API            API (§38)
+  **GRD**                     Grading (§17)                                   API            API (§38)
 
-  **PRG**                     Progress (§17)                         BE             Backend architecture (§39)
+  **PRG**                     Progress (§17)                                  BE             Backend architecture (§39)
 
-  **ACH / PTS / LDB**         Gamification (§18)                     ERR            Error handling (§40)
+  **ACH / PTS / LDB**         Gamification (§18)                              ERR            Error handling (§40)
 
-  **TCH**                     Teacher experience (§19)               FE / INF       Frontend / infrastructure (§41)
+  **TCH**                     Teacher experience (§19)                        FE / INF       Frontend / infrastructure (§41)
 
-  **STU**                     Student experience (§20)               UI / UX-P      Interface & design (§42)
+  **STU**                     Student experience (§20)                        UI / UX-P      Interface & design (§42)
 
-  **AST**                     Assistant experience (§21)             PERF / NFR     Non-functional (§43)
+  **AST**                     Assistant experience (§21)                      PERF / NFR     Non-functional (§43)
 
-  **PAR**                     Parent experience (§22)                LIF            Lifecycle & deletion (§44)
+  **PAR**                     Parent experience (§22)                         LIF            Lifecycle & deletion (§44)
 
-  **ADM**                     Administration (§23)                   QA / TRC       Quality & traceability (§47, §48)
+  **ADM**                     Administration (§23)                            QA / TRC       Quality & traceability (§47, §48)
 
-  **BR**                      Business rules                         UC / TC / AC   Use cases, test cases, acceptance
+  **BR**                      Business rules                                  UC / TC / AC   Use cases, test cases, acceptance
 
-  **D**                       Open decisions (§51)                   R / CON        Risks and constraints (§50)
-  -------------------------------------------------------------------------------------------------------------------------
+  **D**                       Open decisions (§51)                            R / CON        Risks and constraints (§50)
+  ----------------------------------------------------------------------------------------------------------------------------------
 
-*Table 52.1 --- Requirement prefix registry. PER added in v1.1 (§8.1); the Gamification and Organisation/tenancy area citations corrected (Appendix E).*
+*Table 52.1 --- Requirement prefix registry. PER added in v1.1 (§8.1); the Gamification and Organisation/tenancy area citations corrected.*
 
 ## 52.2 Appendix B --- Requirement ID reconciliation
 
@@ -5359,19 +5472,34 @@ This SRS consolidates the specification package supplied by the project owner. I
 
 ## 52.5 Appendix E --- Document change log
 
-  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Version**   **Date**     **Author**     **Summary**
-  ------------- ------------ -------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **0.1**       ---          Project team   Initial draft specification.
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Version**   **Date**      **Author**                **Summary**
+  ------------- ------------- ------------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **0.1**       ---           Project team              Initial draft specification.
 
-  **0.2**       ---          M. Mahgoub     Consolidated SRS with diagrams, mockups and worked requirements; project team and approval recorded.
+  **0.2**       ---           M. Mahgoub                Consolidated SRS with diagrams, mockups and worked requirements; project team and approval recorded.
 
-  **1.0**       8 Sep 2026   M. Mahgoub     Master SRS. Full reconstruction from the sixteen supplied specifications: conflict resolution (§1.4), 28 architectural golden rules (§4), consolidated data model (§37), API, backend, error, infrastructure, UI/UX, NFR, lifecycle, state machine, use case, QA, traceability, scope, risk and open-decision sections. Requirement IDs reconciled per Appendix B.
+  **1.0**       8 Sep 2026    M. Mahgoub                Master SRS. Full reconstruction from the sixteen supplied specifications: conflict resolution (§1.4), 28 architectural golden rules (§4), consolidated data model (§37), API, backend, error, infrastructure, UI/UX, NFR, lifecycle, state machine, use case, QA, traceability, scope, risk and open-decision sections. Requirement IDs reconciled per Appendix B.
 
-  **1.1**       11 Sep 2026   Audit pass    Systematic audit of v1.0 against its own decisions, data model and traceability chain. No CONFIRMED decision reversed. **Contradictions resolved:** Group/Classroom cardinality corrected in §37.3.2 to match the confirmed GEN-008/GRP-001 (a nullable, cross-classroom Group was removed); cross-tenant storage deduplication corrected in §37.3.4 to match the confirmed §14.4 design (STR-IMP-011/012), not the reverse; duplicate ID BR-014 split --- the classroom/group-change rule renumbered to **BR-015** (§9.2, §37.3.2/3, §45.3, §46.2, §48.3), the payment revenue-share rule keeps BR-014 (§30.1). **Broken cross-references repaired:** §3 terminology citation, §17.2 and §18.2 open-decision citations (now D-17/D-18, newly registered in §51), §35.3 open-decision citation (D-14), QBN-018→QBN-025 (version pinning, three sites), GEN-021→GEN-017 (protected-content caching, three sites), LDB-002→LDB-009 (default-off, three sites), STR-016→STR-023 (referenced-file purge, three sites), SEC-012→SEC-014 where it meant assistant delegation, §24.4 illustration count, §49.1/§52.1 section and area citations. **New requirements closing gaps the document's own structure already implied:** GEN-029 (terminology discipline, testable), SEC-012...015 (relationship re-verification, previously cited via Table 7.2 but never stated), ACT-009 (no-target activities cannot open), STR-023 (referenced-file purge block), LDB-009 (leaderboard default-off), AUTH-127 (MFA recovery path), ORG-009/010 (Organization closure lifecycle and authorization), §8.1 PER-001...006 (Academic Period, load-bearing in §37.3.2 but previously unspecified), CRS-009/010 (co-teacher grant and audit), BR-021 (teacher-deletion ownership transfer, previously cited by LIF-006 but never defined). **Editorial:** §32.3's retention table, which duplicated §44.3 with different category boundaries, replaced with a pointer to the single authoritative schedule (§44.3), which gained a row for trashed-file purge retention. D-17 added to the launch-blocking list in Table 51.1 (progress-weighting formula; Progress is MUST for V1). Full rationale for every item is inline at its location, marked "v1.1" or "added in v1.1".
-  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  1.1           11 Sep 2026   Audit pass                Systematic audit of v1.0 against its own decisions, data model and traceability chain. No CONFIRMED decision reversed. Contradictions resolved: Group/Classroom cardinality (§37.3.2 vs GEN-008/GRP-001); cross-tenant storage deduplication (§37.3.4 vs §14.4); duplicate ID BR-014 split --- classroom/group-change rule renumbered BR-015, payment rule keeps BR-014. Broken cross-references repaired: §3 terminology citation, §17.2/§18.2 open-decision citations (now D-17/D-18), §35.3 citation (D-14), QBN-018→QBN-025, GEN-021→GEN-017, LDB-002→LDB-009, STR-016→STR-023, SEC-012→SEC-014 where it meant assistant delegation, §24.4 illustration count, §49.1/§52.1 section and area citations. New requirements closing gaps the document\'s own structure already implied: GEN-029, SEC-012\...015, ACT-009, STR-023, LDB-009, AUTH-127, ORG-009/010, §8.1 PER-001\...006, CRS-009/010, BR-021. Editorial: §32.3\'s retention table (duplicated §44.3) replaced with a pointer; §44.3 gained a trashed-file retention row. D-17 added to the launch-blocking list in Table 51.1.
+
+  1.2           11 Sep 2026   D-08 resolution           Resolves D-08 (§51) per explicit Project Owner decision: grade scales are configurable per Organization, never a single global scale, with the scale and criteria in force at grade creation/release permanently preserved. Adds GRD-013\...020 (§17.1), the GradingScale and GradingScaleVersion entities (§37.3.3, copy-on-write mirroring QuestionVersion/FileVersion), Grade.grading_scale_version_id, the GRADING_SCALE_MANAGE administrative permission (§26.3), the /grading-scales API resource group (§38.2), and validation/UI guidance in §17.1. D-08 marked resolved in §51 and removed from the launch-blocking list; D-17 added to that list, having been omitted when first registered in v1.1. No other CONFIRMED decision changed.
+
+  1.3           11 Sep 2026   D-16 provenance           Resolves the process question in D-16 (§51) per explicit Project Owner instruction, without inventing or modifying any requirement text. Adds a new status, PROVISIONAL (§1.3), for requirements reconstructed from a source specification that was never supplied. Adds provenance tables 9.1a and 21.1a, classifying every CLS-\*/GRP-\* (§9.2) and AST-\* (§21.2, §21.3) requirement as either CONFIRMED elsewhere (independently corroborated by a golden rule, another section, the data model, or a worked use case --- the large majority) or PROVISIONAL (CLS-002, CLS-003, GRP-002, AST-009, and two rows of Table 21.2 --- inference only, no independent corroboration found). Removed the inaccurate blanket "--- CONFIRMED" from the §9.2 heading. D-16\'s register entry updated to point at the new tables. No CONFIRMED decision, and no requirement\'s normative text, changed. Per Project Owner instruction, Phase 5/6 architecture work is not blocked by this --- only the specific PROVISIONAL rows\' final behaviour awaits confirmation.
+
+  1.4           13 Sep 2026   Flutter client strategy   Records the Project Owner's client-platform decision (13 September 2026): Flutter replaces the responsive-web-client decision of v1.0--v1.3 as the EduCapsules client technology. V1 ships a Flutter desktop application (Windows/macOS/Linux); the same Flutter application/codebase extends to Android and iOS as a FUTURE RELEASE, not V1 delivery, per an explicit Project Owner release decision rather than an unmet-requirement trigger. Updated: §5.2 (client applications), Table 41.1 and the PLATFORM DECISION box (§41.1), the Static client delivery row of Table 41.3, FE-001/003/004/010 (§41.2), AUTH-125 (§35.2), UI-010/015/016/017/018 (§42.6), PERF-004/005 (§43.1), NFR-021/022/023 (§43.5), Table 49.1 and Table 49.2 (§49), and CON-05 (§50.1, with new risk R-14 added to Table 50.2). No other CONFIRMED decision changed; no unrelated requirement text was modified. Full rationale recorded in docs/decisions/06-flutter-client-decision.md.
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Table 52.5 --- Document change log.*
+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| **BASELINE REDESIGNATION**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+|                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| This document was developed and validated through internal iterations tracked as versions 0.1 through 1.4 (Table 52.5 above records that full history in detail). Per explicit Project Owner instruction, the final consolidated specification --- containing every approved decision through the Flutter client-strategy update --- is now designated Version 1.0: the single, official, authoritative Master SRS baseline for building EduCapsules going forward. No requirement, decision, or content changed as part of this redesignation; only the document's own version label changed, here and in its front matter (§1.1). |
+|                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| *Status: CONFIRMED · Date: 13 September 2026 · Owner: Project Owner*                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
++=====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 +--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | **END OF SPECIFICATION**                                                                                                                                                                                                                                                                                                             |

@@ -1,0 +1,2 @@
+ALTER TABLE "academic_periods" ADD CONSTRAINT "academic_periods_status_check" CHECK ("academic_periods"."status" IN ('planned', 'active', 'closed'));--> statement-breakpoint
+ALTER TABLE "enrollments" ADD CONSTRAINT "enrollments_status_check" CHECK ("enrollments"."status" IN ('requested', 'active', 'withdrawn', 'completed', 'transferred'));
