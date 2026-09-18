@@ -1,17 +1,19 @@
-import { Hono } from "hono";
+import { Hono, type Context } from "hono";
 import { HTTPException } from "hono/http-exception";
 import type { AppEnv } from "../types.js";
 import { requireSession } from "../modules/auth/middleware.js";
 import { AUTHZ_ERROR_STATUS, AuthzDomainError } from "../modules/authz/errors.js";
-import { authorize, resolveAuthoritySources } from "../modules/authz/service.js";
-import { requirePermission } from "../modules/authz/middleware.js";
+import {
+  ACADEMIC_STRUCTURE_ERROR_STATUS,
+  AcademicStructureDomainError,
+} from "../modules/academic-structure/errors.js";
+import * as service from "../modules/academic-structure/service.js";
 
 /**
- * A minimal, deliberately narrow Classroom read/manage surface — NOT the
- * real academic-structure module (Phase 6's, per the Phase 0 roadmap).
- * This exists to prove the Phase 5 authorization pipeline end-to-end
- * against a real protected resource: list/get exercise the relationship
- * stage, PATCH exercises the permission stage (MANAGE_CLASSROOM).
+ * /api/v1/classrooms (SRS §9, CLS-*) — the real academic-structure module's
+ * Classroom surface. Replaces the Phase 5 ../modules/classrooms/
+ * demonstrator entirely; that module's own header comment named this one as
+ * its intended successor from the start.
  */
 
 export const classrooms = new Hono<AppEnv>();
@@ -21,6 +23,11 @@ classrooms.use("*", requireSession());
 function toHttpException(err: unknown): HTTPException {
   if (err instanceof AuthzDomainError) {
     return new HTTPException(AUTHZ_ERROR_STATUS[err.code] as 400, { message: err.message });
+  }
+  if (err instanceof AcademicStructureDomainError) {
+    return new HTTPException(ACADEMIC_STRUCTURE_ERROR_STATUS[err.code] as 400, {
+      message: err.message,
+    });
   }
   throw err;
 }
@@ -35,90 +42,122 @@ async function readJsonBody(request: Request): Promise<Record<string, unknown>> 
   }
 }
 
-// GEN-025/SEC-009: listing never reveals a classroom the caller has no
-// relationship to — each candidate row is independently authorized and
-// silently omitted on denial, exactly like a single-object 404 would be,
-// rather than the list endpoint itself ever failing closed-but-visibly.
+function deps(c: Context<AppEnv>): service.Deps {
+  return { repo: c.get("academicStructureRepository"), authzRepo: c.get("authzRepository") };
+}
+
 classrooms.get("/", async (c) => {
   const session = c.get("session")!;
-  const authzRepo = c.get("authzRepository");
-  const classroomsRepo = c.get("classroomsRepository");
-  const all = await classroomsRepo.listClassrooms(session.organizationId);
-
-  const visible = [];
-  for (const classroom of all) {
-    const sources = await resolveAuthoritySources(
-      authzRepo,
-      { organizationId: session.organizationId, userId: session.userId },
-      { scopeType: "CLASSROOM", scopeId: classroom.id, objectId: classroom.id },
-      new Date(),
-    );
-    if (sources.length > 0) visible.push(classroom);
-  }
-
-  return c.json({ classrooms: visible });
+  const academicPeriodId = c.req.query("academicPeriodId");
+  const list = await service.listClassrooms(
+    deps(c),
+    { organizationId: session.organizationId, userId: session.userId },
+    academicPeriodId ? { academicPeriodId } : undefined,
+  );
+  return c.json({ classrooms: list });
 });
 
 classrooms.get("/:id", async (c) => {
   const session = c.get("session")!;
-  const authzRepo = c.get("authzRepository");
-  const classroomsRepo = c.get("classroomsRepository");
-  const id = c.req.param("id");
-
   try {
-    await authorize(
-      authzRepo,
+    const classroom = await service.getClassroom(
+      deps(c),
       { organizationId: session.organizationId, userId: session.userId },
-      { scopeType: "CLASSROOM", scopeId: id, objectId: id },
-      new Date(),
+      c.req.param("id"),
     );
+    return c.json({ classroom });
   } catch (err) {
     throw toHttpException(err);
   }
-
-  const classroom = await classroomsRepo.findClassroomById(session.organizationId, id);
-  if (!classroom) throw new HTTPException(404, { message: "Not found." });
-  return c.json({ classroom });
 });
 
-classrooms.patch(
-  "/:id",
-  requirePermission("MANAGE_CLASSROOM", (c) => {
-    const id = c.req.param("id")!;
-    return { scopeType: "CLASSROOM", scopeId: id, objectId: id };
-  }),
-  async (c) => {
-    const session = c.get("session")!;
-    const authzRepo = c.get("authzRepository");
-    const classroomsRepo = c.get("classroomsRepository");
-    const id = c.req.param("id");
-    const body = await readJsonBody(c.req.raw);
+classrooms.post("/", async (c) => {
+  const session = c.get("session")!;
+  const body = await readJsonBody(c.req.raw);
+  const name = typeof body["name"] === "string" ? body["name"] : "";
+  const gradeLevel = typeof body["gradeLevel"] === "string" ? body["gradeLevel"] : null;
+  const academicPeriodId =
+    typeof body["academicPeriodId"] === "string" ? body["academicPeriodId"] : "";
+  const homeroomTeacherId =
+    typeof body["homeroomTeacherId"] === "string" ? body["homeroomTeacherId"] : null;
 
-    const existing = await classroomsRepo.findClassroomById(session.organizationId, id);
-    if (!existing) throw new HTTPException(404, { message: "Not found." });
+  try {
+    const classroom = await service.createClassroom(
+      deps(c),
+      { organizationId: session.organizationId, userId: session.userId },
+      { name, gradeLevel, academicPeriodId, homeroomTeacherId },
+      { loginSessionId: session.id },
+    );
+    return c.json({ classroom }, 201);
+  } catch (err) {
+    throw toHttpException(err);
+  }
+});
 
-    const patch: Partial<{ name: string; gradeLevel: string | null; status: string }> = {};
-    if (typeof body["name"] === "string") patch.name = body["name"];
-    if (typeof body["gradeLevel"] === "string" || body["gradeLevel"] === null) {
-      patch.gradeLevel = body["gradeLevel"] as string | null;
-    }
-    if (typeof body["status"] === "string") patch.status = body["status"];
+classrooms.patch("/:id", async (c) => {
+  const session = c.get("session")!;
+  const body = await readJsonBody(c.req.raw);
+  const patch: {
+    name?: string;
+    gradeLevel?: string | null;
+    homeroomTeacherId?: string | null;
+    status?: "active" | "archived";
+  } = {};
+  if (typeof body["name"] === "string") patch.name = body["name"];
+  if (typeof body["gradeLevel"] === "string" || body["gradeLevel"] === null) {
+    patch.gradeLevel = body["gradeLevel"] as string | null;
+  }
+  if (typeof body["homeroomTeacherId"] === "string" || body["homeroomTeacherId"] === null) {
+    patch.homeroomTeacherId = body["homeroomTeacherId"] as string | null;
+  }
+  if (body["status"] === "active" || body["status"] === "archived") patch.status = body["status"];
 
-    await classroomsRepo.patchClassroom(session.organizationId, id, patch);
-    await authzRepo.writeAuditEvent({
-      organizationId: session.organizationId,
-      actorUserId: session.userId,
-      actorRole: null,
-      action: "CLASSROOM_UPDATED",
-      targetType: "classroom",
-      targetId: id,
-      ipHash: null,
-      loginSessionId: session.id,
-      occurredAt: new Date(),
-      reason: null,
-    });
+  try {
+    const classroom = await service.updateClassroom(
+      deps(c),
+      { organizationId: session.organizationId, userId: session.userId },
+      c.req.param("id"),
+      patch,
+      { loginSessionId: session.id },
+    );
+    return c.json({ classroom });
+  } catch (err) {
+    throw toHttpException(err);
+  }
+});
 
-    const updated = await classroomsRepo.findClassroomById(session.organizationId, id);
-    return c.json({ classroom: updated });
-  },
-);
+// --- Nested Group surface (GRP-001: a Group belongs to exactly one Classroom) ---
+
+classrooms.get("/:id/groups", async (c) => {
+  const session = c.get("session")!;
+  try {
+    const groups = await service.listGroups(
+      deps(c),
+      { organizationId: session.organizationId, userId: session.userId },
+      c.req.param("id"),
+    );
+    return c.json({ groups });
+  } catch (err) {
+    throw toHttpException(err);
+  }
+});
+
+classrooms.post("/:id/groups", async (c) => {
+  const session = c.get("session")!;
+  const body = await readJsonBody(c.req.raw);
+  const name = typeof body["name"] === "string" ? body["name"] : "";
+  const purpose = typeof body["purpose"] === "string" ? body["purpose"] : null;
+
+  try {
+    const group = await service.createGroup(
+      deps(c),
+      { organizationId: session.organizationId, userId: session.userId },
+      c.req.param("id"),
+      { name, purpose },
+      { loginSessionId: session.id },
+    );
+    return c.json({ group }, 201);
+  } catch (err) {
+    throw toHttpException(err);
+  }
+});

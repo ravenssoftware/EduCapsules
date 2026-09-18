@@ -3,9 +3,9 @@ import { optionalEnv } from "@educapsules/shared";
 import { createAuthRepository, type AuthRepository } from "./modules/auth/repository.js";
 import { createAuthzRepository, type AuthzRepository } from "./modules/authz/repository.js";
 import {
-  createClassroomsRepository,
-  type ClassroomsRepository,
-} from "./modules/classrooms/repository.js";
+  createAcademicStructureRepository,
+  type AcademicStructureRepository,
+} from "./modules/academic-structure/repository.js";
 
 /**
  * Selects the active database dialect for this process — SQLite (D1
@@ -17,7 +17,7 @@ import {
 export interface AppDatabase {
   authRepository: AuthRepository;
   authzRepository: AuthzRepository;
-  classroomsRepository: ClassroomsRepository;
+  academicStructureRepository: AcademicStructureRepository;
   close: () => Promise<void>;
 }
 
@@ -28,7 +28,7 @@ export function createAppDatabase(): AppDatabase {
     return {
       authRepository: createAuthRepository(db, postgresSchema),
       authzRepository: createAuthzRepository(db, postgresSchema),
-      classroomsRepository: createClassroomsRepository(db, postgresSchema),
+      academicStructureRepository: createAcademicStructureRepository(db, postgresSchema),
       close,
     };
   }
@@ -37,7 +37,7 @@ export function createAppDatabase(): AppDatabase {
   return {
     authRepository: createAuthRepository(db, sqliteSchema),
     authzRepository: createAuthzRepository(db, sqliteSchema),
-    classroomsRepository: createClassroomsRepository(db, sqliteSchema),
+    academicStructureRepository: createAcademicStructureRepository(db, sqliteSchema),
     close: () => Promise.resolve(),
   };
 }

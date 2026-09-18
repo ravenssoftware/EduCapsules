@@ -46,6 +46,8 @@ export const academicPeriods = sqliteTable(
       name: "academic_periods_organization_fk",
     }),
     index("academic_periods_org_idx").on(t.organizationId),
+    // PER-001: planned | active | closed — no other states.
+    check("academic_periods_status_check", sql`${t.status} IN ('planned', 'active', 'closed')`),
   ],
 );
 
@@ -370,5 +372,15 @@ export const enrollments = sqliteTable(
     }),
     index("enrollments_org_course_idx").on(t.organizationId, t.courseId),
     index("enrollments_org_student_idx").on(t.organizationId, t.studentUserId),
+    // SRS §45.3's state machine: REQUESTED -> ACTIVE -> (WITHDRAWN |
+    // COMPLETED | TRANSFERRED). Phase 6 only reaches 'active' (on creation)
+    // and 'withdrawn' (via the withdraw action) — 'requested', 'completed'
+    // and 'transferred' are reserved vocabulary, not yet wired to any code
+    // path (no enrollment-request/approval workflow, no course-completion
+    // detection or transfer operation exists yet).
+    check(
+      "enrollments_status_check",
+      sql`${t.status} IN ('requested', 'active', 'withdrawn', 'completed', 'transferred')`,
+    ),
   ],
 );

@@ -25,8 +25,15 @@ export const academicPeriods = pgTable(
     id: text("id").primaryKey(),
     organizationId: text("organization_id").notNull(),
     name: text("name").notNull(),
-    startsOn: date("starts_on").notNull(),
-    endsOn: date("ends_on").notNull(),
+    // mode: "string" — without it, drizzle-orm's Postgres `date` column
+    // maps to a JS Date by default (the SQLite mirror's `text` column is
+    // always a string); Phase 6 found this dialect divergence while
+    // building PER-004's overlap check, which compares these as plain ISO
+    // date strings. This is a pure ORM-mapping change (mapFromDriverValue),
+    // not a SQL type change — getSQLType() is still 'date' either way, so
+    // no new migration is needed.
+    startsOn: date("starts_on", { mode: "string" }).notNull(),
+    endsOn: date("ends_on", { mode: "string" }).notNull(),
     status: text("status").notNull().default("planned"),
     createdBy: text("created_by"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
@@ -40,6 +47,8 @@ export const academicPeriods = pgTable(
       name: "academic_periods_organization_fk",
     }),
     index("academic_periods_org_idx").on(t.organizationId),
+    // PER-001: planned | active | closed — no other states.
+    check("academic_periods_status_check", sql`${t.status} IN ('planned', 'active', 'closed')`),
   ],
 );
 
@@ -252,8 +261,8 @@ export const cycles = pgTable(
     courseId: text("course_id").notNull(),
     title: text("title").notNull(),
     sequenceNo: integer("sequence_no").notNull(),
-    startsOn: date("starts_on"),
-    endsOn: date("ends_on"),
+    startsOn: date("starts_on", { mode: "string" }),
+    endsOn: date("ends_on", { mode: "string" }),
     status: text("status").notNull().default("active"),
     createdBy: text("created_by"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
@@ -346,5 +355,15 @@ export const enrollments = pgTable(
     }),
     index("enrollments_org_course_idx").on(t.organizationId, t.courseId),
     index("enrollments_org_student_idx").on(t.organizationId, t.studentUserId),
+    // SRS §45.3's state machine: REQUESTED -> ACTIVE -> (WITHDRAWN |
+    // COMPLETED | TRANSFERRED). Phase 6 only reaches 'active' (on creation)
+    // and 'withdrawn' (via the withdraw action) — 'requested', 'completed'
+    // and 'transferred' are reserved vocabulary, not yet wired to any code
+    // path (no enrollment-request/approval workflow, no course-completion
+    // detection or transfer operation exists yet).
+    check(
+      "enrollments_status_check",
+      sql`${t.status} IN ('requested', 'active', 'withdrawn', 'completed', 'transferred')`,
+    ),
   ],
 );

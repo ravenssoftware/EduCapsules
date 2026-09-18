@@ -16,7 +16,7 @@ import { uuid7 } from "@educapsules/shared";
 import { createApp } from "../app.js";
 import { createAuthRepository } from "../modules/auth/repository.js";
 import { createAuthzRepository } from "../modules/authz/repository.js";
-import { createClassroomsRepository } from "../modules/classrooms/repository.js";
+import { createAcademicStructureRepository } from "../modules/academic-structure/repository.js";
 import { issueSession } from "../modules/auth/sessions.js";
 
 /**
@@ -54,8 +54,8 @@ migrate(db, { migrationsFolder });
 
 const authRepository = createAuthRepository(db, sqliteSchema);
 const authzRepository = createAuthzRepository(db, sqliteSchema);
-const classroomsRepository = createClassroomsRepository(db, sqliteSchema);
-const app = createApp({ authRepository, authzRepository, classroomsRepository });
+const academicStructureRepository = createAcademicStructureRepository(db, sqliteSchema);
+const app = createApp({ authRepository, authzRepository, academicStructureRepository });
 
 const ORG_A = uuid7();
 const ORG_B = uuid7();

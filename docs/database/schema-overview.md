@@ -3,7 +3,7 @@
 **Status:** Phase 3 (Database Foundation), implemented.
 **Source of truth:** Master SRS v1.0 §37 (Data Model) + `docs/architecture/database.md`. This document records what Phase 3 actually built; it does not restate or re-derive the SRS's normative model.
 
-This document, `migration-strategy.md`, and `tenancy-and-security.md` in this folder together satisfy the Phase 3 documentation requirement. Keep them synchronized with `packages/db/src/schema/` as the schema evolves — a stale doc is worse than no doc.
+This document, `migration-strategy.md`, and `tenancy-and-security.md` in this folder together satisfy the Phase 3 documentation requirement. Keep them synchronized with `packages/db/src/schema/` as the schema evolves — a stale doc is worse than no doc. **Phase 6** (`docs/academic-structure/academic-structure.md`) is the module that turned the academic-structure tables described here into real CRUD/workflows and closed several gaps this document explicitly deferred (PER-003's cardinality rule, PER-004's overlap rule, the polymorphic `memberships.container_id`/`course_audiences.target_id` reference validation named in `tenancy-and-security.md` §1) — see that document for the business-rule enforcement mechanics, not here.
 
 ## 1. Package layout
 
@@ -99,10 +99,12 @@ CHECK constraints were added only where the SRS text itself gives an explicit, c
 | `assistant_assignments.status` | `pending, active, expired, revoked, suspended` | §45.3's AssistantAssignment lifecycle (added Phase 5) |
 | `assistant_assignment_scopes.scope_type` | `CLASSROOM, GROUP, SUBJECT, COURSE, CYCLE` | §7.3's scope containment list, minus `ORG` — an Assistant assignment is always a bounded delegation, never organization-wide (AST-002, GEN-006) |
 | `parent_links.status` | `requested, confirmed, revoked` | §45.3's ParentLink lifecycle (added Phase 5) |
+| `academic_periods.status` | `planned, active, closed` | PER-001's own three-state vocabulary (added Phase 6, migration `0006` — see `docs/academic-structure/academic-structure.md` §8) |
+| `enrollments.status` | `requested, active, withdrawn, completed, transferred` | §45.3's Enrollment state machine (added Phase 6, migration `0006`); Phase 6 code only reaches `active`/`withdrawn` — see that same doc's §5 known limitations |
 
-Other status-like columns (`classrooms.status`, `groups.status`, `subjects.status`, `academic_periods.status`, `enrollments.status`) deliberately carry **no** CHECK constraint: their value sets are not enumerated anywhere in the SRS, and locking one in now would silently pre-commit an unstated business rule ahead of the phase that actually owns that entity's lifecycle. This is a scope boundary, not an oversight.
+Other status-like columns (`classrooms.status`, `groups.status`, `subjects.status`) still deliberately carry **no** CHECK constraint, unchanged from Phase 3: their value sets are not enumerated anywhere in the SRS, and locking one in now would silently pre-commit an unstated business rule — this held true even once Phase 6 became the phase that owns these entities' lifecycle, since there remains no enumerated source to draw the vocabulary from. This is a scope boundary, not an oversight.
 
-Two requirements are explicitly **PROVISIONAL** per decision record D-16 (CLS-002/CLS-003/GRP-002): rather than hard-coding one unconfirmed interpretation into a constraint, the schema stays permissive there. See the header comment in `src/schema/sqlite/academic-structure.ts` for the exact citation.
+Two requirements are explicitly **PROVISIONAL** per decision record D-16 (CLS-002/CLS-003/GRP-002): rather than hard-coding one unconfirmed interpretation into a constraint, the schema stays permissive there. See the header comment in `src/schema/sqlite/academic-structure.ts` for the exact citation. Phase 6 (the academic-structure module, `apps/api/src/modules/academic-structure/`) did not force a resolution either — the schema remains as permissive as Phase 3 left it, per Table 9.1a's own note that these PROVISIONAL rows "do not block Phase 6 architecture; they block only finalising their own specific behaviour."
 
 Uniqueness: `organizations.slug`; `users(organization_id, email)` (DB-012 — scoped, never global); `roles(organization_id, key)`; `cycles(course_id, sequence_no)` and `topics(cycle_id, sequence_no)` (CYC-002); `course_audiences(course_id, target_type, target_id)`; plus every `unique(organization_id, id)` that exists solely to give child tables a composite-FK target (see `tenancy-and-security.md` §1).
 

@@ -43,6 +43,13 @@
       "when": 1789519299049,
       "tag": "0005_harsh_lizard",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1789768945671,
+      "tag": "0006_gifted_virginia_dare",
+      "breakpoints": true
     }
   ]
 }

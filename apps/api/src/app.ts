@@ -4,20 +4,29 @@ import { correlationId } from "./middleware/correlation-id.js";
 import { errorHandler } from "./middleware/error-handler.js";
 import { health } from "./routes/health.js";
 import { auth } from "./routes/auth.js";
+import { academicPeriods } from "./routes/academic-periods.js";
 import { classrooms } from "./routes/classrooms.js";
+import { groups } from "./routes/groups.js";
+import { memberships } from "./routes/memberships.js";
+import { subjects } from "./routes/subjects.js";
+import { courses, subjectCourses } from "./routes/courses.js";
+import { cycles } from "./routes/cycles.js";
+import { topics } from "./routes/topics.js";
+import { enrollments } from "./routes/enrollments.js";
 import { assistantAssignments } from "./routes/assistant-assignments.js";
 import { parentLinks } from "./routes/parent-links.js";
 import type { AuthRepository } from "./modules/auth/repository.js";
 import type { AuthzRepository } from "./modules/authz/repository.js";
-import type { ClassroomsRepository } from "./modules/classrooms/repository.js";
+import type { AcademicStructureRepository } from "./modules/academic-structure/repository.js";
 import type { AppEnv } from "./types.js";
 
 export interface CreateAppDeps {
   /** Omitted in tests that only exercise health/error-handling — the /api/v1/auth routes simply aren't mounted then. server.ts always supplies a real one (db.ts). */
   authRepository?: AuthRepository;
-  /** Phase 5 — required alongside authRepository to mount the authorization-gated routes (classrooms, assistant-assignments, parent-links). */
+  /** Phase 5 — required alongside authRepository to mount the authorization-gated routes. */
   authzRepository?: AuthzRepository;
-  classroomsRepository?: ClassroomsRepository;
+  /** Phase 6 — the real academic-structure module (replaces the Phase 5 classrooms/ demonstrator). */
+  academicStructureRepository?: AcademicStructureRepository;
 }
 
 /**
@@ -46,10 +55,10 @@ export function createApp(deps: CreateAppDeps = {}): Hono<AppEnv> {
       await next();
     });
   }
-  if (deps.classroomsRepository) {
-    const repo = deps.classroomsRepository;
+  if (deps.academicStructureRepository) {
+    const repo = deps.academicStructureRepository;
     app.use("*", async (c, next) => {
-      c.set("classroomsRepository", repo);
+      c.set("academicStructureRepository", repo);
       await next();
     });
   }
@@ -60,11 +69,21 @@ export function createApp(deps: CreateAppDeps = {}): Hono<AppEnv> {
   if (deps.authRepository) {
     app.route("/api/v1/auth", auth);
   }
-  // Phase 5 — every route below requires BOTH authentication (stage 1) and
-  // the centralized authorization pipeline (stage 2+), so neither mounts
-  // without both repositories present.
-  if (deps.authRepository && deps.authzRepository && deps.classroomsRepository) {
+  // Phase 6 — the real academic-structure module. Every route below
+  // requires BOTH authentication (stage 1) and the centralized
+  // authorization pipeline (stage 2+), so nothing here mounts without all
+  // three repositories present.
+  if (deps.authRepository && deps.authzRepository && deps.academicStructureRepository) {
+    app.route("/api/v1/academic-periods", academicPeriods);
     app.route("/api/v1/classrooms", classrooms);
+    app.route("/api/v1/groups", groups);
+    app.route("/api/v1/memberships", memberships);
+    app.route("/api/v1/subjects", subjects);
+    app.route("/api/v1/subjects/:id/courses", subjectCourses);
+    app.route("/api/v1/courses", courses);
+    app.route("/api/v1/cycles", cycles);
+    app.route("/api/v1/topics", topics);
+    app.route("/api/v1/enrollments", enrollments);
   }
   if (deps.authRepository && deps.authzRepository) {
     app.route("/api/v1/assistant-assignments", assistantAssignments);

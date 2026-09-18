@@ -13,8 +13,8 @@ try {
 }
 
 const port = Number(optionalEnv("PORT", "8787"));
-const { authRepository, authzRepository, classroomsRepository } = createAppDatabase();
-const app = createApp({ authRepository, authzRepository, classroomsRepository });
+const { authRepository, authzRepository, academicStructureRepository } = createAppDatabase();
+const app = createApp({ authRepository, authzRepository, academicStructureRepository });
 
 serve({ fetch: app.fetch, port }, (info) => {
   console.log(`EduCapsules API listening on http://localhost:${info.port}`);

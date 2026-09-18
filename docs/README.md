@@ -22,9 +22,23 @@ Start here on any device: clone the repo, read this file, follow the links.
 - [`decisions/05-phase1-decisions-pending-approval.md`](decisions/05-phase1-decisions-pending-approval.md) — the backend stack decisions, approved 2026-09-13 (filename kept for link stability)
 - [`decisions/06-flutter-client-decision.md`](decisions/06-flutter-client-decision.md) — **the client is Flutter**, not React + Vite (Project Owner decision, 2026-09-13) — read this before touching any client-facing screen or component
 
+## Phase 3 — Database Foundation
+- [`database/schema-overview.md`](database/schema-overview.md) — entities implemented, identifiers, portable core types, constraints/indexes
+- [`database/migration-strategy.md`](database/migration-strategy.md) — how migrations are generated, applied and tested for both dialects
+- [`database/tenancy-and-security.md`](database/tenancy-and-security.md) — tenant isolation, soft delete, audit-log append-only guarantee
+
+## Phase 4 — Identity & Authentication
+- [`auth/authentication.md`](auth/authentication.md) — Login Session mechanism, MFA, password reset, account lifecycle
+
+## Phase 5 — Roles, Permissions & Authorization
+- [`authz/authorization.md`](authz/authorization.md) — the §7.1 pipeline, Assistant delegation, ParentLink lifecycle
+
+## Phase 6 — Core Academic Structure
+- [`academic-structure/academic-structure.md`](academic-structure/academic-structure.md) — AcademicPeriod, Classroom, Group, Membership, Subject, Course, CourseAudience, Cycle, Topic, Enrollment: CRUD, business rules (PER-003/PER-004), co-teachers (CRS-009/010), known limitations
+
 ## Traceability
 - [`srs-traceability/00-traceability-strategy.md`](srs-traceability/00-traceability-strategy.md) — the mechanism (format, CI enforcement plan, test-level map)
 - [`srs-traceability/matrix.csv`](srs-traceability/matrix.csv) — the live requirement → module → test matrix (populated incrementally, phase by phase)
 
 ## Not yet created (arrives with the phases that produce them)
-`database/`, `api/`, `security/`, `deployment/`, `testing/` — per the repository structure agreed with the Project Owner. (`architecture/` now exists as of Phase 1, above.)
+`api/`, `security/`, `deployment/`, `testing/` — per the repository structure agreed with the Project Owner. (`architecture/` exists as of Phase 1; `database/` as of Phase 3; `auth/` as of Phase 4; `authz/` as of Phase 5; `academic-structure/` as of Phase 6 — all above.)
