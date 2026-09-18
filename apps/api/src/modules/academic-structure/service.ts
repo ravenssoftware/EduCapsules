@@ -7,6 +7,7 @@ import {
   type Principal,
 } from "../authz/service.js";
 import type { AuthzRepository } from "../authz/repository.js";
+import { AuthzDomainError } from "../authz/errors.js";
 import { AcademicStructureDomainError } from "./errors.js";
 import type {
   AcademicPeriodRow,
@@ -245,9 +246,13 @@ export async function listClassrooms(
         objectId: classroom.id,
       });
       visible.push(classroom);
-    } catch {
+    } catch (err) {
       // GEN-025/SEC-009: a classroom the caller has no relationship to is
-      // silently omitted from the list, exactly like a single-object 404.
+      // silently omitted from the list, exactly like a single-object 404 —
+      // but only for the expected authorization-denial condition. Any other
+      // error (a genuine bug, a repository failure) must surface, not
+      // vanish the row silently.
+      if (!(err instanceof AuthzDomainError)) throw err;
     }
   }
   return visible;
@@ -363,7 +368,7 @@ export async function createGroup(
   ctx: { loginSessionId: string | null },
 ): Promise<GroupRow> {
   const classroom = await deps.repo.findClassroomById(principal.organizationId, classroomId);
-  if (!classroom) notFound("Classroom not found.");
+  if (!classroom) notFound();
   await check(
     deps,
     principal,
@@ -423,12 +428,12 @@ async function resolveContainerOrThrow(
 ): Promise<ClassroomRow | GroupRow> {
   if (containerType === "classroom") {
     const row = await deps.repo.findClassroomById(organizationId, containerId);
-    if (!row) notFound("Classroom not found.");
+    if (!row) notFound();
     return row;
   }
   if (containerType === "group") {
     const row = await deps.repo.findGroupById(organizationId, containerId);
-    if (!row) notFound("Group not found.");
+    if (!row) notFound();
     return row;
   }
   invalid('containerType must be "classroom" or "group".');
@@ -469,6 +474,11 @@ export async function addMembership(
     invalid('containerType must be "classroom" or "group".');
   }
   if (!input.userId) invalid("userId is required.");
+  // SRS Table 40.2: an invalid client-supplied reference is a validation
+  // error, never a raw DB FK violation surfacing as a 500.
+  if (!(await deps.repo.userExists(principal.organizationId, input.userId))) {
+    invalid("userId does not refer to a user in this Organization.");
+  }
 
   // Tenancy-and-security.md §1's named gap: the polymorphic container_id
   // column has no FK — existence and organization match are validated here,
@@ -567,7 +577,7 @@ export async function moveStudent(
     principal.organizationId,
     input.toClassroomId,
   );
-  if (!toClassroom) notFound("Classroom not found.");
+  if (!toClassroom) notFound();
 
   await check(
     deps,
@@ -640,8 +650,10 @@ export async function listSubjects(deps: Deps, principal: Principal): Promise<Su
         objectId: subject.id,
       });
       visible.push(subject);
-    } catch {
-      // silently omitted, as with Classroom listing.
+    } catch (err) {
+      // silently omitted, as with Classroom listing — only for the
+      // expected authorization denial; unexpected errors surface.
+      if (!(err instanceof AuthzDomainError)) throw err;
     }
   }
   return visible;
@@ -747,8 +759,10 @@ export async function listCourses(
         objectId: course.id,
       });
       visible.push(course);
-    } catch {
-      // silently omitted.
+    } catch (err) {
+      // silently omitted — only for the expected authorization denial;
+      // unexpected errors surface.
+      if (!(err instanceof AuthzDomainError)) throw err;
     }
   }
   return visible;
@@ -774,7 +788,7 @@ export async function createCourse(
   ctx: { loginSessionId: string | null },
 ): Promise<CourseRow> {
   const subject = await deps.repo.findSubjectById(principal.organizationId, input.subjectId);
-  if (!subject) notFound("Subject not found.");
+  if (!subject) notFound();
   await check(
     deps,
     principal,
@@ -842,6 +856,12 @@ async function transitionCourseStatus(
     from: string[];
     to: string;
     action: string;
+    /** The canonical audit action string — spelled out explicitly rather
+     * than derived from `action` (a prior `${action.toUpperCase()}D`
+     * template produced "COURSE_PUBLISHD"/"COURSE_UNPUBLISHD" for the
+     * publish/unpublish actions — only "archive" happened to pluralize
+     * correctly by coincidence). */
+    auditAction: string;
   },
   ctx: { loginSessionId: string | null },
 ): Promise<CourseRow> {
@@ -858,14 +878,7 @@ async function transitionCourseStatus(
   }
 
   await deps.repo.updateCourse(principal.organizationId, id, { status: opts.to }, new Date());
-  await audit(
-    deps,
-    principal,
-    `COURSE_${opts.action.toUpperCase()}D`,
-    "course",
-    id,
-    ctx.loginSessionId,
-  );
+  await audit(deps, principal, opts.auditAction, "course", id, ctx.loginSessionId);
   const updated = await deps.repo.findCourseById(principal.organizationId, id);
   return updated!;
 }
@@ -881,7 +894,13 @@ export async function publishCourse(
     deps,
     principal,
     id,
-    { permissionKey: "PUBLISH_CONTENT", from: ["draft"], to: "published", action: "publish" },
+    {
+      permissionKey: "PUBLISH_CONTENT",
+      from: ["draft"],
+      to: "published",
+      action: "publish",
+      auditAction: "COURSE_PUBLISHED",
+    },
     ctx,
   );
 }
@@ -902,7 +921,13 @@ export async function unpublishCourse(
     deps,
     principal,
     id,
-    { permissionKey: "PUBLISH_CONTENT", from: ["published"], to: "draft", action: "unpublish" },
+    {
+      permissionKey: "PUBLISH_CONTENT",
+      from: ["published"],
+      to: "draft",
+      action: "unpublish",
+      auditAction: "COURSE_UNPUBLISHED",
+    },
     ctx,
   );
 }
@@ -922,6 +947,7 @@ export async function archiveCourse(
       from: ["draft", "published"],
       to: "archived",
       action: "archive",
+      auditAction: "COURSE_ARCHIVED",
     },
     ctx,
   );
@@ -946,7 +972,7 @@ export async function addCoTeacher(
   ctx: { loginSessionId: string | null },
 ): Promise<CoTeacherRow> {
   const course = await deps.repo.findCourseById(principal.organizationId, courseId);
-  if (!course) notFound("Course not found.");
+  if (!course) notFound();
   await check(
     deps,
     principal,
@@ -997,7 +1023,7 @@ export async function removeCoTeacher(
   ctx: { loginSessionId: string | null },
 ): Promise<void> {
   const course = await deps.repo.findCourseById(principal.organizationId, courseId);
-  if (!course) notFound("Course not found.");
+  if (!course) notFound();
   await check(
     deps,
     principal,
@@ -1037,7 +1063,7 @@ export async function addCourseAudience(
   ctx: { loginSessionId: string | null },
 ): Promise<CourseAudienceRow> {
   const course = await deps.repo.findCourseById(principal.organizationId, courseId);
-  if (!course) notFound("Course not found.");
+  if (!course) notFound();
   await check(
     deps,
     principal,
@@ -1118,7 +1144,7 @@ export async function createCycle(
   ctx: { loginSessionId: string | null },
 ): Promise<CycleRow> {
   const course = await deps.repo.findCourseById(principal.organizationId, courseId);
-  if (!course) notFound("Course not found.");
+  if (!course) notFound();
   await check(
     deps,
     principal,
@@ -1215,7 +1241,7 @@ export async function createTopic(
   ctx: { loginSessionId: string | null },
 ): Promise<TopicRow> {
   const cycle = await deps.repo.findCycleById(principal.organizationId, cycleId);
-  if (!cycle) notFound("Cycle not found.");
+  if (!cycle) notFound();
   await check(
     deps,
     principal,
@@ -1319,6 +1345,16 @@ export async function listEnrollmentsForStudent(
   return deps.repo.listEnrollmentsByStudent(principal.organizationId, studentUserId);
 }
 
+/**
+ * Creates an Enrollment in REQUESTED status — SRS §45.3's state machine is
+ * REQUESTED -> ACTIVE -> (WITHDRAWN | COMPLETED | TRANSFERRED), and this is
+ * its start state, not an immediate ACTIVE (see activateEnrollment() for
+ * the next step, and the module's known-limitations note for why the same
+ * MANAGE_STUDENTS authority gates both this and the activation step: the
+ * SRS names no distinct requester-vs-approver actor for Enrollment
+ * anywhere, unlike ParentLink's explicit requestedBy/confirmedBy split or
+ * AssistantAssignment's grantor/assistant distinction).
+ */
 export async function createEnrollment(
   deps: Deps,
   principal: Principal,
@@ -1327,7 +1363,7 @@ export async function createEnrollment(
   ctx: { loginSessionId: string | null },
 ): Promise<EnrollmentRow> {
   const course = await deps.repo.findCourseById(principal.organizationId, courseId);
-  if (!course) notFound("Course not found.");
+  if (!course) notFound();
   await check(
     deps,
     principal,
@@ -1335,6 +1371,11 @@ export async function createEnrollment(
     { permissionKey: "MANAGE_STUDENTS" },
   );
   if (!input.studentUserId) invalid("studentUserId is required.");
+  // SRS Table 40.2: an invalid client-supplied reference is a validation
+  // error, never a raw DB FK violation surfacing as a 500.
+  if (!(await deps.repo.userExists(principal.organizationId, input.studentUserId))) {
+    invalid("studentUserId does not refer to a user in this Organization.");
+  }
   if (course.status === "archived") invalid("Cannot enroll a student in an archived Course.");
 
   const existing = await deps.repo.findActiveEnrollment(
@@ -1343,7 +1384,9 @@ export async function createEnrollment(
     courseId,
   );
   if (existing)
-    conflict("This student already has an active or completed Enrollment in this Course.");
+    conflict(
+      "This student already has a requested, active or completed Enrollment in this Course.",
+    );
 
   const now = new Date();
   // academic_period_id is always derived from the Course, never a
@@ -1362,8 +1405,39 @@ export async function createEnrollment(
     createdAt: now,
     updatedAt: now,
   });
-  await audit(deps, principal, "ENROLLMENT_CREATED", "enrollment", row.id, ctx.loginSessionId);
+  await audit(deps, principal, "ENROLLMENT_REQUESTED", "enrollment", row.id, ctx.loginSessionId);
   return row;
+}
+
+/**
+ * REQUESTED -> ACTIVE. See createEnrollment()'s doc comment for why this is
+ * gated by the same MANAGE_STUDENTS authority as every other Enrollment
+ * mutation in this module, rather than a distinct approver role — none is
+ * named in the SRS for this entity.
+ */
+export async function activateEnrollment(
+  deps: Deps,
+  principal: Principal,
+  id: string,
+  ctx: { loginSessionId: string | null },
+): Promise<EnrollmentRow> {
+  const existing = await deps.repo.findEnrollmentById(principal.organizationId, id);
+  if (!existing) notFound();
+  await check(
+    deps,
+    principal,
+    { scopeType: "COURSE", scopeId: existing.courseId, objectId: existing.courseId },
+    { permissionKey: "MANAGE_STUDENTS" },
+  );
+  if (existing.status !== "requested") {
+    conflict(`Cannot activate an Enrollment in status "${existing.status}".`);
+  }
+
+  const now = new Date();
+  await deps.repo.updateEnrollmentStatus(id, "active", null, now);
+  await audit(deps, principal, "ENROLLMENT_ACTIVATED", "enrollment", id, ctx.loginSessionId);
+  const updated = await deps.repo.findEnrollmentById(principal.organizationId, id);
+  return updated!;
 }
 
 export async function withdrawEnrollment(

@@ -336,6 +336,13 @@ function toCoTeacherRow(r: any): CoTeacherRow {
 }
 
 export interface AcademicStructureRepository {
+  /** SRS Table 40.2: an invalid client-supplied reference must not surface
+   * as a raw DB FK violation (a generic 500) — the service layer uses this
+   * to produce a clean validation error instead, for the two places a bare
+   * user id crosses from client input into a composite-FK-checked column
+   * (memberships.user_id, enrollments.student_user_id). */
+  userExists(organizationId: string, userId: string): Promise<boolean>;
+
   // --- AcademicPeriod ---------------------------------------------------
   createAcademicPeriod(row: {
     id: string;
@@ -625,6 +632,14 @@ export function createAcademicStructureRepository(
   schema: any,
 ): AcademicStructureRepository {
   return {
+    async userExists(organizationId, userId) {
+      const rows = await db
+        .select({ id: schema.users.id })
+        .from(schema.users)
+        .where(and(eq(schema.users.organizationId, organizationId), eq(schema.users.id, userId)));
+      return rows.length > 0;
+    },
+
     // --- AcademicPeriod ---------------------------------------------------
     async createAcademicPeriod(row) {
       await db.insert(schema.academicPeriods).values({
@@ -1335,7 +1350,9 @@ export function createAcademicStructureRepository(
         academicPeriodId: row.academicPeriodId,
         enrolledAt: row.enrolledAt,
         withdrawnAt: null,
-        status: "active",
+        // SRS §45.3: Enrollment starts REQUESTED, not ACTIVE — see
+        // service.ts's createEnrollment/activateEnrollment.
+        status: "requested",
         source: row.source,
         createdBy: row.createdBy,
         createdAt: row.createdAt,
@@ -1349,7 +1366,9 @@ export function createAcademicStructureRepository(
         academicPeriodId: row.academicPeriodId,
         enrolledAt: row.enrolledAt,
         withdrawnAt: null,
-        status: "active",
+        // SRS §45.3: Enrollment starts REQUESTED, not ACTIVE — see
+        // service.ts's createEnrollment/activateEnrollment.
+        status: "requested",
         source: row.source,
         createdBy: row.createdBy,
         createdAt: row.createdAt,

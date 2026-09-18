@@ -44,6 +44,23 @@ enrollments.get("/mine", async (c) => {
   return c.json({ enrollments: list });
 });
 
+// SRS §45.3: REQUESTED -> ACTIVE. See service.js's activateEnrollment doc
+// comment for the reported ambiguity around who approves this transition.
+enrollments.post("/:id/activate", async (c) => {
+  const session = c.get("session")!;
+  try {
+    const enrollment = await service.activateEnrollment(
+      deps(c),
+      { organizationId: session.organizationId, userId: session.userId },
+      c.req.param("id"),
+      { loginSessionId: session.id },
+    );
+    return c.json({ enrollment });
+  } catch (err) {
+    throw toHttpException(err);
+  }
+});
+
 enrollments.post("/:id/withdraw", async (c) => {
   const session = c.get("session")!;
   try {

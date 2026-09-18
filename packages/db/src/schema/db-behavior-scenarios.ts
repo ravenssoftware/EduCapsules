@@ -255,6 +255,66 @@ export function runDbBehaviorScenarios(ctx: DbBehaviorContext) {
       ).rejects.toThrow();
     });
 
+    it("applies a CHECK constraint on academic_periods.status (PER-001, Phase 6)", async () => {
+      const org = await insertOrg(db, schema);
+      const period = await insertPeriod(db, schema, org.id);
+      expect(period.status).toBe("active"); // control: a valid status inserts cleanly
+      const now = new Date();
+      await expect(
+        db.insert(schema.academicPeriods).values({
+          id: uuid7(),
+          organizationId: org.id,
+          name: "Bad status period",
+          startsOn: "2027-01-01",
+          endsOn: "2027-06-01",
+          status: "not_a_real_status",
+          createdBy: null,
+          createdAt: now,
+          updatedAt: now,
+        }),
+      ).rejects.toThrow();
+    });
+
+    it("applies a CHECK constraint on enrollments.status (§45.3 state machine, Phase 6)", async () => {
+      const org = await insertOrg(db, schema);
+      const teacher = await insertUser(db, schema, org.id);
+      const student = await insertUser(db, schema, org.id);
+      const subject = await insertSubject(db, schema, org.id);
+      const period = await insertPeriod(db, schema, org.id);
+      const course = await insertCourse(db, schema, org.id, subject.id, teacher.id, period.id);
+      const now = new Date();
+      await expect(
+        db.insert(schema.enrollments).values({
+          id: uuid7(),
+          organizationId: org.id,
+          studentUserId: student.id,
+          courseId: course.id,
+          academicPeriodId: period.id,
+          enrolledAt: now,
+          withdrawnAt: null,
+          status: "requested",
+          source: null,
+          createdAt: now,
+          updatedAt: now,
+        }),
+      ).resolves.not.toThrow(); // control: a valid status ('requested') inserts cleanly
+      await expect(
+        db.insert(schema.enrollments).values({
+          id: uuid7(),
+          organizationId: org.id,
+          studentUserId: student.id,
+          courseId: course.id,
+          academicPeriodId: period.id,
+          enrolledAt: now,
+          withdrawnAt: null,
+          status: "not_a_real_status",
+          source: null,
+          createdAt: now,
+          updatedAt: now,
+        }),
+      ).rejects.toThrow();
+    });
+
     it("enforces cycle sequence-number uniqueness within a course (CYC-002)", async () => {
       const org = await insertOrg(db, schema);
       const teacher = await insertUser(db, schema, org.id);

@@ -16,6 +16,8 @@ import { createApp } from "../app.js";
 import { createAuthRepository } from "../modules/auth/repository.js";
 import { createAuthzRepository } from "../modules/authz/repository.js";
 import { createAcademicStructureRepository } from "../modules/academic-structure/repository.js";
+import * as service from "../modules/academic-structure/service.js";
+import type { AuthzRepository } from "../modules/authz/repository.js";
 import { issueSession } from "../modules/auth/sessions.js";
 
 /**
@@ -681,15 +683,24 @@ describe("courses — lifecycle (CRS-002/007/008), ownership (CRS-003), co-teach
     courseId = body.course.id;
   });
 
-  it("denies a different Teacher from creating a Course under a Subject they have no authority over", async () => {
-    // subjectId itself is ORG-scoped-visible to any org-wide Teacher in this
-    // fixture (both teacher1/teacher2 hold ORG-wide grants) — so this
-    // specifically tests that Subject *existence* isn't the gate; scope is.
-    // teacher2 DOES hold ORG-wide MANAGE_COURSE too in this fixture, so we
-    // instead prove the SUBJECT-not-found path with a bogus subject id.
+  it("returns 404 for a Course-creation attempt against a nonexistent Subject", async () => {
     const auth = await authHeader(teacher1, ORG_A);
     const res = await post(`/api/v1/subjects/${uuid7()}/courses`, auth, {
       title: "Nowhere",
+      academicPeriodId: academicPeriod1,
+    });
+    expect(res.status).toBe(404);
+  });
+
+  it("denies a Teacher with no relationship to this Subject from creating a Course under it (SEC-009: 404)", async () => {
+    // Subject has no owner field, so the only way to construct a genuinely
+    // unrelated Teacher is one whose role assignment is scoped to the
+    // cohort tree (CLASSROOM), which never covers a content-tree (SUBJECT)
+    // target — unlike teacher2, who deliberately holds an ORG-wide grant in
+    // this fixture and would incorrectly pass this check.
+    const auth = await authHeader(createUnrelatedTeacher(), ORG_A);
+    const res = await post(`/api/v1/subjects/${subjectId}/courses`, auth, {
+      title: "Should fail",
       academicPeriodId: academicPeriod1,
     });
     expect(res.status).toBe(404);
@@ -953,7 +964,7 @@ describe("enrollments — creation, duplicate handling, withdrawal (BR-015)", ()
     courseId = ((await courseRes.json()) as { course: { id: string } }).course.id;
   });
 
-  it("enrolls a student, deriving academicPeriodId from the Course (never a client-supplied field)", async () => {
+  it("requests an Enrollment (SRS §45.3: starts REQUESTED, not ACTIVE), deriving academicPeriodId from the Course (never a client-supplied field)", async () => {
     const auth = await authHeader(teacher1, ORG_A);
     const res = await post(`/api/v1/courses/${courseId}/enrollments`, auth, {
       studentUserId: student1,
@@ -962,10 +973,10 @@ describe("enrollments — creation, duplicate handling, withdrawal (BR-015)", ()
     expect(res.status).toBe(201);
     const body = (await res.json()) as { enrollment: { academicPeriodId: string; status: string } };
     expect(body.enrollment.academicPeriodId).toBe(academicPeriod1);
-    expect(body.enrollment.status).toBe("active");
+    expect(body.enrollment.status).toBe("requested");
   });
 
-  it("rejects a duplicate active Enrollment for the same student in the same Course", async () => {
+  it("rejects a duplicate Enrollment (requested or active) for the same student in the same Course", async () => {
     const auth = await authHeader(teacher1, ORG_A);
     const res = await post(`/api/v1/courses/${courseId}/enrollments`, auth, {
       studentUserId: student1,
@@ -973,21 +984,76 @@ describe("enrollments — creation, duplicate handling, withdrawal (BR-015)", ()
     expect(res.status).toBe(409);
   });
 
-  it("a Student can list their own enrollments (self-access)", async () => {
+  it("rejects an enrollment request for a studentUserId that does not exist in this Organization (SRS Table 40.2: validation error, not a raw 500)", async () => {
+    const auth = await authHeader(teacher1, ORG_A);
+    const res = await post(`/api/v1/courses/${courseId}/enrollments`, auth, {
+      studentUserId: uuid7(),
+    });
+    expect(res.status).toBe(422);
+  });
+
+  it("a Student can list their own enrollments (self-access), including a still-REQUESTED one", async () => {
     const auth = await authHeader(student1, ORG_A);
     const res = await get("/api/v1/enrollments/mine", auth);
     expect(res.status).toBe(200);
-    const body = (await res.json()) as { enrollments: Array<{ courseId: string }> };
-    expect(body.enrollments.some((e) => e.courseId === courseId)).toBe(true);
+    const body = (await res.json()) as { enrollments: Array<{ courseId: string; status: string }> };
+    const mine = body.enrollments.find((e) => e.courseId === courseId);
+    expect(mine).toBeDefined();
+    expect(mine!.status).toBe("requested");
   });
 
-  it("withdraws an Enrollment — the row is preserved with status=withdrawn, never deleted (BR-015)", async () => {
+  it("rejects withdrawing an Enrollment that is still REQUESTED (only ACTIVE -> WITHDRAWN is a valid edge)", async () => {
     const auth = await authHeader(teacher1, ORG_A);
     const list = await get(`/api/v1/courses/${courseId}/enrollments`, auth);
     const body = (await list.json()) as {
       enrollments: Array<{ id: string; studentUserId: string }>;
     };
     const enrollment = body.enrollments.find((e) => e.studentUserId === student1)!;
+    const res = await post(`/api/v1/enrollments/${enrollment.id}/withdraw`, auth);
+    expect(res.status).toBe(409);
+  });
+
+  it("denies a Teacher with no relationship to the Course from activating its Enrollments (SEC-009: 404)", async () => {
+    const list = await get(
+      `/api/v1/courses/${courseId}/enrollments`,
+      await authHeader(teacher1, ORG_A),
+    );
+    const body = (await list.json()) as {
+      enrollments: Array<{ id: string; studentUserId: string }>;
+    };
+    const enrollment = body.enrollments.find((e) => e.studentUserId === student1)!;
+    const res = await post(
+      `/api/v1/enrollments/${enrollment.id}/activate`,
+      await authHeader(createUnrelatedTeacher(), ORG_A),
+    );
+    expect(res.status).toBe(404);
+  });
+
+  it("activates a REQUESTED Enrollment (REQUESTED -> ACTIVE), and rejects activating it twice", async () => {
+    const auth = await authHeader(teacher1, ORG_A);
+    const list = await get(`/api/v1/courses/${courseId}/enrollments`, auth);
+    const body = (await list.json()) as {
+      enrollments: Array<{ id: string; studentUserId: string }>;
+    };
+    const enrollment = body.enrollments.find((e) => e.studentUserId === student1)!;
+
+    const res = await post(`/api/v1/enrollments/${enrollment.id}/activate`, auth);
+    expect(res.status).toBe(200);
+    const activated = (await res.json()) as { enrollment: { status: string } };
+    expect(activated.enrollment.status).toBe("active");
+
+    const again = await post(`/api/v1/enrollments/${enrollment.id}/activate`, auth);
+    expect(again.status).toBe(409);
+  });
+
+  it("withdraws an ACTIVE Enrollment — the row is preserved with status=withdrawn, never deleted (BR-015)", async () => {
+    const auth = await authHeader(teacher1, ORG_A);
+    const list = await get(`/api/v1/courses/${courseId}/enrollments`, auth);
+    const body = (await list.json()) as {
+      enrollments: Array<{ id: string; studentUserId: string; status: string }>;
+    };
+    const enrollment = body.enrollments.find((e) => e.studentUserId === student1)!;
+    expect(enrollment.status).toBe("active"); // activated by the previous test
 
     const res = await post(`/api/v1/enrollments/${enrollment.id}/withdraw`, auth);
     expect(res.status).toBe(200);
@@ -997,14 +1063,14 @@ describe("enrollments — creation, duplicate handling, withdrawal (BR-015)", ()
     expect(withdrawn.enrollment.status).toBe("withdrawn");
     expect(withdrawn.enrollment.withdrawnAt).not.toBeNull();
 
-    // Re-enrolling after withdrawal is allowed (the old row stays, a new one can be added).
+    // Re-requesting after withdrawal is allowed (the old row stays, a new one can be added).
     const reEnroll = await post(`/api/v1/courses/${courseId}/enrollments`, auth, {
       studentUserId: student1,
     });
     expect(reEnroll.status).toBe(201);
   });
 
-  it("denies a Student from enrolling themself (MANAGE_STUDENTS is a Teacher/Admin action; SEC-009: 404)", async () => {
+  it("denies a Student from requesting their own enrollment (MANAGE_STUDENTS is a Teacher/Admin action; SEC-009: 404)", async () => {
     const auth = await authHeader(student1, ORG_A);
     const res = await post(`/api/v1/courses/${courseId}/enrollments`, auth, {
       studentUserId: student1,
@@ -1052,5 +1118,181 @@ describe("cross-organization isolation and IDOR (GEN-025, ORG-003/004)", () => {
   it("rejects every mutating request with no bearer token", async () => {
     const res = await post("/api/v1/classrooms", "", { name: "no auth" });
     expect(res.status).toBe(401);
+  });
+});
+
+// =============================================================================
+// Phase 6 review-fix regressions (SEC-009 message leak, audit action typo,
+// overly broad list-endpoint catch blocks)
+// =============================================================================
+
+describe("review fix — SEC-009 response indistinguishability for 'create child under parent' endpoints", () => {
+  it("Group creation: a nonexistent Classroom and a real-but-unauthorized Classroom produce the same status and response title", async () => {
+    const auth = await authHeader(createUnrelatedTeacher(), ORG_A);
+    const realClassroomRes = await post("/api/v1/classrooms", await authHeader(teacher1, ORG_A), {
+      name: "Real classroom for SEC-009 check",
+      academicPeriodId: academicPeriod1,
+      homeroomTeacherId: teacher1,
+    });
+    const realClassroomId = ((await realClassroomRes.json()) as { classroom: { id: string } })
+      .classroom.id;
+
+    const realButUnauthorized = await post(`/api/v1/classrooms/${realClassroomId}/groups`, auth, {
+      name: "x",
+    });
+    const genuinelyMissing = await post(`/api/v1/classrooms/${uuid7()}/groups`, auth, {
+      name: "x",
+    });
+    // Only status/title are compared — correlationId legitimately differs
+    // per request, so full-body equality is not the right assertion here.
+    const [realBody, missingBody] = await Promise.all([
+      realButUnauthorized.json() as Promise<{ title: string; status: number }>,
+      genuinelyMissing.json() as Promise<{ title: string; status: number }>,
+    ]);
+    expect(realButUnauthorized.status).toBe(genuinelyMissing.status);
+    expect(realButUnauthorized.status).toBe(404);
+    expect(realBody.title).toBe(missingBody.title);
+    expect(realBody.status).toBe(missingBody.status);
+  });
+
+  it("Cycle creation: a nonexistent Course and a real-but-unauthorized Course produce the same response title", async () => {
+    const teacherAuth = await authHeader(teacher1, ORG_A);
+    const subjectRes = await post("/api/v1/subjects", teacherAuth, {
+      name: "SEC-009 subject",
+      code: `SEC009-${uuid7().slice(0, 8)}`,
+    });
+    const subjId = ((await subjectRes.json()) as { subject: { id: string } }).subject.id;
+    const courseRes = await post(`/api/v1/subjects/${subjId}/courses`, teacherAuth, {
+      title: "SEC-009 course",
+      academicPeriodId: academicPeriod1,
+    });
+    const realCourseId = ((await courseRes.json()) as { course: { id: string } }).course.id;
+
+    const auth = await authHeader(createUnrelatedTeacher(), ORG_A);
+    const realButUnauthorized = await post(`/api/v1/courses/${realCourseId}/cycles`, auth, {
+      title: "x",
+      sequenceNo: 1,
+    });
+    const genuinelyMissing = await post(`/api/v1/courses/${uuid7()}/cycles`, auth, {
+      title: "x",
+      sequenceNo: 1,
+    });
+    const [realBody, missingBody] = await Promise.all([
+      realButUnauthorized.json() as Promise<{ title: string }>,
+      genuinelyMissing.json() as Promise<{ title: string }>,
+    ]);
+    expect(realButUnauthorized.status).toBe(genuinelyMissing.status);
+    expect(realBody.title).toBe(missingBody.title);
+  });
+
+  it("Enrollment request: a nonexistent Course and a real-but-unauthorized Course produce the same response title", async () => {
+    const teacherAuth = await authHeader(teacher1, ORG_A);
+    const subjectRes = await post("/api/v1/subjects", teacherAuth, {
+      name: "SEC-009 subject 2",
+      code: `SEC009B-${uuid7().slice(0, 8)}`,
+    });
+    const subjId = ((await subjectRes.json()) as { subject: { id: string } }).subject.id;
+    const courseRes = await post(`/api/v1/subjects/${subjId}/courses`, teacherAuth, {
+      title: "SEC-009 course 2",
+      academicPeriodId: academicPeriod1,
+    });
+    const realCourseId = ((await courseRes.json()) as { course: { id: string } }).course.id;
+
+    const auth = await authHeader(createUnrelatedTeacher(), ORG_A);
+    const realButUnauthorized = await post(`/api/v1/courses/${realCourseId}/enrollments`, auth, {
+      studentUserId: student1,
+    });
+    const genuinelyMissing = await post(`/api/v1/courses/${uuid7()}/enrollments`, auth, {
+      studentUserId: student1,
+    });
+    const [realBody, missingBody] = await Promise.all([
+      realButUnauthorized.json() as Promise<{ title: string }>,
+      genuinelyMissing.json() as Promise<{ title: string }>,
+    ]);
+    expect(realButUnauthorized.status).toBe(genuinelyMissing.status);
+    expect(realBody.title).toBe(missingBody.title);
+  });
+});
+
+describe("review fix — audit action string correctness for Course lifecycle transitions", () => {
+  it("publish/unpublish/archive write the correctly-spelled canonical audit action", async () => {
+    const teacherAuth = await authHeader(teacher1, ORG_A);
+    const subjectRes = await post("/api/v1/subjects", teacherAuth, {
+      name: "Audit subject",
+      code: `AUD-${uuid7().slice(0, 8)}`,
+    });
+    const subjId = ((await subjectRes.json()) as { subject: { id: string } }).subject.id;
+    const courseRes = await post(`/api/v1/subjects/${subjId}/courses`, teacherAuth, {
+      title: "Audit course",
+      academicPeriodId: academicPeriod1,
+    });
+    const auditCourseId = ((await courseRes.json()) as { course: { id: string } }).course.id;
+
+    const publishRes = await post(`/api/v1/courses/${auditCourseId}/publish`, teacherAuth);
+    expect(publishRes.status).toBe(200);
+    const unpublishRes = await post(`/api/v1/courses/${auditCourseId}/unpublish`, teacherAuth);
+    expect(unpublishRes.status).toBe(200);
+    const archiveRes = await post(`/api/v1/courses/${auditCourseId}/archive`, teacherAuth);
+    expect(archiveRes.status).toBe(200);
+
+    const rows = db.select().from(sqliteSchema.auditLog).all() as Array<{
+      action: string;
+      targetId: string;
+    }>;
+    const courseAuditActions = rows
+      .filter((r) => r.targetId === auditCourseId)
+      .map((r) => r.action);
+    expect(courseAuditActions).toContain("COURSE_PUBLISHED");
+    expect(courseAuditActions).toContain("COURSE_UNPUBLISHED");
+    expect(courseAuditActions).toContain("COURSE_ARCHIVED");
+    // The old, misspelled forms must never appear again.
+    expect(courseAuditActions).not.toContain("COURSE_PUBLISHD");
+    expect(courseAuditActions).not.toContain("COURSE_UNPUBLISHD");
+  });
+});
+
+describe("review fix — list endpoints hide only the expected authorization denial, never an unexpected error", () => {
+  it("listClassrooms still hides a classroom the caller has no relationship to (expected denial)", async () => {
+    const auth = await authHeader(teacher2, ORG_A);
+    const res = await get("/api/v1/classrooms", auth);
+    expect(res.status).toBe(200);
+  });
+
+  it("listClassrooms propagates an unexpected repository/authz error instead of silently omitting the row", async () => {
+    const auth = await authHeader(teacher1, ORG_A);
+    const classroomRes = await post("/api/v1/classrooms", auth, {
+      name: "Triggers a simulated failure",
+      academicPeriodId: academicPeriod1,
+      homeroomTeacherId: teacher1,
+    });
+    const triggerId = ((await classroomRes.json()) as { classroom: { id: string } }).classroom.id;
+
+    // Wraps the real authzRepository so that resolving authority for this
+    // ONE specific classroom id throws a plain (non-AuthzDomainError)
+    // exception — simulating an unrelated bug or infrastructure failure,
+    // never an authorization denial.
+    const brokenAuthzRepo = new Proxy(authzRepository, {
+      get(target, prop, receiver) {
+        if (prop === "findParentScope") {
+          return async (organizationId: string, scope: { scopeId: string | null }) => {
+            if (scope.scopeId === triggerId) {
+              throw new Error("simulated unexpected repository failure");
+            }
+            return target.findParentScope(
+              organizationId,
+              scope as { scopeType: "CLASSROOM"; scopeId: string | null },
+            );
+          };
+        }
+        return Reflect.get(target, prop, receiver);
+      },
+    }) as AuthzRepository;
+
+    await expect(
+      service.listClassrooms(
+        { repo: academicStructureRepository, authzRepo: brokenAuthzRepo },
+        { organizationId: ORG_A, userId: teacher1 },
+      ),
+    ).rejects.toThrow("simulated unexpected repository failure");
   });
 });
