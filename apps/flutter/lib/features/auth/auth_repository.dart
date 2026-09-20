@@ -20,10 +20,21 @@ class AuthRepository {
   /// [LoginOutcome.mfaRequired] means the caller must collect a code and
   /// call [verifyMfaChallenge] — this repository never invents its own MFA
   /// step beyond what the server states is required.
+  ///
+  /// `/api/v1/auth/login` has no concept of "role" (routes/auth.ts accepts
+  /// only organizationId/email/password) — a role selector in the UI is a
+  /// client-side-only concept and is never sent here.
+  ///
+  /// [rememberMe] controls only whether the resulting session token is
+  /// persisted to [SecureSessionStore] (`false` keeps it in-memory for
+  /// this app run only, so the next cold start requires signing in again);
+  /// it is a client-side storage choice, not something the login API
+  /// itself has any concept of.
   Future<LoginOutcome> login({
     required String organizationId,
     required String email,
     required String password,
+    bool rememberMe = true,
   }) async {
     final body = await _apiClient.post("/api/v1/auth/login", {
       "organizationId": organizationId,
@@ -33,8 +44,21 @@ class AuthRepository {
     if (body["status"] == "mfa_required") {
       return LoginOutcome.mfaRequired(body["mfaChallengeToken"] as String);
     }
-    await _sessionStore.writeSessionToken(body["sessionToken"] as String);
+    if (rememberMe) {
+      await _sessionStore.writeSessionToken(body["sessionToken"] as String);
+    }
     return LoginOutcome.authenticated();
+  }
+
+  /// AUTH-122: `/api/v1/auth/password/forgot` always responds the same way
+  /// whether or not the email is registered, so the UI must show one
+  /// generic confirmation regardless of what actually happened server-side
+  /// — never "email sent" vs "no such account".
+  Future<void> forgotPassword({required String organizationId, required String email}) async {
+    await _apiClient.post("/api/v1/auth/password/forgot", {
+      "organizationId": organizationId,
+      "email": email,
+    });
   }
 
   Future<void> verifyMfaChallenge({

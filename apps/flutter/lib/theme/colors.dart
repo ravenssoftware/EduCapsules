@@ -19,4 +19,26 @@ abstract final class EduCapsulesColors {
 
   /// Page and card background; the default canvas.
   static const surface = Color(0xFFFFFFFF);
+
+  // --- Login page tokens ---------------------------------------------
+  //
+  // Additive tokens for the Login page only (docs/design-references/
+  // 01-login-and-general-signup.webp is the visual source of truth). They
+  // don't replace the semantic tokens above and follow the same UI-004
+  // "named token, not a hex literal in a widget" rule. The reference uses
+  // a violet identity brand distinct from the SRS Table 42.2 primary/
+  // accent above; both sets coexist until D-04 resolves which one is
+  // final.
+  static const authIdentity = Color(0xFF5B4FE5);
+  static const authIdentityDark = Color(0xFF4438C9);
+  static const authBackground = Color(0xFFF5F4FC);
+  static const authCardBackground = Color(0xFFFFFFFF);
+  static const authBorder = Color(0xFFE7E6F2);
+  static const authHeading = Color(0xFF1A1B2E);
+  static const authMutedText = Color(0xFF6B7280);
+  static const authPlaceholder = Color(0xFF9CA3AF);
+
+  /// Secondary accent used only inside the promo-panel illustration (bar
+  /// chart, plant) — not a role or status colour.
+  static const authIllustrationAccent = Color(0xFF1FA97A);
 }

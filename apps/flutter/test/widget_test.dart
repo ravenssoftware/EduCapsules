@@ -33,9 +33,9 @@ void main() {
     await tester.pumpWidget(EduCapsulesApp(authRepository: authRepository));
     await tester.pumpAndSettle();
 
-    expect(find.text("EduCapsules"), findsOneWidget);
-    expect(find.text("Sign in"), findsOneWidget);
-    expect(find.text("Email"), findsOneWidget);
+    expect(find.textContaining("Login to"), findsOneWidget);
+    expect(find.text("Login"), findsOneWidget);
+    expect(find.text("Email or Username"), findsOneWidget);
     expect(find.text("Password"), findsOneWidget);
   });
 
