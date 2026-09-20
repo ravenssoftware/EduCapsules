@@ -56,15 +56,22 @@ class _RoleTile extends StatelessWidget {
             children: [
               Icon(role.icon, size: 20, color: isSelected ? Colors.white : EduCapsulesColors.authMutedText),
               const SizedBox(height: 6),
-              Text(
-                role.label,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: isSelected ? Colors.white : EduCapsulesColors.authHeading,
+              // FittedBox rather than a fixed font size + ellipsis: "Assistant"
+              // is noticeably longer than the other four labels and was
+              // clipping to "Assist…" at the card's default width under the
+              // system fallback font. Scaling down keeps every label fully
+              // readable instead of truncating the longest one.
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  role.label,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: isSelected ? Colors.white : EduCapsulesColors.authHeading,
+                  ),
                 ),
               ),
             ],
