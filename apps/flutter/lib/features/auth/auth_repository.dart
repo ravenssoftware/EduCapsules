@@ -50,6 +50,26 @@ class AuthRepository {
     await _sessionStore.writeSessionToken(body["sessionToken"] as String);
   }
 
+  /// AUTH-121's registration half. Calls `/api/v1/auth/register`, which
+  /// today accepts only organizationId/email/password/locale/timezone
+  /// (see routes/auth.ts) — it does not yet accept a role, name, phone
+  /// number, or any of the other profile fields the signup UI collects.
+  /// Those extra fields are validated and held in the UI for a future
+  /// profile-completion step; this method only ever sends what the real
+  /// endpoint accepts, and never pretends the rest was persisted.
+  Future<RegisterOutcome> register({
+    required String organizationId,
+    required String email,
+    required String password,
+  }) async {
+    final body = await _apiClient.post("/api/v1/auth/register", {
+      "organizationId": organizationId,
+      "email": email,
+      "password": password,
+    });
+    return RegisterOutcome(message: body["message"] as String? ?? "Check your email to verify your account.");
+  }
+
   Future<void> logout() async {
     final token = await _sessionStore.readSessionToken();
     if (token != null) {
@@ -74,4 +94,10 @@ class LoginOutcome {
 
   final bool mfaRequired;
   final String? mfaChallengeToken;
+}
+
+class RegisterOutcome {
+  RegisterOutcome({required this.message});
+
+  final String message;
 }

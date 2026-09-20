@@ -19,4 +19,32 @@ abstract final class EduCapsulesColors {
 
   /// Page and card background; the default canvas.
   static const surface = Color(0xFFFFFFFF);
+
+  // --- Auth surface tokens (Login/Signup, requested pixel-reproduction of
+  // the uploaded reference designs) --------------------------------------
+  //
+  // These are additive UI tokens for the auth screens only; they do not
+  // replace the semantic tokens above and follow the same UI-004
+  // "named token, not a hex literal in a widget" rule. Not yet reconciled
+  // with D-04 — the reference images use a purple identity brand distinct
+  // from the SRS Table 42.2 primary/accent above, so both sets of tokens
+  // currently coexist by design.
+  static const authIdentity = Color(0xFF6D5BF5);
+  static const authIdentityDark = Color(0xFF4F3FE0);
+  static const authBackground = Color(0xFFF5F5FC);
+  static const authCardBackground = Color(0xFFFFFFFF);
+  static const authBorder = Color(0xFFE5E7F0);
+  static const authHeading = Color(0xFF1A1B2E);
+  static const authMutedText = Color(0xFF6B7280);
+  static const authPlaceholder = Color(0xFF9CA3AF);
+
+  /// Role accent colours (Reference Image 2): Teacher = purple (reuses
+  /// [authIdentity]), Student = green, Parent = pink, Admin = orange.
+  /// Assistant has no dedicated reference form, so it uses the neutral
+  /// identity colour rather than an invented accent.
+  static const roleTeacher = authIdentity;
+  static const roleStudent = Color(0xFF1FA97A);
+  static const roleParent = Color(0xFFE0457B);
+  static const roleAdmin = Color(0xFFE08A1F);
+  static const roleAssistant = authIdentity;
 }

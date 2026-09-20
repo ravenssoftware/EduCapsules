@@ -1,11 +1,22 @@
+import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 
+import "../../theme/colors.dart";
 import "auth_repository.dart";
+import "auth_role.dart";
+import "signup_screen.dart";
+import "widgets/auth_page_shell.dart";
+import "widgets/auth_text_field.dart";
+import "widgets/gradient_button.dart";
+import "widgets/password_field.dart";
+import "widgets/role_selector.dart";
+import "widgets/social_auth_row.dart";
 
-/// Minimal Phase 4 foundation screen — email/password plus an optional MFA
-/// step. No role-specific UI, no routing framework (Phases 14-17/22 own
-/// that); this exists to exercise the authentication flow end-to-end
-/// against the real API, not to be the final login experience.
+/// Login page (Reference Image 1): promo panel + role selector + email/
+/// username + password + MFA step. Reproduces the reference visually while
+/// keeping the real authentication flow this screen already had —
+/// selecting a role here is a client-side UI concept only (see
+/// [AuthRole]'s doc comment); `/api/v1/auth/login` is never sent it.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({
     super.key,
@@ -23,10 +34,13 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _codeController = TextEditingController();
 
+  AuthRole _role = AuthRole.student;
+  bool _rememberMe = true;
   String? _mfaChallengeToken;
   String? _errorMessage;
   bool _isSubmitting = false;
@@ -40,6 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _submitCredentials() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
     setState(() {
       _isSubmitting = true;
       _errorMessage = null;
@@ -92,31 +107,48 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void _openSignUp() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => SignupScreen(
+          authRepository: widget.authRepository,
+          organizationId: widget.organizationId,
+          onRegistered: () => Navigator.of(context).pop(),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 360),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  "EduCapsules",
-                  style: Theme.of(context).textTheme.headlineMedium,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 24),
-                if (_errorMessage != null) ...[
-                  Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-                  const SizedBox(height: 16),
-                ],
-                if (_mfaChallengeToken == null) ..._credentialFields() else ..._mfaFields(context),
+    return AuthPageShell(
+      promoHeading: "Welcome back!",
+      promoSubheading: "Login to continue your learning journey with EduCapsules.",
+      card: AuthCard(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "Login to EduCapsules",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: EduCapsulesColors.authHeading),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                "Choose your role to continue",
+                style: TextStyle(fontSize: 13, color: EduCapsulesColors.authMutedText),
+              ),
+              const SizedBox(height: 18),
+              RoleSelector(selected: _role, onChanged: (role) => setState(() => _role = role)),
+              const SizedBox(height: 22),
+              if (_errorMessage != null) ...[
+                _ErrorBanner(message: _errorMessage!),
+                const SizedBox(height: 16),
               ],
-            ),
+              if (_mfaChallengeToken == null) ..._credentialFields() else ..._mfaFields(),
+            ],
           ),
         ),
       ),
@@ -125,44 +157,139 @@ class _LoginScreenState extends State<LoginScreen> {
 
   List<Widget> _credentialFields() {
     return [
-      TextField(
+      AuthTextField(
+        label: "Email or Username",
         controller: _emailController,
-        decoration: const InputDecoration(labelText: "Email"),
+        hintText: "Enter your email or username",
+        icon: Icons.person_outline,
         keyboardType: TextInputType.emailAddress,
-        autocorrect: false,
+        autofillHints: const [AutofillHints.email],
+        validator: (value) => (value == null || value.trim().isEmpty) ? "Enter your email or username." : null,
       ),
-      const SizedBox(height: 12),
-      TextField(
+      const SizedBox(height: 16),
+      PasswordField(
+        label: "Password",
         controller: _passwordController,
-        decoration: const InputDecoration(labelText: "Password"),
-        obscureText: true,
+        autofillHints: const [AutofillHints.password],
+        validator: (value) => (value == null || value.isEmpty) ? "Enter your password." : null,
       ),
-      const SizedBox(height: 24),
-      FilledButton(
-        onPressed: _isSubmitting ? null : _submitCredentials,
-        child: _isSubmitting
-            ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-            : const Text("Sign in"),
+      const SizedBox(height: 10),
+      Align(
+        alignment: Alignment.centerRight,
+        child: TextButton(
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Password reset isn't available in this build yet.")),
+            );
+          },
+          style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 0)),
+          child: const Text(
+            "Forgot password?",
+            style: TextStyle(fontSize: 12.5, color: EduCapsulesColors.authIdentity, fontWeight: FontWeight.w600),
+          ),
+        ),
+      ),
+      const SizedBox(height: 6),
+      Row(
+        children: [
+          SizedBox(
+            width: 20,
+            height: 20,
+            child: Checkbox(
+              value: _rememberMe,
+              onChanged: (v) => setState(() => _rememberMe = v ?? true),
+              activeColor: EduCapsulesColors.authIdentity,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+          ),
+          const SizedBox(width: 8),
+          const Text("Remember me", style: TextStyle(fontSize: 13, color: EduCapsulesColors.authMutedText)),
+        ],
+      ),
+      const SizedBox(height: 20),
+      GradientActionButton(
+        label: "Login",
+        isLoading: _isSubmitting,
+        onPressed: _submitCredentials,
+      ),
+      const SizedBox(height: 22),
+      const SocialAuthRow(),
+      const SizedBox(height: 20),
+      _BottomLink(
+        text: "Don't have an account? ",
+        actionText: "Sign up",
+        onTap: _openSignUp,
       ),
     ];
   }
 
-  List<Widget> _mfaFields(BuildContext context) {
+  List<Widget> _mfaFields() {
     return [
-      Text("Enter your 6-digit authentication code", style: Theme.of(context).textTheme.bodyMedium),
-      const SizedBox(height: 12),
-      TextField(
+      const Text(
+        "Enter your 6-digit authentication code",
+        style: TextStyle(fontSize: 13, color: EduCapsulesColors.authMutedText),
+      ),
+      const SizedBox(height: 14),
+      AuthTextField(
+        label: "Verification Code",
         controller: _codeController,
-        decoration: const InputDecoration(labelText: "Code"),
+        hintText: "123456",
+        icon: Icons.shield_outlined,
         keyboardType: TextInputType.number,
       ),
-      const SizedBox(height: 24),
-      FilledButton(
-        onPressed: _isSubmitting ? null : _submitMfaCode,
-        child: _isSubmitting
-            ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-            : const Text("Verify"),
+      const SizedBox(height: 20),
+      GradientActionButton(
+        label: "Verify",
+        isLoading: _isSubmitting,
+        onPressed: _submitMfaCode,
       ),
     ];
+  }
+}
+
+class _ErrorBanner extends StatelessWidget {
+  const _ErrorBanner({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.error.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Theme.of(context).colorScheme.error.withValues(alpha: 0.3)),
+      ),
+      child: Text(message, style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 13)),
+    );
+  }
+}
+
+class _BottomLink extends StatelessWidget {
+  const _BottomLink({required this.text, required this.actionText, required this.onTap});
+
+  final String text;
+  final String actionText;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: RichText(
+        text: TextSpan(
+          style: const TextStyle(fontSize: 13, color: EduCapsulesColors.authMutedText),
+          children: [
+            TextSpan(text: text),
+            TextSpan(
+              text: actionText,
+              style: const TextStyle(color: EduCapsulesColors.authIdentity, fontWeight: FontWeight.w700),
+              recognizer: TapGestureRecognizer()..onTap = onTap,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
