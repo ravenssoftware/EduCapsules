@@ -54,7 +54,7 @@ class PasswordRequirementsChecklist extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    requirement.isMet ? Icons.check_circle : Icons.check_circle_outline,
+                    requirement.isMet ? Icons.check_circle : Icons.radio_button_unchecked,
                     size: 15,
                     color: requirement.isMet ? EduCapsulesColors.roleStudent : EduCapsulesColors.authPlaceholder,
                   ),

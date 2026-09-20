@@ -63,7 +63,7 @@ class PromoPanel extends StatelessWidget {
             _FeatureRow(icon: feature.icon, title: feature.title, description: feature.description),
             const SizedBox(height: 18),
           ],
-          const Spacer(),
+          const SizedBox(height: 32),
           Row(
             children: [
               Icon(Icons.headset_mic_outlined, size: 18, color: EduCapsulesColors.authMutedText),
@@ -144,7 +144,7 @@ class _PromoIllustration extends StatelessWidget {
             bottom: 0,
             child: Container(
               width: 210,
-              height: 140,
+              height: 146,
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
                 color: Colors.white,

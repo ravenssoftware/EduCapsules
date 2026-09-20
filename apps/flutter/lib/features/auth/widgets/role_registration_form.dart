@@ -102,12 +102,6 @@ class _RoleRegistrationFormState extends State<RoleRegistrationForm> {
     return ok ? null : "Enter a valid email address.";
   }
 
-  String? _phoneValidator(String? value) {
-    if (value == null || value.trim().isEmpty) return "Phone Number is required.";
-    final digits = value.replaceAll(RegExp(r"[^0-9]"), "");
-    return digits.length >= 7 ? null : "Enter a valid phone number.";
-  }
-
   String? _passwordValidator(String? value) {
     if (value == null || value.isEmpty) return "Password is required.";
     return passwordMeetsAllRequirements(value) ? null : "Password does not meet all requirements.";
@@ -128,9 +122,6 @@ class _RoleRegistrationFormState extends State<RoleRegistrationForm> {
     );
     if (selected != null) setState(() => _dateOfBirth = selected);
   }
-
-  String _formatDate(DateTime date) =>
-      "${date.year.toString().padLeft(4, "0")}-${date.month.toString().padLeft(2, "0")}-${date.day.toString().padLeft(2, "0")}";
 
   Future<void> _submit() async {
     final formValid = _formKey.currentState?.validate() ?? false;
@@ -387,7 +378,7 @@ class _RoleRegistrationFormState extends State<RoleRegistrationForm> {
         value: _grade,
         hintText: "Select your grade or class",
         icon: Icons.grade_outlined,
-        items: const [
+        items: [
           for (var grade = 1; grade <= 12; grade++)
             DropdownMenuItem(value: "grade_$grade", child: Text("Grade $grade")),
         ],
@@ -464,7 +455,7 @@ class _RoleRegistrationFormState extends State<RoleRegistrationForm> {
         value: _childGrade,
         hintText: "Select grade or class",
         icon: Icons.grade_outlined,
-        items: const [
+        items: [
           for (var grade = 1; grade <= 12; grade++)
             DropdownMenuItem(value: "grade_$grade", child: Text("Grade $grade")),
         ],

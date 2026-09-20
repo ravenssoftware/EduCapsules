@@ -3,8 +3,8 @@ import "package:flutter/material.dart";
 import "../../../theme/colors.dart";
 
 /// The full-width gradient action button used for Login/Sign Up and every
-/// "Create <Role> Account" button, with the trailing arrow icon shown in
-/// the references and a loading spinner while [isLoading] is true.
+/// "Create ROLE Account" button, with the trailing arrow icon shown in the
+/// references and a loading spinner while [isLoading] is true.
 class GradientActionButton extends StatelessWidget {
   const GradientActionButton({
     super.key,
