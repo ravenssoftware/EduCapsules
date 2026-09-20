@@ -1,0 +1,27 @@
+-- DB-004, AUD-001/002/004/005: audit_log must be append-only.
+--
+-- PORTABILITY LIMITATION (flagged per Phase 3 instructions rather than
+-- silently worked around): SQLite (and Cloudflare D1, which is
+-- SQLite-compatible) has no database-level user/privilege system -- no
+-- GRANT, REVOKE, or roles -- so there is no clean, portable way to revoke
+-- UPDATE/DELETE on this table at the database layer the way
+-- migrations/postgres/0001_audit_log_append_only.sql does for Postgres.
+--
+-- A SQLite trigger that raises on UPDATE/DELETE against audit_log was
+-- considered and deliberately rejected: Phase 3 instructions explicitly
+-- forbid putting business logic into database triggers, and a
+-- mutation-blocking trigger is exactly that kind of vendor-specific,
+-- hard-to-portably-mirror procedural logic.
+--
+-- Decision: on the SQLite/D1 dialect, the append-only guarantee for
+-- audit_log MUST be enforced at the application/service data-access
+-- layer (i.e. the data-access module must never issue UPDATE or DELETE
+-- against audit_log, regardless of underlying engine). This is a
+-- documented gap, not a silently weakened requirement -- see the Phase 3
+-- completion report.
+--
+-- This migration file is intentionally a no-op so the SQLite and Postgres
+-- migration sequences stay numbered in lockstep. The SELECT below is a
+-- harmless placeholder statement -- drizzle's migrator requires at least
+-- one SQL statement per migration file and rejects an all-comment file.
+SELECT 1;
